@@ -1,0 +1,68 @@
+{
+  "common": {
+    "name": "Name",
+    "quantity": "Quantity",
+    "revenue": "Revenue",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "loading": "Loading...",
+    "actions": "Actions"
+  },
+  "auth": {
+    "login": "Login",
+    "email_or_phone": "Email or Phone",
+    "password": "Password",
+    "sign_in": "Sign In",
+    "pin_login": "PIN Login",
+    "no_account": "Don't have an account?",
+    "register": "Register",
+    "login_failed": "Login failed"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "today_orders": "Today's Orders",
+    "today_revenue": "Today's Revenue",
+    "avg_check": "Average Check",
+    "new_customers": "New Customers",
+    "top_products": "Top Products",
+    "quick_actions": "Quick Actions"
+  },
+  "pos": {
+    "new_order": "New Order",
+    "current_order": "Current Order",
+    "empty_order": "Order is empty",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "total": "Total",
+    "clear": "Clear",
+    "send_to_kitchen": "Send to Kitchen",
+    "pay": "Pay"
+  },
+  "payment": {
+    "title": "Payment",
+    "total": "Total Due",
+    "cash": "Cash",
+    "card": "Card",
+    "transfer": "Transfer",
+    "received": "Received",
+    "change": "Change",
+    "confirm": "Confirm Payment"
+  },
+  "kds": {
+    "title": "Kitchen Display",
+    "pending": "Pending",
+    "preparing": "Preparing",
+    "ready": "Ready",
+    "no_orders": "No active orders",
+    "serve_all": "Serve All"
+  },
+  "reservations": {
+    "title": "Reservations"
+  },
+  "reports": {
+    "title": "Reports"
+  }
+}

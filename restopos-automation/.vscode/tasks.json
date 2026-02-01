@@ -1,0 +1,260 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    // ==================== DEVELOPMENT ====================
+    {
+      "label": "🚀 Serve (Dev Server)",
+      "type": "shell",
+      "command": "php artisan serve",
+      "problemMatcher": [],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "group": "dev"
+      }
+    },
+    {
+      "label": "🎨 Vite (Frontend Dev)",
+      "type": "shell",
+      "command": "npm run dev",
+      "problemMatcher": [],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "group": "dev"
+      }
+    },
+    {
+      "label": "📊 Horizon (Queues)",
+      "type": "shell",
+      "command": "php artisan horizon",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "group": "dev"
+      }
+    },
+    {
+      "label": "🔄 Dev: Start All",
+      "dependsOn": [
+        "🚀 Serve (Dev Server)",
+        "🎨 Vite (Frontend Dev)"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    
+    // ==================== DOCKER ====================
+    {
+      "label": "🐳 Docker: Up",
+      "type": "shell",
+      "command": "docker compose up -d",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "🐳 Docker: Down",
+      "type": "shell",
+      "command": "docker compose down",
+      "problemMatcher": []
+    },
+    {
+      "label": "🐳 Docker: Rebuild",
+      "type": "shell",
+      "command": "docker compose down && docker compose build --no-cache && docker compose up -d",
+      "problemMatcher": []
+    },
+    {
+      "label": "🐳 Docker: Logs",
+      "type": "shell",
+      "command": "docker compose logs -f",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    
+    // ==================== DATABASE ====================
+    {
+      "label": "📦 Migrate",
+      "type": "shell",
+      "command": "php artisan migrate",
+      "problemMatcher": []
+    },
+    {
+      "label": "📦 Migrate Fresh + Seed",
+      "type": "shell",
+      "command": "php artisan migrate:fresh --seed",
+      "problemMatcher": []
+    },
+    {
+      "label": "📦 Rollback",
+      "type": "shell",
+      "command": "php artisan migrate:rollback",
+      "problemMatcher": []
+    },
+    {
+      "label": "📦 Seed",
+      "type": "shell",
+      "command": "php artisan db:seed",
+      "problemMatcher": []
+    },
+    
+    // ==================== TESTING ====================
+    {
+      "label": "🧪 Test: All",
+      "type": "shell",
+      "command": "php artisan test",
+      "problemMatcher": [],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "🧪 Test: Parallel",
+      "type": "shell",
+      "command": "php artisan test --parallel",
+      "problemMatcher": [],
+      "group": "test"
+    },
+    {
+      "label": "🧪 Test: Coverage",
+      "type": "shell",
+      "command": "php artisan test --coverage",
+      "problemMatcher": [],
+      "group": "test"
+    },
+    {
+      "label": "🧪 Test: Current File",
+      "type": "shell",
+      "command": "php artisan test ${relativeFile}",
+      "problemMatcher": [],
+      "group": "test"
+    },
+    
+    // ==================== CACHE ====================
+    {
+      "label": "🔄 Cache: Clear All",
+      "type": "shell",
+      "command": "php artisan optimize:clear",
+      "problemMatcher": []
+    },
+    {
+      "label": "🔄 Cache: Optimize",
+      "type": "shell",
+      "command": "php artisan optimize",
+      "problemMatcher": []
+    },
+    
+    // ==================== CODE QUALITY ====================
+    {
+      "label": "🔍 Pint (Code Style)",
+      "type": "shell",
+      "command": "./vendor/bin/pint",
+      "problemMatcher": []
+    },
+    {
+      "label": "🔍 PHPStan (Static Analysis)",
+      "type": "shell",
+      "command": "./vendor/bin/phpstan analyse",
+      "problemMatcher": []
+    },
+    {
+      "label": "🔍 IDE Helper: Generate",
+      "type": "shell",
+      "command": "php artisan ide-helper:generate && php artisan ide-helper:models -N && php artisan ide-helper:meta",
+      "problemMatcher": []
+    },
+    
+    // ==================== ARTISAN MAKE ====================
+    {
+      "label": "✨ Make: Model",
+      "type": "shell",
+      "command": "php artisan make:model ${input:modelName} -mfs",
+      "problemMatcher": []
+    },
+    {
+      "label": "✨ Make: Controller",
+      "type": "shell",
+      "command": "php artisan make:controller ${input:controllerName}",
+      "problemMatcher": []
+    },
+    {
+      "label": "✨ Make: Livewire",
+      "type": "shell",
+      "command": "php artisan make:livewire ${input:livewireName}",
+      "problemMatcher": []
+    },
+    {
+      "label": "✨ Make: Migration",
+      "type": "shell",
+      "command": "php artisan make:migration ${input:migrationName}",
+      "problemMatcher": []
+    },
+    {
+      "label": "✨ Make: Test",
+      "type": "shell",
+      "command": "php artisan make:test ${input:testName}",
+      "problemMatcher": []
+    },
+    
+    // ==================== INSTALL ====================
+    {
+      "label": "📥 Install: Dependencies",
+      "type": "shell",
+      "command": "composer install && npm install",
+      "problemMatcher": []
+    },
+    {
+      "label": "📥 Install: Fresh Setup",
+      "type": "shell",
+      "command": "composer install && npm install && cp .env.example .env && php artisan key:generate && php artisan migrate:fresh --seed",
+      "problemMatcher": []
+    },
+    
+    // ==================== BUILD ====================
+    {
+      "label": "🏗️ Build: Production",
+      "type": "shell",
+      "command": "npm run build",
+      "problemMatcher": [],
+      "group": "build"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "modelName",
+      "type": "promptString",
+      "description": "Model name (e.g., Order, MenuItem)"
+    },
+    {
+      "id": "controllerName",
+      "type": "promptString",
+      "description": "Controller name (e.g., OrderController)"
+    },
+    {
+      "id": "livewireName",
+      "type": "promptString",
+      "description": "Livewire component name (e.g., Orders/CreateOrder)"
+    },
+    {
+      "id": "migrationName",
+      "type": "promptString",
+      "description": "Migration name (e.g., create_orders_table)"
+    },
+    {
+      "id": "testName",
+      "type": "promptString",
+      "description": "Test name (e.g., OrderTest)"
+    }
+  ]
+}

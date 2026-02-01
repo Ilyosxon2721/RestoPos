@@ -1,0 +1,109 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // ==================== PHP DEBUGGING ====================
+    {
+      "name": "PHP: Listen for Xdebug",
+      "type": "php",
+      "request": "launch",
+      "port": 9003,
+      "pathMappings": {
+        "/var/www/html": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "PHP: Debug Current Script",
+      "type": "php",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${fileDirname}",
+      "port": 9003
+    },
+    {
+      "name": "PHP: Debug Artisan",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/artisan",
+      "args": ["${input:artisanCommand}"],
+      "cwd": "${workspaceFolder}",
+      "port": 9003
+    },
+    
+    // ==================== PHPUNIT DEBUGGING ====================
+    {
+      "name": "PHPUnit: Debug All Tests",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/vendor/bin/phpunit",
+      "cwd": "${workspaceFolder}",
+      "port": 9003
+    },
+    {
+      "name": "PHPUnit: Debug Current Test File",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/vendor/bin/phpunit",
+      "args": ["${file}"],
+      "cwd": "${workspaceFolder}",
+      "port": 9003
+    },
+    {
+      "name": "PHPUnit: Debug Current Test Method",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/vendor/bin/phpunit",
+      "args": ["${file}", "--filter", "${input:testMethod}"],
+      "cwd": "${workspaceFolder}",
+      "port": 9003
+    },
+    
+    // ==================== DOCKER DEBUGGING ====================
+    {
+      "name": "Docker: Listen for Xdebug",
+      "type": "php",
+      "request": "launch",
+      "port": 9003,
+      "pathMappings": {
+        "/var/www/html": "${workspaceFolder}"
+      },
+      "hostname": "0.0.0.0"
+    },
+    
+    // ==================== JAVASCRIPT DEBUGGING ====================
+    {
+      "name": "JS: Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:8000",
+      "webRoot": "${workspaceFolder}/resources/js"
+    },
+    {
+      "name": "JS: Edge",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:8000",
+      "webRoot": "${workspaceFolder}/resources/js"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack: PHP + JS",
+      "configurations": [
+        "PHP: Listen for Xdebug",
+        "JS: Chrome"
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "artisanCommand",
+      "type": "promptString",
+      "description": "Artisan command to debug (e.g., migrate, tinker)"
+    },
+    {
+      "id": "testMethod",
+      "type": "promptString",
+      "description": "Test method name to filter"
+    }
+  ]
+}

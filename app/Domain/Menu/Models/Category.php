@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Domain\Menu\Models;
+
+use App\Support\Traits\HasUuid;
+use App\Support\Traits\BelongsToOrganization;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Translatable\HasTranslations;
+
+class Category extends Model
+{
+    use HasUuid, BelongsToOrganization, HasTranslations;
+
+    public array $translatable = ['name', 'description'];
+
+    protected $fillable = [
+        'organization_id',
+        'parent_id',
+        'name',
+        'slug',
+        'description',
+        'image',
+        'color',
+        'icon',
+        'sort_order',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'sort_order' => 'integer',
+        'is_active' => 'boolean',
+    ];
+
+    /**
+     * Get parent category.
+     */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    /**
+     * Get child categories.
+     */
+    public function children(): HasMany
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    /**
+     * Get products in this category.
+     */
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    /**
+     * Get all descendants (recursive).
+     */
+    public function descendants(): HasMany
+    {
+        return $this->children()->with('descendants');
+    }
+
+    /**
+     * Get all ancestor IDs.
+     */
+    public function getAncestorIds(): array
+    {
+        $ids = [];
+        $category = $this;
+
+        while ($category->parent_id) {
+            $ids[] = $category->parent_id;
+            $category = $category->parent;
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Check if category has children.
+     */
+    public function hasChildren(): bool
+    {
+        return $this->children()->exists();
+    }
+
+    /**
+     * Scope for root categories (no parent).
+     */
+    public function scopeRoot($query)
+    {
+        return $query->whereNull('parent_id');
+    }
+
+    /**
+     * Scope for active categories.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope ordered by sort.
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('sort_order')->orderBy('name');
+    }
+}

@@ -1,0 +1,123 @@
+{
+  "common": {
+    "name": "Название",
+    "quantity": "Кол-во",
+    "revenue": "Выручка",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "search": "Поиск",
+    "loading": "Загрузка...",
+    "actions": "Действия",
+    "add": "Добавить",
+    "close": "Закрыть",
+    "confirm": "Подтвердить",
+    "status": "Статус",
+    "date": "Дата",
+    "total": "Итого"
+  },
+  "auth": {
+    "login": "Вход в систему",
+    "email_or_phone": "Email или телефон",
+    "password": "Пароль",
+    "sign_in": "Войти",
+    "pin_login": "Вход по PIN-коду",
+    "no_account": "Нет аккаунта?",
+    "register": "Зарегистрироваться",
+    "login_failed": "Ошибка входа"
+  },
+  "dashboard": {
+    "title": "Главная",
+    "today_orders": "Заказов сегодня",
+    "today_revenue": "Выручка сегодня",
+    "avg_check": "Средний чек",
+    "new_customers": "Новых клиентов",
+    "top_products": "Топ продаж",
+    "quick_actions": "Быстрые действия"
+  },
+  "pos": {
+    "new_order": "Новый заказ",
+    "current_order": "Текущий заказ",
+    "empty_order": "Заказ пуст",
+    "subtotal": "Подытог",
+    "discount": "Скидка",
+    "total": "Итого",
+    "clear": "Очистить",
+    "send_to_kitchen": "На кухню",
+    "pay": "Оплатить"
+  },
+  "payment": {
+    "title": "Оплата",
+    "total": "К оплате",
+    "cash": "Наличные",
+    "card": "Карта",
+    "transfer": "Перевод",
+    "received": "Получено",
+    "change": "Сдача",
+    "confirm": "Подтвердить оплату"
+  },
+  "kds": {
+    "title": "Кухня",
+    "pending": "Ожидают",
+    "preparing": "Готовятся",
+    "ready": "Готовы",
+    "no_orders": "Нет активных заказов",
+    "serve_all": "Подать всё"
+  },
+  "reservations": {
+    "title": "Бронирования"
+  },
+  "reports": {
+    "title": "Отчёты",
+    "sales": "Продажи",
+    "products": "Товары",
+    "employees": "Сотрудники",
+    "payments": "Оплаты"
+  },
+  "menu": {
+    "title": "Меню",
+    "categories": "Категории",
+    "products": "Товары",
+    "add_category": "Добавить категорию",
+    "add_product": "Добавить товар",
+    "price": "Цена",
+    "available": "Доступен"
+  },
+  "customers": {
+    "title": "Клиенты",
+    "add": "Добавить клиента",
+    "phone": "Телефон",
+    "bonus": "Бонусы",
+    "orders": "Заказов",
+    "spent": "Потрачено"
+  },
+  "warehouse": {
+    "title": "Склад",
+    "stock": "Остатки",
+    "supplies": "Поставки",
+    "low_stock": "Заканчивается"
+  },
+  "staff": {
+    "title": "Персонал",
+    "add": "Добавить сотрудника",
+    "shifts": "Смены"
+  },
+  "orders": {
+    "title": "Заказы",
+    "new": "Новый",
+    "preparing": "Готовится",
+    "ready": "Готов",
+    "closed": "Закрыт",
+    "cancelled": "Отменён"
+  },
+  "settings": {
+    "title": "Настройки",
+    "organization": "Организация",
+    "branches": "Филиалы",
+    "receipt": "Чек",
+    "printers": "Принтеры",
+    "users": "Пользователи",
+    "integrations": "Интеграции"
+  }
+}

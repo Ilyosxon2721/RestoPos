@@ -1,0 +1,28 @@
+{
+  "name": "restopos-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "^0.5.5",
+    "@vueuse/nuxt": "^11.0.0",
+    "nuxt": "^3.14.0",
+    "pinia": "^2.2.0",
+    "primevue": "^4.2.0",
+    "primeicons": "^7.0.0",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/i18n": "^8.5.0",
+    "@primevue/nuxt-module": "^4.2.0",
+    "@primevue/themes": "^4.2.0",
+    "sass": "^1.80.0",
+    "typescript": "^5.6.0"
+  }
+}

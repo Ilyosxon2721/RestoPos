@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(findstr:*)",
+      "Bash(php artisan migrate:*)",
+      "Bash(del \"d:\\\\server\\\\OSPanel\\\\home\\\\RestoPos\\\\database\\\\migrations\\\\2024_01_01_000002_create_cache_table.php\")",
+      "Bash(del \"d:\\\\server\\\\OSPanel\\\\home\\\\RestoPos\\\\database\\\\migrations\\\\2024_01_01_000003_create_jobs_table.php\")",
+      "Bash(php artisan db:seed:*)",
+      "Bash(php artisan serve:*)",
+      "Bash(npm install:*)",
+      "Bash(gh auth:*)",
+      "Bash(where git)",
+      "Bash(git init:*)",
+      "Bash(git branch:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

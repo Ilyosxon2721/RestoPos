@@ -1,0 +1,60 @@
+{
+  "recommendations": [
+    // PHP & Laravel
+    "bmewburn.vscode-intelephense-client",
+    "shufo.vscode-blade-formatter",
+    "onecentlin.laravel-blade",
+    "amiralizadeh9480.laravel-extra-intellisense",
+    "codingyu.laravel-goto-view",
+    "MrChetan.laravel-goto-config",
+    "absszero.vscode-laravel-goto",
+    "laravel-vscode.vscode-laravel",
+    "ryannaddy.laravel-artisan",
+    
+    // Livewire & Alpine
+    "cierra.livewire-vscode",
+    "adrianwilczynski.alpine-js-intellisense",
+    
+    // Tailwind CSS
+    "bradlc.vscode-tailwindcss",
+    
+    // Code Quality
+    "valeryanm.vscode-phpsab",
+    "shevaua.phpcs",
+    "neilbrayfield.php-docblocker",
+    
+    // Testing
+    "recca0120.vscode-phpunit",
+    "better-pest.better-pest",
+    
+    // Git
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+    
+    // Docker
+    "ms-azuretools.vscode-docker",
+    
+    // Formatting
+    "esbenp.prettier-vscode",
+    "EditorConfig.EditorConfig",
+    
+    // Utilities
+    "mikestead.dotenv",
+    "humao.rest-client",
+    "Gruntfuggly.todo-tree",
+    "streetsidesoftware.code-spell-checker",
+    "yzhang.markdown-all-in-one",
+    "ms-vscode.vscode-typescript-next",
+    
+    // Database
+    "cweijan.vscode-database-client2",
+    
+    // AI Assistant
+    "saoudrizwan.claude-dev",
+    "anthropics.claude-code",
+    
+    // Themes (optional)
+    "GitHub.github-vscode-theme"
+  ],
+  "unwantedRecommendations": []
+}

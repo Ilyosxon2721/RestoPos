@@ -1,0 +1,2126 @@
+openapi: 3.0.3
+info:
+  title: RestoPOS API
+  description: |
+    REST API для облачной POS-системы автоматизации ресторанов и кафе.
+    
+    ## Аутентификация
+    API использует Bearer Token аутентификацию. Токен получается через endpoint `/auth/login`.
+    
+    ## Формат ответов
+    Все ответы возвращаются в формате JSON.
+    
+    ## Пагинация
+    Списки возвращаются с пагинацией. Параметры: `page`, `per_page` (max 100).
+    
+    ## Фильтрация
+    Большинство списков поддерживают фильтрацию через query параметры.
+    
+    ## Мультитенантность
+    Организация определяется по токену авторизации.
+  version: 1.0.0
+  contact:
+    name: RestoPOS Support
+    email: support@restopos.uz
+    url: https://restopos.uz
+
+servers:
+  - url: https://api.restopos.uz/v1
+    description: Production сервер
+  - url: https://staging-api.restopos.uz/v1
+    description: Staging сервер
+  - url: http://localhost:8000/api/v1
+    description: Локальная разработка
+
+tags:
+  - name: Auth
+    description: Аутентификация и авторизация
+  - name: Orders
+    description: Управление заказами
+  - name: Products
+    description: Меню и товары
+  - name: Categories
+    description: Категории меню
+  - name: Tables
+    description: Столы и залы
+  - name: Customers
+    description: Клиенты и лояльность
+  - name: Warehouse
+    description: Складской учёт
+  - name: Employees
+    description: Персонал
+  - name: Reports
+    description: Аналитика и отчёты
+  - name: Settings
+    description: Настройки
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # ==================== ОБЩИЕ ====================
+    Pagination:
+      type: object
+      properties:
+        current_page:
+          type: integer
+        last_page:
+          type: integer
+        per_page:
+          type: integer
+        total:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+    # ==================== АУТЕНТИФИКАЦИЯ ====================
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        device_name:
+          type: string
+          default: "web"
+
+    LoginResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+          example: "Bearer"
+        expires_in:
+          type: integer
+        user:
+          $ref: '#/components/schemas/User'
+
+    PinLoginRequest:
+      type: object
+      required:
+        - branch_id
+        - pin_code
+      properties:
+        branch_id:
+          type: integer
+        pin_code:
+          type: string
+          minLength: 4
+          maxLength: 6
+
+    # ==================== ПОЛЬЗОВАТЕЛИ ====================
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+          format: uuid
+        email:
+          type: string
+        phone:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        avatar:
+          type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        created_at:
+          type: string
+          format: date-time
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+
+    # ==================== ФИЛИАЛЫ ====================
+    Branch:
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        phone:
+          type: string
+        timezone:
+          type: string
+        currency_code:
+          type: string
+        is_active:
+          type: boolean
+
+    # ==================== КАТЕГОРИИ ====================
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        parent_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        color:
+          type: string
+        sort_order:
+          type: integer
+        is_visible:
+          type: boolean
+        products_count:
+          type: integer
+
+    CategoryRequest:
+      type: object
+      required:
+        - name
+      properties:
+        parent_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        image:
+          type: string
+          format: uri
+        color:
+          type: string
+          pattern: '^#[0-9A-Fa-f]{6}$'
+        sort_order:
+          type: integer
+        is_visible:
+          type: boolean
+          default: true
+
+    # ==================== ТОВАРЫ ====================
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+          format: uuid
+        category_id:
+          type: integer
+        category:
+          $ref: '#/components/schemas/Category'
+        workshop_id:
+          type: integer
+        type:
+          type: string
+          enum: [dish, drink, product, service, semi_finished]
+        name:
+          type: string
+        name_uz:
+          type: string
+        name_en:
+          type: string
+        sku:
+          type: string
+        barcode:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        price:
+          type: number
+          format: float
+        cost_price:
+          type: number
+          format: float
+        margin_percent:
+          type: number
+          format: float
+        calories:
+          type: integer
+        proteins:
+          type: number
+        fats:
+          type: number
+        carbohydrates:
+          type: number
+        weight:
+          type: number
+        cooking_time:
+          type: integer
+        is_visible:
+          type: boolean
+        is_available:
+          type: boolean
+        in_stop_list:
+          type: boolean
+        modifier_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModifierGroup'
+
+    ProductRequest:
+      type: object
+      required:
+        - name
+        - price
+      properties:
+        category_id:
+          type: integer
+        workshop_id:
+          type: integer
+        unit_id:
+          type: integer
+        type:
+          type: string
+          enum: [dish, drink, product, service]
+        name:
+          type: string
+          maxLength: 255
+        name_uz:
+          type: string
+        name_en:
+          type: string
+        sku:
+          type: string
+        barcode:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+          format: uri
+        price:
+          type: number
+          minimum: 0
+        calories:
+          type: integer
+        proteins:
+          type: number
+        fats:
+          type: number
+        carbohydrates:
+          type: number
+        weight:
+          type: number
+        cooking_time:
+          type: integer
+        is_visible:
+          type: boolean
+          default: true
+        modifier_group_ids:
+          type: array
+          items:
+            type: integer
+
+    # ==================== МОДИФИКАТОРЫ ====================
+    ModifierGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [single, multiple]
+        is_required:
+          type: boolean
+        min_selections:
+          type: integer
+        max_selections:
+          type: integer
+        modifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Modifier'
+
+    Modifier:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price_adjustment:
+          type: number
+        is_default:
+          type: boolean
+
+    # ==================== ТЕХКАРТЫ ====================
+    TechCard:
+      type: object
+      properties:
+        id:
+          type: integer
+        product_id:
+          type: integer
+        output_quantity:
+          type: number
+        description:
+          type: string
+        cooking_instructions:
+          type: string
+        total_cost:
+          type: number
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TechCardItem'
+
+    TechCardItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        ingredient_id:
+          type: integer
+        ingredient:
+          $ref: '#/components/schemas/Ingredient'
+        quantity:
+          type: number
+        loss_percent:
+          type: number
+        gross_quantity:
+          type: number
+        cost:
+          type: number
+
+    # ==================== ИНГРЕДИЕНТЫ ====================
+    Ingredient:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        sku:
+          type: string
+        barcode:
+          type: string
+        unit:
+          $ref: '#/components/schemas/Unit'
+        current_cost:
+          type: number
+        min_stock:
+          type: number
+        current_stock:
+          type: number
+
+    Unit:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        short_name:
+          type: string
+
+    # ==================== СТОЛЫ ====================
+    Hall:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        sort_order:
+          type: integer
+        is_active:
+          type: boolean
+        tables:
+          type: array
+          items:
+            $ref: '#/components/schemas/Table'
+
+    Table:
+      type: object
+      properties:
+        id:
+          type: integer
+        hall_id:
+          type: integer
+        name:
+          type: string
+        capacity:
+          type: integer
+        shape:
+          type: string
+          enum: [square, round, rectangle]
+        pos_x:
+          type: integer
+        pos_y:
+          type: integer
+        width:
+          type: integer
+        height:
+          type: integer
+        status:
+          type: string
+          enum: [free, occupied, reserved, unavailable]
+        current_order:
+          $ref: '#/components/schemas/OrderSummary'
+
+    # ==================== ЗАКАЗЫ ====================
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+          format: uuid
+        order_number:
+          type: string
+        branch_id:
+          type: integer
+        table_id:
+          type: integer
+        table:
+          $ref: '#/components/schemas/Table'
+        customer_id:
+          type: integer
+        customer:
+          $ref: '#/components/schemas/Customer'
+        waiter_id:
+          type: integer
+        waiter:
+          $ref: '#/components/schemas/Employee'
+        type:
+          type: string
+          enum: [dine_in, takeaway, delivery, preorder]
+        source:
+          type: string
+          enum: [pos, website, app, aggregator, phone, qr]
+        guests_count:
+          type: integer
+        subtotal:
+          type: number
+        discount_amount:
+          type: number
+        discount_percent:
+          type: number
+        service_charge:
+          type: number
+        tax_amount:
+          type: number
+        total_amount:
+          type: number
+        status:
+          type: string
+          enum: [new, accepted, preparing, ready, served, completed, cancelled]
+        payment_status:
+          type: string
+          enum: [unpaid, partial, paid, refunded]
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        notes:
+          type: string
+        opened_at:
+          type: string
+          format: date-time
+        closed_at:
+          type: string
+          format: date-time
+
+    OrderSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        order_number:
+          type: string
+        total_amount:
+          type: number
+        status:
+          type: string
+        items_count:
+          type: integer
+        opened_at:
+          type: string
+          format: date-time
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        product_id:
+          type: integer
+        product:
+          $ref: '#/components/schemas/Product'
+        name:
+          type: string
+        quantity:
+          type: number
+        unit_price:
+          type: number
+        discount_amount:
+          type: number
+        total_price:
+          type: number
+        course:
+          type: integer
+        status:
+          type: string
+          enum: [pending, sent, preparing, ready, served, cancelled]
+        modifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemModifier'
+        comment:
+          type: string
+
+    OrderItemModifier:
+      type: object
+      properties:
+        id:
+          type: integer
+        modifier_id:
+          type: integer
+        name:
+          type: string
+        price_adjustment:
+          type: number
+        quantity:
+          type: integer
+
+    CreateOrderRequest:
+      type: object
+      required:
+        - branch_id
+        - type
+      properties:
+        branch_id:
+          type: integer
+        table_id:
+          type: integer
+        customer_id:
+          type: integer
+        type:
+          type: string
+          enum: [dine_in, takeaway, delivery, preorder]
+        guests_count:
+          type: integer
+          default: 1
+        notes:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateOrderItemRequest'
+
+    CreateOrderItemRequest:
+      type: object
+      required:
+        - product_id
+        - quantity
+      properties:
+        product_id:
+          type: integer
+        quantity:
+          type: number
+          minimum: 0.001
+        course:
+          type: integer
+          default: 1
+        comment:
+          type: string
+        modifiers:
+          type: array
+          items:
+            type: object
+            properties:
+              modifier_id:
+                type: integer
+              quantity:
+                type: integer
+                default: 1
+
+    AddOrderItemRequest:
+      type: object
+      required:
+        - product_id
+        - quantity
+      properties:
+        product_id:
+          type: integer
+        quantity:
+          type: number
+        course:
+          type: integer
+        comment:
+          type: string
+        modifiers:
+          type: array
+          items:
+            type: object
+            properties:
+              modifier_id:
+                type: integer
+              quantity:
+                type: integer
+
+    # ==================== ОПЛАТЫ ====================
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+          format: uuid
+        order_id:
+          type: integer
+        payment_method:
+          $ref: '#/components/schemas/PaymentMethod'
+        amount:
+          type: number
+        change_amount:
+          type: number
+        status:
+          type: string
+          enum: [pending, completed, refunded, cancelled]
+        transaction_id:
+          type: string
+        paid_at:
+          type: string
+          format: date-time
+
+    PaymentMethod:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [cash, card, transfer, bonus, credit, other]
+
+    CreatePaymentRequest:
+      type: object
+      required:
+        - payment_method_id
+        - amount
+      properties:
+        payment_method_id:
+          type: integer
+        amount:
+          type: number
+          minimum: 0.01
+        received_amount:
+          type: number
+          description: "Полученная сумма (для расчёта сдачи при наличных)"
+
+    # ==================== КЛИЕНТЫ ====================
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+          format: uuid
+        phone:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        full_name:
+          type: string
+        birth_date:
+          type: string
+          format: date
+        loyalty_card_number:
+          type: string
+        bonus_balance:
+          type: number
+        total_spent:
+          type: number
+        total_orders:
+          type: integer
+        discount_percent:
+          type: number
+        customer_group:
+          $ref: '#/components/schemas/CustomerGroup'
+        last_visit_at:
+          type: string
+          format: date-time
+
+    CustomerGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        discount_percent:
+          type: number
+        bonus_earn_percent:
+          type: number
+        color:
+          type: string
+
+    CustomerRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        last_name:
+          type: string
+        birth_date:
+          type: string
+          format: date
+        customer_group_id:
+          type: integer
+
+    # ==================== СОТРУДНИКИ ====================
+    Employee:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: '#/components/schemas/User'
+        branch_id:
+          type: integer
+        position:
+          type: string
+        hire_date:
+          type: string
+          format: date
+        salary_type:
+          type: string
+          enum: [hourly, monthly, percent, mixed]
+        hourly_rate:
+          type: number
+        monthly_salary:
+          type: number
+        sales_percent:
+          type: number
+
+    # ==================== КАССОВЫЕ СМЕНЫ ====================
+    CashShift:
+      type: object
+      properties:
+        id:
+          type: integer
+        branch_id:
+          type: integer
+        opened_by:
+          $ref: '#/components/schemas/User'
+        closed_by:
+          $ref: '#/components/schemas/User'
+        opened_at:
+          type: string
+          format: date-time
+        closed_at:
+          type: string
+          format: date-time
+        opening_cash:
+          type: number
+        closing_cash:
+          type: number
+        expected_cash:
+          type: number
+        cash_difference:
+          type: number
+        total_sales:
+          type: number
+        total_refunds:
+          type: number
+        total_cash_payments:
+          type: number
+        total_card_payments:
+          type: number
+        total_orders:
+          type: integer
+        status:
+          type: string
+          enum: [open, closed]
+
+    OpenCashShiftRequest:
+      type: object
+      required:
+        - branch_id
+        - opening_cash
+      properties:
+        branch_id:
+          type: integer
+        opening_cash:
+          type: number
+          minimum: 0
+
+    CloseCashShiftRequest:
+      type: object
+      required:
+        - closing_cash
+      properties:
+        closing_cash:
+          type: number
+          minimum: 0
+        notes:
+          type: string
+
+    # ==================== СКЛАД ====================
+    Warehouse:
+      type: object
+      properties:
+        id:
+          type: integer
+        branch_id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [main, kitchen, bar, freezer]
+        is_default:
+          type: boolean
+
+    StockItem:
+      type: object
+      properties:
+        ingredient:
+          $ref: '#/components/schemas/Ingredient'
+        warehouse_id:
+          type: integer
+        quantity:
+          type: number
+        reserved_quantity:
+          type: number
+        available_quantity:
+          type: number
+        average_cost:
+          type: number
+        total_value:
+          type: number
+        min_stock:
+          type: number
+        is_low_stock:
+          type: boolean
+
+    Supply:
+      type: object
+      properties:
+        id:
+          type: integer
+        warehouse_id:
+          type: integer
+        supplier:
+          $ref: '#/components/schemas/Supplier'
+        number:
+          type: string
+        document_number:
+          type: string
+        document_date:
+          type: string
+          format: date
+        total_amount:
+          type: number
+        status:
+          type: string
+          enum: [draft, pending, received, cancelled]
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupplyItem'
+        created_at:
+          type: string
+          format: date-time
+
+    SupplyItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        ingredient_id:
+          type: integer
+        ingredient:
+          $ref: '#/components/schemas/Ingredient'
+        quantity:
+          type: number
+        price:
+          type: number
+        total:
+          type: number
+        expiry_date:
+          type: string
+          format: date
+
+    Supplier:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        legal_name:
+          type: string
+        inn:
+          type: string
+        contact_person:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+
+    # ==================== ОТЧЁТЫ ====================
+    SalesReport:
+      type: object
+      properties:
+        period:
+          type: object
+          properties:
+            from:
+              type: string
+              format: date
+            to:
+              type: string
+              format: date
+        summary:
+          type: object
+          properties:
+            total_revenue:
+              type: number
+            total_orders:
+              type: integer
+            average_check:
+              type: number
+            total_discount:
+              type: number
+            net_revenue:
+              type: number
+        by_date:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              revenue:
+                type: number
+              orders:
+                type: integer
+              average_check:
+                type: number
+
+    DashboardStats:
+      type: object
+      properties:
+        today:
+          type: object
+          properties:
+            revenue:
+              type: number
+            orders:
+              type: integer
+            average_check:
+              type: number
+            comparison:
+              type: object
+              properties:
+                revenue_change:
+                  type: number
+                orders_change:
+                  type: number
+        current_shift:
+          $ref: '#/components/schemas/CashShift'
+        active_orders:
+          type: integer
+        tables_occupied:
+          type: integer
+        tables_total:
+          type: integer
+        top_products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                $ref: '#/components/schemas/Product'
+              quantity:
+                type: number
+              revenue:
+                type: number
+        hourly_sales:
+          type: array
+          items:
+            type: object
+            properties:
+              hour:
+                type: integer
+              revenue:
+                type: number
+              orders:
+                type: integer
+
+paths:
+  # ==================== AUTH ====================
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Вход в систему
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Успешная авторизация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Неверные учетные данные
+
+  /auth/pin-login:
+    post:
+      tags: [Auth]
+      summary: Вход по PIN-коду (для терминала)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PinLoginRequest'
+      responses:
+        '200':
+          description: Успешная авторизация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Выход из системы
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Успешный выход
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Информация о текущем пользователе
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Данные пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  # ==================== BRANCHES ====================
+  /branches:
+    get:
+      tags: [Settings]
+      summary: Список филиалов
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Список филиалов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Branch'
+
+  # ==================== CATEGORIES ====================
+  /categories:
+    get:
+      tags: [Categories]
+      summary: Список категорий
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: parent_id
+          in: query
+          schema:
+            type: integer
+        - name: with_products
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Список категорий
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+
+    post:
+      tags: [Categories]
+      summary: Создать категорию
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+      responses:
+        '201':
+          description: Категория создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+
+  /categories/{id}:
+    get:
+      tags: [Categories]
+      summary: Получить категорию
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Категория
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+
+    put:
+      tags: [Categories]
+      summary: Обновить категорию
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+      responses:
+        '200':
+          description: Категория обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+
+    delete:
+      tags: [Categories]
+      summary: Удалить категорию
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Категория удалена
+
+  # ==================== PRODUCTS ====================
+  /products:
+    get:
+      tags: [Products]
+      summary: Список товаров
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: category_id
+          in: query
+          schema:
+            type: integer
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [dish, drink, product, service]
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: in_stop_list
+          in: query
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            maximum: 100
+      responses:
+        '200':
+          description: Список товаров
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      tags: [Products]
+      summary: Создать товар
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+      responses:
+        '201':
+          description: Товар создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+  /products/{id}:
+    get:
+      tags: [Products]
+      summary: Получить товар
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Товар
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+    put:
+      tags: [Products]
+      summary: Обновить товар
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+      responses:
+        '200':
+          description: Товар обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+    delete:
+      tags: [Products]
+      summary: Удалить товар
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Товар удалён
+
+  /products/{id}/stop-list:
+    post:
+      tags: [Products]
+      summary: Добавить в стоп-лист
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Добавлено в стоп-лист
+
+    delete:
+      tags: [Products]
+      summary: Убрать из стоп-листа
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Убрано из стоп-листа
+
+  # ==================== TABLES ====================
+  /halls:
+    get:
+      tags: [Tables]
+      summary: Список залов со столами
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: branch_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список залов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Hall'
+
+  /tables/{id}/status:
+    put:
+      tags: [Tables]
+      summary: Изменить статус стола
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [free, occupied, reserved, unavailable]
+      responses:
+        '200':
+          description: Статус обновлён
+
+  # ==================== ORDERS ====================
+  /orders:
+    get:
+      tags: [Orders]
+      summary: Список заказов
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: branch_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [new, accepted, preparing, ready, served, completed, cancelled]
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [dine_in, takeaway, delivery]
+        - name: table_id
+          in: query
+          schema:
+            type: integer
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список заказов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      tags: [Orders]
+      summary: Создать заказ
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Заказ создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /orders/{id}:
+    get:
+      tags: [Orders]
+      summary: Получить заказ
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Заказ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /orders/{id}/items:
+    post:
+      tags: [Orders]
+      summary: Добавить позицию в заказ
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddOrderItemRequest'
+      responses:
+        '200':
+          description: Позиция добавлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /orders/{id}/items/{itemId}:
+    delete:
+      tags: [Orders]
+      summary: Удалить позицию из заказа
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Позиция удалена
+
+  /orders/{id}/send-to-kitchen:
+    post:
+      tags: [Orders]
+      summary: Отправить заказ на кухню
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Заказ отправлен на кухню
+
+  /orders/{id}/discount:
+    post:
+      tags: [Orders]
+      summary: Применить скидку
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [percent, fixed]
+                value:
+                  type: number
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Скидка применена
+
+  /orders/{id}/pay:
+    post:
+      tags: [Orders]
+      summary: Оплатить заказ
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentRequest'
+      responses:
+        '200':
+          description: Оплата принята
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+
+  /orders/{id}/close:
+    post:
+      tags: [Orders]
+      summary: Закрыть заказ
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Заказ закрыт
+
+  /orders/{id}/cancel:
+    post:
+      tags: [Orders]
+      summary: Отменить заказ
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reason
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Заказ отменён
+
+  # ==================== CASH SHIFTS ====================
+  /cash-shifts/current:
+    get:
+      tags: [Orders]
+      summary: Текущая кассовая смена
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: branch_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Текущая смена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashShift'
+        '404':
+          description: Нет открытой смены
+
+  /cash-shifts/open:
+    post:
+      tags: [Orders]
+      summary: Открыть кассовую смену
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpenCashShiftRequest'
+      responses:
+        '201':
+          description: Смена открыта
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashShift'
+
+  /cash-shifts/{id}/close:
+    post:
+      tags: [Orders]
+      summary: Закрыть кассовую смену
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CloseCashShiftRequest'
+      responses:
+        '200':
+          description: Смена закрыта
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashShift'
+
+  # ==================== CUSTOMERS ====================
+  /customers:
+    get:
+      tags: [Customers]
+      summary: Список клиентов
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Поиск по телефону, имени, email
+        - name: group_id
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список клиентов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Customer'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      tags: [Customers]
+      summary: Создать клиента
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+      responses:
+        '201':
+          description: Клиент создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+
+  /customers/find-by-phone:
+    get:
+      tags: [Customers]
+      summary: Найти клиента по телефону
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: phone
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Клиент найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          description: Клиент не найден
+
+  # ==================== WAREHOUSE ====================
+  /warehouses/{id}/stock:
+    get:
+      tags: [Warehouse]
+      summary: Остатки на складе
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: low_stock
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Остатки
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/StockItem'
+
+  /supplies:
+    get:
+      tags: [Warehouse]
+      summary: Список поставок
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: warehouse_id
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список поставок
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Supply'
+
+  # ==================== REPORTS ====================
+  /reports/dashboard:
+    get:
+      tags: [Reports]
+      summary: Данные для дашборда
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: branch_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Данные дашборда
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardStats'
+
+  /reports/sales:
+    get:
+      tags: [Reports]
+      summary: Отчёт по продажам
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: branch_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: group_by
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month]
+      responses:
+        '200':
+          description: Отчёт по продажам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesReport'
+
+  # ==================== KDS (Kitchen Display) ====================
+  /kds/orders:
+    get:
+      tags: [Orders]
+      summary: Заказы для кухни
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: branch_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: workshop_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список заказов для кухни
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+
+  /kds/items/{itemId}/ready:
+    post:
+      tags: [Orders]
+      summary: Отметить позицию готовой
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Позиция отмечена готовой

@@ -1,0 +1,486 @@
+erDiagram
+    %% ============================================
+    %% RestoPOS - ER Диаграмма базы данных
+    %% ============================================
+
+    %% === ОРГАНИЗАЦИИ И ФИЛИАЛЫ ===
+    organizations ||--o{ branches : "имеет"
+    organizations ||--o{ users : "содержит"
+    organizations ||--o{ categories : "владеет"
+    organizations ||--o{ products : "владеет"
+    organizations ||--o{ customers : "обслуживает"
+
+    organizations {
+        bigint id PK
+        uuid uuid UK
+        string name
+        string legal_name
+        string inn
+        string subdomain UK
+        enum subscription_plan
+        timestamp subscription_expires_at
+        json settings
+        boolean is_active
+    }
+
+    branches {
+        bigint id PK
+        uuid uuid UK
+        bigint organization_id FK
+        string name
+        string address
+        string city
+        string phone
+        string timezone
+        string currency_code
+        json working_hours
+        boolean is_active
+    }
+
+    %% === ПОЛЬЗОВАТЕЛИ И ПРАВА ===
+    users ||--o{ user_roles : "имеет"
+    users ||--o| employees : "может быть"
+    roles ||--o{ role_permissions : "имеет"
+    roles ||--o{ user_roles : "назначена"
+    permissions ||--o{ role_permissions : "входит"
+
+    users {
+        bigint id PK
+        uuid uuid UK
+        bigint organization_id FK
+        string email UK
+        string phone
+        string password
+        string pin_code
+        string first_name
+        string last_name
+        string avatar
+        boolean is_active
+    }
+
+    roles {
+        bigint id PK
+        bigint organization_id FK
+        string name
+        string slug
+        boolean is_system
+    }
+
+    permissions {
+        bigint id PK
+        string name
+        string slug UK
+        string module
+    }
+
+    %% === ПЕРСОНАЛ ===
+    employees ||--o{ employee_shifts : "работает"
+    employees ||--o{ salary_calculations : "получает"
+    employees ||--o{ orders : "обслуживает"
+    branches ||--o{ employees : "содержит"
+
+    employees {
+        bigint id PK
+        bigint user_id FK,UK
+        bigint branch_id FK
+        string position
+        date hire_date
+        enum salary_type
+        decimal hourly_rate
+        decimal monthly_salary
+        decimal sales_percent
+    }
+
+    employee_shifts {
+        bigint id PK
+        bigint employee_id FK
+        bigint branch_id FK
+        timestamp clock_in
+        timestamp clock_out
+        int break_minutes
+    }
+
+    %% === ЗАЛЫ И СТОЛЫ ===
+    branches ||--o{ halls : "содержит"
+    halls ||--o{ tables : "содержит"
+    tables ||--o{ orders : "имеет заказы"
+    tables ||--o{ reservations : "забронирован"
+
+    halls {
+        bigint id PK
+        bigint branch_id FK
+        string name
+        int sort_order
+        boolean is_active
+    }
+
+    tables {
+        bigint id PK
+        bigint hall_id FK
+        string name
+        int capacity
+        enum shape
+        int pos_x
+        int pos_y
+        enum status
+    }
+
+    %% === МЕНЮ И ТОВАРЫ ===
+    categories ||--o{ products : "содержит"
+    categories ||--o| categories : "родитель"
+    products ||--o{ order_items : "продаётся"
+    products ||--o{ tech_cards : "имеет рецепт"
+    products ||--o{ product_modifier_groups : "имеет"
+    products ||--o{ product_prices : "имеет цены"
+
+    categories {
+        bigint id PK
+        bigint organization_id FK
+        bigint parent_id FK
+        string name
+        string image
+        string color
+        int sort_order
+        boolean is_visible
+    }
+
+    products {
+        bigint id PK
+        uuid uuid UK
+        bigint organization_id FK
+        bigint category_id FK
+        bigint workshop_id FK
+        enum type
+        string name
+        string sku
+        string barcode
+        decimal price
+        decimal cost_price
+        int cooking_time
+        boolean is_visible
+        boolean in_stop_list
+    }
+
+    workshops {
+        bigint id PK
+        bigint branch_id FK
+        string name
+        string color
+    }
+
+    %% === МОДИФИКАТОРЫ ===
+    modifier_groups ||--o{ modifiers : "содержит"
+    modifier_groups ||--o{ product_modifier_groups : "привязана"
+    modifiers ||--o{ order_item_modifiers : "используется"
+
+    modifier_groups {
+        bigint id PK
+        bigint organization_id FK
+        string name
+        enum type
+        boolean is_required
+        int min_selections
+        int max_selections
+    }
+
+    modifiers {
+        bigint id PK
+        bigint modifier_group_id FK
+        string name
+        decimal price_adjustment
+        boolean is_default
+    }
+
+    %% === ТЕХКАРТЫ ===
+    tech_cards ||--o{ tech_card_items : "содержит"
+    ingredients ||--o{ tech_card_items : "входит"
+    ingredients ||--o{ stock : "хранится"
+    ingredients ||--o{ supply_items : "поставляется"
+
+    tech_cards {
+        bigint id PK
+        bigint product_id FK
+        decimal output_quantity
+        text cooking_instructions
+        int version
+    }
+
+    tech_card_items {
+        bigint id PK
+        bigint tech_card_id FK
+        bigint ingredient_id FK
+        decimal quantity
+        decimal loss_percent
+    }
+
+    ingredients {
+        bigint id PK
+        bigint organization_id FK
+        bigint unit_id FK
+        string name
+        string sku
+        decimal min_stock
+        decimal current_cost
+    }
+
+    units {
+        bigint id PK
+        bigint organization_id FK
+        string name
+        string short_name
+    }
+
+    %% === СКЛАД ===
+    branches ||--o{ warehouses : "имеет"
+    warehouses ||--o{ stock : "содержит"
+    warehouses ||--o{ supplies : "принимает"
+    suppliers ||--o{ supplies : "поставляет"
+    supplies ||--o{ supply_items : "содержит"
+
+    warehouses {
+        bigint id PK
+        bigint branch_id FK
+        string name
+        enum type
+        boolean is_default
+    }
+
+    stock {
+        bigint id PK
+        bigint warehouse_id FK
+        bigint ingredient_id FK
+        decimal quantity
+        decimal average_cost
+    }
+
+    suppliers {
+        bigint id PK
+        bigint organization_id FK
+        string name
+        string phone
+        string email
+    }
+
+    supplies {
+        bigint id PK
+        bigint warehouse_id FK
+        bigint supplier_id FK
+        bigint user_id FK
+        string number
+        decimal total_amount
+        enum status
+    }
+
+    supply_items {
+        bigint id PK
+        bigint supply_id FK
+        bigint ingredient_id FK
+        decimal quantity
+        decimal price
+        date expiry_date
+    }
+
+    %% === КАССОВЫЕ СМЕНЫ И ЗАКАЗЫ ===
+    branches ||--o{ cash_shifts : "имеет"
+    cash_shifts ||--o{ orders : "содержит"
+    cash_shifts ||--o{ cash_operations : "содержит"
+    orders ||--o{ order_items : "содержит"
+    orders ||--o{ payments : "оплачивается"
+    order_items ||--o{ order_item_modifiers : "имеет"
+
+    cash_shifts {
+        bigint id PK
+        bigint branch_id FK
+        bigint opened_by FK
+        bigint closed_by FK
+        timestamp opened_at
+        timestamp closed_at
+        decimal opening_cash
+        decimal closing_cash
+        decimal total_sales
+        enum status
+    }
+
+    orders {
+        bigint id PK
+        uuid uuid UK
+        bigint branch_id FK
+        bigint cash_shift_id FK
+        bigint table_id FK
+        bigint customer_id FK
+        bigint waiter_id FK
+        string order_number
+        enum type
+        enum source
+        int guests_count
+        decimal subtotal
+        decimal discount_amount
+        decimal total_amount
+        enum status
+        enum payment_status
+        timestamp opened_at
+        timestamp closed_at
+    }
+
+    order_items {
+        bigint id PK
+        bigint order_id FK
+        bigint product_id FK
+        string name
+        decimal quantity
+        decimal unit_price
+        decimal total_price
+        int course
+        enum status
+        string comment
+    }
+
+    order_item_modifiers {
+        bigint id PK
+        bigint order_item_id FK
+        bigint modifier_id FK
+        string name
+        decimal price_adjustment
+    }
+
+    %% === ОПЛАТЫ ===
+    payment_methods ||--o{ payments : "используется"
+    payments ||--o{ receipts : "генерирует"
+
+    payment_methods {
+        bigint id PK
+        bigint organization_id FK
+        string name
+        enum type
+        boolean is_fiscal
+    }
+
+    payments {
+        bigint id PK
+        uuid uuid UK
+        bigint order_id FK
+        bigint payment_method_id FK
+        bigint cash_shift_id FK
+        decimal amount
+        decimal change_amount
+        enum status
+        string transaction_id
+        timestamp paid_at
+    }
+
+    receipts {
+        bigint id PK
+        bigint order_id FK
+        bigint payment_id FK
+        enum type
+        string fiscal_number
+        decimal amount
+        enum status
+    }
+
+    %% === КЛИЕНТЫ И ЛОЯЛЬНОСТЬ ===
+    customers ||--o{ orders : "делает"
+    customers ||--o{ bonus_transactions : "имеет"
+    customer_groups ||--o{ customers : "содержит"
+
+    customers {
+        bigint id PK
+        uuid uuid UK
+        bigint organization_id FK
+        string phone
+        string email
+        string first_name
+        string last_name
+        date birth_date
+        string loyalty_card_number
+        decimal bonus_balance
+        decimal total_spent
+        int total_orders
+    }
+
+    customer_groups {
+        bigint id PK
+        bigint organization_id FK
+        string name
+        decimal discount_percent
+        decimal bonus_earn_percent
+    }
+
+    bonus_transactions {
+        bigint id PK
+        bigint customer_id FK
+        bigint order_id FK
+        enum type
+        decimal amount
+        decimal balance_after
+    }
+
+    promotions {
+        bigint id PK
+        bigint organization_id FK
+        string name
+        enum type
+        decimal discount_value
+        json conditions
+        timestamp start_date
+        timestamp end_date
+        string promo_code
+        boolean is_active
+    }
+
+    %% === ДОСТАВКА ===
+    branches ||--o{ delivery_zones : "имеет"
+    branches ||--o{ couriers : "нанимает"
+    orders ||--o| delivery_orders : "может быть"
+    couriers ||--o{ delivery_orders : "доставляет"
+
+    delivery_zones {
+        bigint id PK
+        bigint branch_id FK
+        string name
+        json polygon
+        decimal delivery_fee
+        decimal min_order_amount
+        int estimated_time
+    }
+
+    couriers {
+        bigint id PK
+        bigint branch_id FK
+        bigint employee_id FK
+        string name
+        string phone
+        enum vehicle_type
+        enum status
+        decimal current_lat
+        decimal current_lng
+    }
+
+    delivery_orders {
+        bigint id PK
+        bigint order_id FK,UK
+        bigint courier_id FK
+        bigint delivery_zone_id FK
+        text address
+        string contact_phone
+        decimal delivery_fee
+        timestamp scheduled_at
+        enum status
+    }
+
+    %% === БРОНИРОВАНИЕ ===
+    reservations {
+        bigint id PK
+        uuid uuid UK
+        bigint branch_id FK
+        bigint table_id FK
+        bigint customer_id FK
+        string guest_name
+        string guest_phone
+        int guests_count
+        date reservation_date
+        time reservation_time
+        int duration_minutes
+        decimal deposit_amount
+        enum status
+    }

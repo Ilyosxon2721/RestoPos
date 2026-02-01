@@ -1,0 +1,68 @@
+{
+  "common": {
+    "name": "Nomi",
+    "quantity": "Soni",
+    "revenue": "Daromad",
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "delete": "O'chirish",
+    "edit": "Tahrirlash",
+    "search": "Qidirish",
+    "loading": "Yuklanmoqda...",
+    "actions": "Amallar"
+  },
+  "auth": {
+    "login": "Tizimga kirish",
+    "email_or_phone": "Email yoki telefon",
+    "password": "Parol",
+    "sign_in": "Kirish",
+    "pin_login": "PIN-kod bilan kirish",
+    "no_account": "Akkauntingiz yo'qmi?",
+    "register": "Ro'yxatdan o'tish",
+    "login_failed": "Kirish xatosi"
+  },
+  "dashboard": {
+    "title": "Bosh sahifa",
+    "today_orders": "Bugungi buyurtmalar",
+    "today_revenue": "Bugungi daromad",
+    "avg_check": "O'rtacha chek",
+    "new_customers": "Yangi mijozlar",
+    "top_products": "Top mahsulotlar",
+    "quick_actions": "Tezkor amallar"
+  },
+  "pos": {
+    "new_order": "Yangi buyurtma",
+    "current_order": "Joriy buyurtma",
+    "empty_order": "Buyurtma bo'sh",
+    "subtotal": "Oraliq summa",
+    "discount": "Chegirma",
+    "total": "Jami",
+    "clear": "Tozalash",
+    "send_to_kitchen": "Oshxonaga",
+    "pay": "To'lash"
+  },
+  "payment": {
+    "title": "To'lov",
+    "total": "To'lov summasi",
+    "cash": "Naqd pul",
+    "card": "Karta",
+    "transfer": "O'tkazma",
+    "received": "Qabul qilingan",
+    "change": "Qaytim",
+    "confirm": "To'lovni tasdiqlash"
+  },
+  "kds": {
+    "title": "Oshxona",
+    "pending": "Kutilmoqda",
+    "preparing": "Tayyorlanmoqda",
+    "ready": "Tayyor",
+    "no_orders": "Faol buyurtmalar yo'q",
+    "serve_all": "Hammasini berish"
+  },
+  "reservations": {
+    "title": "Bron qilish"
+  },
+  "reports": {
+    "title": "Hisobotlar"
+  }
+}

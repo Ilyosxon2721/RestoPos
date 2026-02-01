@@ -1,0 +1,146 @@
+# RestoPOS Docker Development Environment
+# Использование: docker compose up -d
+
+services:
+  # ==================== PHP APPLICATION ====================
+  app:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    container_name: restopos-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - restopos-network
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - PHP_OPCACHE_ENABLE=0
+      - XDEBUG_MODE=debug,develop,coverage
+      - XDEBUG_CONFIG=client_host=host.docker.internal
+
+  # ==================== NGINX WEB SERVER ====================
+  nginx:
+    image: nginx:alpine
+    container_name: restopos-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+      - "443:443"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/sites:/etc/nginx/conf.d
+    networks:
+      - restopos-network
+    depends_on:
+      - app
+
+  # ==================== MYSQL DATABASE ====================
+  mysql:
+    image: mysql:8.0
+    container_name: restopos-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: restopos
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_USER: restopos
+      MYSQL_PASSWORD: secret
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - restopos-network
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # ==================== REDIS CACHE ====================
+  redis:
+    image: redis:7-alpine
+    container_name: restopos-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - restopos-network
+    command: redis-server --appendonly yes
+
+  # ==================== MAILPIT (DEV EMAIL) ====================
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: restopos-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+    networks:
+      - restopos-network
+
+  # ==================== MEILISEARCH (OPTIONAL) ====================
+  meilisearch:
+    image: getmeili/meilisearch:v1.6
+    container_name: restopos-meilisearch
+    restart: unless-stopped
+    ports:
+      - "7700:7700"
+    environment:
+      MEILI_MASTER_KEY: masterkey
+      MEILI_NO_ANALYTICS: true
+    volumes:
+      - meilisearch-data:/meili_data
+    networks:
+      - restopos-network
+    profiles:
+      - search
+
+  # ==================== PHPMYADMIN ====================
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: restopos-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: restopos
+      PMA_PASSWORD: secret
+    networks:
+      - restopos-network
+    depends_on:
+      - mysql
+    profiles:
+      - tools
+
+  # ==================== REDIS COMMANDER ====================
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: restopos-redis-commander
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    networks:
+      - restopos-network
+    depends_on:
+      - redis
+    profiles:
+      - tools
+
+# ==================== NETWORKS ====================
+networks:
+  restopos-network:
+    driver: bridge
+
+# ==================== VOLUMES ====================
+volumes:
+  mysql-data:
+  redis-data:
+  meilisearch-data:
