@@ -1,24 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Staff\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Support\Traits\BelongsToBranch;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EmployeeShift extends Model
 {
-    use HasUuid, BelongsToOrganization, BelongsToBranch;
+    use BelongsToBranch;
 
     protected $fillable = [
-        'organization_id',
-        'branch_id',
         'employee_id',
+        'branch_id',
         'clock_in',
         'clock_out',
-        'worked_minutes',
         'break_minutes',
         'notes',
     ];
@@ -28,7 +26,6 @@ class EmployeeShift extends Model
         return [
             'clock_in' => 'datetime',
             'clock_out' => 'datetime',
-            'worked_minutes' => 'integer',
             'break_minutes' => 'integer',
         ];
     }
@@ -42,16 +39,16 @@ class EmployeeShift extends Model
     }
 
     /**
-     * Calculate worked minutes.
+     * Calculate worked minutes from clock_in/clock_out.
      */
-    public function calculateWorkedMinutes(): void
+    public function getWorkedMinutes(): int
     {
         if ($this->clock_in && $this->clock_out) {
             $totalMinutes = $this->clock_in->diffInMinutes($this->clock_out);
-            $this->update([
-                'worked_minutes' => $totalMinutes - ($this->break_minutes ?? 0),
-            ]);
+            return (int) ($totalMinutes - ($this->break_minutes ?? 0));
         }
+
+        return 0;
     }
 
     /**
@@ -59,12 +56,14 @@ class EmployeeShift extends Model
      */
     public function getDurationAttribute(): string
     {
-        if (!$this->worked_minutes) {
+        $workedMinutes = $this->getWorkedMinutes();
+
+        if ($workedMinutes <= 0) {
             return '0ч 0м';
         }
 
-        $hours = floor($this->worked_minutes / 60);
-        $minutes = $this->worked_minutes % 60;
+        $hours = floor($workedMinutes / 60);
+        $minutes = $workedMinutes % 60;
 
         return "{$hours}ч {$minutes}м";
     }

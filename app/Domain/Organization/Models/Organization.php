@@ -76,4 +76,10 @@ class Organization extends Model
         $this->settings = $settings;
         $this->save();
     }
+
+    protected static function newFactory(): \Database\Factories\OrganizationFactory
+    {
+        return \Database\Factories\OrganizationFactory::new();
+    }
+
 }

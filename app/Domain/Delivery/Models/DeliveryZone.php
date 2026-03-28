@@ -1,36 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Delivery\Models;
 
 use App\Domain\Organization\Models\Branch;
 use App\Support\Traits\BelongsToBranch;
-use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DeliveryZone extends Model
 {
-    use HasUuid, BelongsToBranch, SoftDeletes;
+    use BelongsToBranch;
 
     protected $fillable = [
         'branch_id',
         'name',
         'polygon',
         'min_order_amount',
-        'delivery_price',
+        'delivery_fee',
         'free_delivery_from',
-        'estimated_time_minutes',
+        'estimated_time',
         'is_active',
     ];
 
     protected $casts = [
         'polygon' => 'array',
         'min_order_amount' => 'decimal:2',
-        'delivery_price' => 'decimal:2',
+        'delivery_fee' => 'decimal:2',
         'free_delivery_from' => 'decimal:2',
-        'estimated_time_minutes' => 'integer',
+        'estimated_time' => 'integer',
         'is_active' => 'boolean',
     ];
 
@@ -69,13 +69,13 @@ class DeliveryZone extends Model
         return $inside;
     }
 
-    public function getDeliveryPrice(float $orderAmount): float
+    public function getDeliveryFee(float $orderAmount): float
     {
         if ($this->free_delivery_from && $orderAmount >= $this->free_delivery_from) {
             return 0;
         }
 
-        return (float) $this->delivery_price;
+        return (float) $this->delivery_fee;
     }
 
     public function scopeActive($query)

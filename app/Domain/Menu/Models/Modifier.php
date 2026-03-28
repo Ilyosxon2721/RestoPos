@@ -1,31 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Menu\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Translatable\HasTranslations;
 
 class Modifier extends Model
 {
-    use HasUuid, BelongsToOrganization, HasTranslations;
+    use HasTranslations;
 
     public array $translatable = ['name'];
 
     protected $fillable = [
-        'organization_id',
         'modifier_group_id',
         'name',
-        'price',
+        'price_adjustment',
         'sort_order',
         'is_default',
         'is_active',
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
+        'price_adjustment' => 'decimal:2',
         'sort_order' => 'integer',
         'is_default' => 'boolean',
         'is_active' => 'boolean',

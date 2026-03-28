@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Auth\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +12,7 @@ class Permission extends Model
     protected $fillable = [
         'name',
         'slug',
-        'group',
+        'module',
         'description',
     ];
 
@@ -23,26 +25,26 @@ class Permission extends Model
     }
 
     /**
-     * Scope by permission group.
+     * Scope by permission module.
      */
-    public function scopeInGroup($query, string $group)
+    public function scopeInModule($query, string $module)
     {
-        return $query->where('group', $group);
+        return $query->where('module', $module);
     }
 
     /**
-     * Get all permission groups.
+     * Get all permission modules.
      */
-    public static function getGroups(): array
+    public static function getModules(): array
     {
-        return static::distinct('group')->pluck('group')->toArray();
+        return static::distinct('module')->pluck('module')->toArray();
     }
 
     /**
-     * Get permissions grouped by their group.
+     * Get permissions grouped by their module.
      */
     public static function getAllGrouped(): array
     {
-        return static::all()->groupBy('group')->toArray();
+        return static::all()->groupBy('module')->toArray();
     }
 }

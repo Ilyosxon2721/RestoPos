@@ -10,11 +10,12 @@ use App\Support\Enums\ReservationStatus;
 use App\Domain\Floor\Models\Table;
 use App\Domain\Customer\Models\Customer;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Reservation extends Model
 {
-    use HasUuid, BelongsToBranch;
+    use HasFactory, HasUuid, BelongsToBranch;
 
     protected $fillable = [
         'branch_id',
@@ -215,4 +216,10 @@ class Reservation extends Model
     {
         return $query->whereBetween('reservation_date', [$start, $end]);
     }
+
+    protected static function newFactory(): \Database\Factories\ReservationFactory
+    {
+        return \Database\Factories\ReservationFactory::new();
+    }
+
 }

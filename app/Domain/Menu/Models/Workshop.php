@@ -1,24 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Menu\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Support\Traits\BelongsToBranch;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Workshop extends Model
 {
-    use HasUuid, BelongsToOrganization, BelongsToBranch;
+    use BelongsToBranch;
 
     protected $fillable = [
-        'organization_id',
         'branch_id',
         'name',
-        'code',
-        'color',
         'printer_id',
+        'color',
         'sort_order',
         'is_active',
     ];

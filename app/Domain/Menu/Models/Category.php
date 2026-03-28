@@ -1,17 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Menu\Models;
 
-use App\Support\Traits\HasUuid;
 use App\Support\Traits\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Translatable\HasTranslations;
 
 class Category extends Model
 {
-    use HasUuid, BelongsToOrganization, HasTranslations;
+    use HasFactory, BelongsToOrganization, HasTranslations, SoftDeletes;
 
     public array $translatable = ['name', 'description'];
 
@@ -23,14 +26,17 @@ class Category extends Model
         'description',
         'image',
         'color',
-        'icon',
         'sort_order',
-        'is_active',
+        'is_visible',
+        'available_from',
+        'available_to',
     ];
 
     protected $casts = [
         'sort_order' => 'integer',
-        'is_active' => 'boolean',
+        'is_visible' => 'boolean',
+        'available_from' => 'datetime:H:i',
+        'available_to' => 'datetime:H:i',
     ];
 
     /**
@@ -98,11 +104,11 @@ class Category extends Model
     }
 
     /**
-     * Scope for active categories.
+     * Scope for active (visible) categories.
      */
     public function scopeActive($query)
     {
-        return $query->where('is_active', true);
+        return $query->where('is_visible', true);
     }
 
     /**
@@ -112,4 +118,10 @@ class Category extends Model
     {
         return $query->orderBy('sort_order')->orderBy('name');
     }
+
+    protected static function newFactory(): \Database\Factories\CategoryFactory
+    {
+        return \Database\Factories\CategoryFactory::new();
+    }
+
 }
