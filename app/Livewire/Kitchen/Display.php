@@ -38,17 +38,17 @@ final class Display extends Component
     {
         $query = OrderItem::query()
             ->whereIn('status', [
-                OrderItemStatus::Sent,
-                OrderItemStatus::Preparing,
-                OrderItemStatus::Ready,
+                OrderItemStatus::SENT,
+                OrderItemStatus::PREPARING,
+                OrderItemStatus::READY,
             ])
             ->with(['order.table', 'product']);
 
         if ($this->filter !== 'all') {
             $statusMap = [
-                'pending' => OrderItemStatus::Sent,
-                'preparing' => OrderItemStatus::Preparing,
-                'ready' => OrderItemStatus::Ready,
+                'pending' => OrderItemStatus::SENT,
+                'preparing' => OrderItemStatus::PREPARING,
+                'ready' => OrderItemStatus::READY,
             ];
 
             if (isset($statusMap[$this->filter])) {
@@ -81,8 +81,7 @@ final class Display extends Component
     {
         $item = OrderItem::findOrFail($itemId);
         $item->update([
-            'status' => OrderItemStatus::Preparing,
-            'preparing_at' => now(),
+            'status' => OrderItemStatus::PREPARING,
         ]);
 
         unset($this->orders, $this->stats);
@@ -92,7 +91,7 @@ final class Display extends Component
     {
         $item = OrderItem::findOrFail($itemId);
         $item->update([
-            'status' => OrderItemStatus::Ready,
+            'status' => OrderItemStatus::READY,
             'ready_at' => now(),
         ]);
 
@@ -103,8 +102,7 @@ final class Display extends Component
     {
         $item = OrderItem::findOrFail($itemId);
         $item->update([
-            'status' => OrderItemStatus::Served,
-            'served_at' => now(),
+            'status' => OrderItemStatus::SERVED,
         ]);
 
         unset($this->orders, $this->stats);
@@ -114,21 +112,21 @@ final class Display extends Component
     {
         $items = OrderItem::query()
             ->whereIn('status', [
-                OrderItemStatus::Sent,
-                OrderItemStatus::Preparing,
-                OrderItemStatus::Ready,
+                OrderItemStatus::SENT,
+                OrderItemStatus::PREPARING,
+                OrderItemStatus::READY,
             ])
             ->get();
 
         $avgPrepTime = $items
-            ->filter(fn (OrderItem $item) => $item->preparing_at && $item->ready_at)
-            ->avg(fn (OrderItem $item) => $item->ready_at->diffInMinutes($item->preparing_at));
+            ->filter(fn (OrderItem $item) => $item->sent_to_kitchen_at && $item->ready_at)
+            ->avg(fn (OrderItem $item) => $item->ready_at->diffInMinutes($item->sent_to_kitchen_at));
 
         return [
             'total' => $items->count(),
-            'sent' => $items->where('status', OrderItemStatus::Sent)->count(),
-            'preparing' => $items->where('status', OrderItemStatus::Preparing)->count(),
-            'ready' => $items->where('status', OrderItemStatus::Ready)->count(),
+            'sent' => $items->where('status', OrderItemStatus::SENT)->count(),
+            'preparing' => $items->where('status', OrderItemStatus::PREPARING)->count(),
+            'ready' => $items->where('status', OrderItemStatus::READY)->count(),
             'avg_prep_time' => round($avgPrepTime ?? 0),
         ];
     }
