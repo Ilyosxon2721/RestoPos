@@ -15,7 +15,7 @@ class EmployeeController extends Controller
         $branchId = $request->input('branch_id') ?? app('current.branch_id');
 
         $employees = Employee::where('branch_id', $branchId)
-            ->when($request->boolean('active_only'), fn($q) => $q->where('is_active', true))
+            ->when($request->boolean('active_only'), fn($q) => $q->whereNotNull('hire_date'))
             ->with('user')
             ->orderBy('created_at', 'desc')
             ->paginate($request->input('per_page', 20));
@@ -37,16 +37,15 @@ class EmployeeController extends Controller
             'user_id' => 'required|exists:users,id',
             'position' => 'required|string|max:255',
             'salary_type' => 'required|string|in:hourly,monthly,percent,mixed',
-            'salary_amount' => 'nullable|numeric|min:0',
+            'hourly_rate' => 'nullable|numeric|min:0',
+            'monthly_salary' => 'nullable|numeric|min:0',
             'sales_percent' => 'nullable|numeric|min:0|max:100',
-            'hired_at' => 'nullable|date',
+            'hire_date' => 'nullable|date',
         ]);
 
-        $employee = Employee::create([
-            'organization_id' => $request->user()->organization_id,
-            ...$request->only(['branch_id', 'user_id', 'position', 'salary_type', 'salary_amount', 'sales_percent', 'hired_at']),
-            'is_active' => true,
-        ]);
+        $employee = Employee::create(
+            $request->only(['branch_id', 'user_id', 'position', 'salary_type', 'hourly_rate', 'monthly_salary', 'sales_percent', 'hire_date']),
+        );
 
         return response()->json(['message' => 'Сотрудник добавлен.', 'data' => $employee], 201);
     }
@@ -56,12 +55,12 @@ class EmployeeController extends Controller
         $request->validate([
             'position' => 'sometimes|string|max:255',
             'salary_type' => 'sometimes|string|in:hourly,monthly,percent,mixed',
-            'salary_amount' => 'nullable|numeric|min:0',
+            'hourly_rate' => 'nullable|numeric|min:0',
+            'monthly_salary' => 'nullable|numeric|min:0',
             'sales_percent' => 'nullable|numeric|min:0|max:100',
-            'is_active' => 'nullable|boolean',
         ]);
 
-        $employee->update($request->only(['position', 'salary_type', 'salary_amount', 'sales_percent', 'is_active']));
+        $employee->update($request->only(['position', 'salary_type', 'hourly_rate', 'monthly_salary', 'sales_percent']));
 
         return response()->json(['message' => 'Сотрудник обновлён.', 'data' => $employee]);
     }
@@ -69,7 +68,7 @@ class EmployeeController extends Controller
     public function clockIn(Request $request): JsonResponse
     {
         $employee = Employee::where('user_id', $request->user()->id)
-            ->where('is_active', true)
+            ->whereNotNull('hire_date')
             ->first();
 
         if (!$employee) {
@@ -118,7 +117,7 @@ class EmployeeController extends Controller
 
     public function destroy(Employee $employee): JsonResponse
     {
-        $employee->update(['fired_at' => now(), 'is_active' => false]);
+        $employee->delete();
 
         return response()->json(['message' => 'Сотрудник уволен.']);
     }

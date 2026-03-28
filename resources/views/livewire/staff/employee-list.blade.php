@@ -39,11 +39,11 @@
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Имя</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Должность</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Роль</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Телефон</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Дата найма</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Зарплата</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Тип зарплаты</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Месячная зарплата</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Почасовая ставка</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">% с продаж</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
                         </tr>
                     </thead>
@@ -51,33 +51,25 @@
                         @forelse ($employees as $employee)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {{ $employee->name }}
+                                    {{ $employee->user?->name ?? '—' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {{ $employee->position ?? '—' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ $employee->role ?? '—' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ $employee->phone ?? '—' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {{ $employee->hire_date ? $employee->hire_date->format('d.m.Y') : '—' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ number_format($employee->salary ?? 0, 2, '.', ' ') }} ₽
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $employee->salary_type?->value ?? '—' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if ($employee->status === 'active')
-                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800">
-                                            Активен
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
-                                            Неактивен
-                                        </span>
-                                    @endif
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ number_format($employee->monthly_salary ?? 0, 2, '.', ' ') }} ₽
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ number_format($employee->hourly_rate ?? 0, 2, '.', ' ') }} ₽
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $employee->sales_percent ?? 0 }}%
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                                     <button
@@ -129,18 +121,6 @@
                             </h3>
 
                             <div class="space-y-4">
-                                {{-- Имя --}}
-                                <div>
-                                    <label for="name" class="block text-sm font-medium text-gray-700">Имя *</label>
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        wire:model="name"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    />
-                                    @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                </div>
-
                                 {{-- Должность --}}
                                 <div>
                                     <label for="position" class="block text-sm font-medium text-gray-700">Должность *</label>
@@ -152,38 +132,6 @@
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     />
                                     @error('position') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                </div>
-
-                                {{-- Роль --}}
-                                <div>
-                                    <label for="role" class="block text-sm font-medium text-gray-700">Роль *</label>
-                                    <select
-                                        id="role"
-                                        wire:model="role"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    >
-                                        <option value="">Выберите роль</option>
-                                        <option value="admin">Администратор</option>
-                                        <option value="manager">Менеджер</option>
-                                        <option value="waiter">Официант</option>
-                                        <option value="chef">Повар</option>
-                                        <option value="bartender">Бармен</option>
-                                        <option value="cashier">Кассир</option>
-                                    </select>
-                                    @error('role') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                </div>
-
-                                {{-- Телефон --}}
-                                <div>
-                                    <label for="phone" class="block text-sm font-medium text-gray-700">Телефон</label>
-                                    <input
-                                        type="text"
-                                        id="phone"
-                                        wire:model="phone"
-                                        placeholder="+7 (999) 123-45-67"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    />
-                                    @error('phone') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
 
                                 {{-- Дата найма --}}
@@ -198,32 +146,63 @@
                                     @error('hireDate') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
 
-                                {{-- Зарплата --}}
+                                {{-- Тип зарплаты --}}
                                 <div>
-                                    <label for="salary" class="block text-sm font-medium text-gray-700">Зарплата</label>
+                                    <label for="salaryType" class="block text-sm font-medium text-gray-700">Тип зарплаты *</label>
+                                    <select
+                                        id="salaryType"
+                                        wire:model="salaryType"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    >
+                                        <option value="monthly">Месячная</option>
+                                        <option value="hourly">Почасовая</option>
+                                        <option value="percent">Процент с продаж</option>
+                                        <option value="mixed">Смешанная</option>
+                                    </select>
+                                    @error('salaryType') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
+
+                                {{-- Месячная зарплата --}}
+                                <div>
+                                    <label for="monthlySalary" class="block text-sm font-medium text-gray-700">Месячная зарплата</label>
                                     <input
                                         type="number"
-                                        id="salary"
-                                        wire:model="salary"
+                                        id="monthlySalary"
+                                        wire:model="monthlySalary"
                                         step="100"
                                         min="0"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     />
-                                    @error('salary') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    @error('monthlySalary') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
 
-                                {{-- Статус --}}
+                                {{-- Почасовая ставка --}}
                                 <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-700">Статус *</label>
-                                    <select
-                                        id="status"
-                                        wire:model="status"
+                                    <label for="hourlyRate" class="block text-sm font-medium text-gray-700">Почасовая ставка</label>
+                                    <input
+                                        type="number"
+                                        id="hourlyRate"
+                                        wire:model="hourlyRate"
+                                        step="10"
+                                        min="0"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    >
-                                        <option value="active">Активен</option>
-                                        <option value="inactive">Неактивен</option>
-                                    </select>
-                                    @error('status') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    />
+                                    @error('hourlyRate') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
+
+                                {{-- Процент с продаж --}}
+                                <div>
+                                    <label for="salesPercent" class="block text-sm font-medium text-gray-700">Процент с продаж (%)</label>
+                                    <input
+                                        type="number"
+                                        id="salesPercent"
+                                        wire:model="salesPercent"
+                                        step="0.1"
+                                        min="0"
+                                        max="100"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    />
+                                    @error('salesPercent') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                         </div>

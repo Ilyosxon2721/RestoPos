@@ -23,9 +23,9 @@
                 @foreach($this->tables as $table)
                     @php
                         $statusColor = match($table->status) {
-                            \App\Support\Enums\TableStatus::Free => 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200',
-                            \App\Support\Enums\TableStatus::Occupied => 'bg-red-100 text-red-800 border-red-300 hover:bg-red-200',
-                            \App\Support\Enums\TableStatus::Reserved => 'bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-200',
+                            \App\Support\Enums\TableStatus::FREE => 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200',
+                            \App\Support\Enums\TableStatus::OCCUPIED => 'bg-red-100 text-red-800 border-red-300 hover:bg-red-200',
+                            \App\Support\Enums\TableStatus::RESERVED => 'bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-200',
                             default => 'bg-gray-100 text-gray-800 border-gray-300 hover:bg-gray-200',
                         };
                         $isSelected = $selectedTable === $table->id;

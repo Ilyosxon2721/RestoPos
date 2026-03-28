@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Reservation\Models;
 
 use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Support\Traits\BelongsToBranch;
 use App\Support\Enums\ReservationStatus;
 use App\Domain\Floor\Models\Table;
@@ -13,30 +14,44 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Reservation extends Model
 {
-    use HasUuid, BelongsToOrganization, BelongsToBranch;
+    use HasUuid, BelongsToBranch;
 
     protected $fillable = [
-        'organization_id',
         'branch_id',
         'table_id',
         'customer_id',
         'guest_name',
         'guest_phone',
-        'guest_count',
-        'reserved_at',
-        'duration',
+        'guest_email',
+        'guests_count',
+        'reservation_date',
+        'reservation_time',
+        'duration_minutes',
+        'deposit_amount',
+        'deposit_paid',
         'status',
-        'notes',
         'source',
+        'special_requests',
+        'internal_notes',
+        'confirmed_at',
+        'cancelled_at',
+        'cancellation_reason',
+        'reminder_sent',
     ];
 
     protected function casts(): array
     {
         return [
             'status' => ReservationStatus::class,
-            'guest_count' => 'integer',
-            'reserved_at' => 'datetime',
-            'duration' => 'integer',
+            'guests_count' => 'integer',
+            'reservation_date' => 'date',
+            'reservation_time' => 'string',
+            'duration_minutes' => 'integer',
+            'deposit_amount' => 'decimal:2',
+            'deposit_paid' => 'boolean',
+            'confirmed_at' => 'datetime',
+            'cancelled_at' => 'datetime',
+            'reminder_sent' => 'boolean',
         ];
     }
 
@@ -57,15 +72,28 @@ class Reservation extends Model
     }
 
     /**
+     * Get the reservation datetime combining date and time.
+     */
+    public function getReservedAtAttribute(): ?\Carbon\Carbon
+    {
+        if (!$this->reservation_date || !$this->reservation_time) {
+            return null;
+        }
+
+        return $this->reservation_date->copy()->setTimeFromTimeString($this->reservation_time);
+    }
+
+    /**
      * Get end time.
      */
     public function getEndTimeAttribute(): ?\DateTime
     {
-        if (!$this->reserved_at || !$this->duration) {
+        $reservedAt = $this->reserved_at;
+        if (!$reservedAt || !$this->duration_minutes) {
             return null;
         }
 
-        return $this->reserved_at->copy()->addMinutes($this->duration);
+        return $reservedAt->copy()->addMinutes($this->duration_minutes);
     }
 
     /**
@@ -73,7 +101,7 @@ class Reservation extends Model
      */
     public function isToday(): bool
     {
-        return $this->reserved_at?->isToday() ?? false;
+        return $this->reservation_date?->isToday() ?? false;
     }
 
     /**
@@ -81,7 +109,8 @@ class Reservation extends Model
      */
     public function isUpcoming(): bool
     {
-        return $this->reserved_at > now();
+        $reservedAt = $this->reserved_at;
+        return $reservedAt !== null && $reservedAt > now();
     }
 
     /**
@@ -89,15 +118,15 @@ class Reservation extends Model
      */
     public function isActive(): bool
     {
-        if (!$this->reserved_at || !$this->duration) {
+        $reservedAt = $this->reserved_at;
+        if (!$reservedAt || !$this->duration_minutes) {
             return false;
         }
 
         $now = now();
-        $start = $this->reserved_at;
         $end = $this->end_time;
 
-        return $now >= $start && $now <= $end;
+        return $now >= $reservedAt && $now <= $end;
     }
 
     /**
@@ -105,7 +134,10 @@ class Reservation extends Model
      */
     public function confirm(): void
     {
-        $this->update(['status' => ReservationStatus::CONFIRMED]);
+        $this->update([
+            'status' => ReservationStatus::CONFIRMED,
+            'confirmed_at' => now(),
+        ]);
     }
 
     /**
@@ -129,9 +161,13 @@ class Reservation extends Model
     /**
      * Cancel reservation.
      */
-    public function cancel(): void
+    public function cancel(?string $reason = null): void
     {
-        $this->update(['status' => ReservationStatus::CANCELLED]);
+        $this->update([
+            'status' => ReservationStatus::CANCELLED,
+            'cancelled_at' => now(),
+            'cancellation_reason' => $reason,
+        ]);
         if ($this->table?->isReserved()) {
             $this->table->release();
         }
@@ -153,7 +189,7 @@ class Reservation extends Model
      */
     public function scopeToday($query)
     {
-        return $query->whereDate('reserved_at', today());
+        return $query->whereDate('reservation_date', today());
     }
 
     /**
@@ -161,7 +197,7 @@ class Reservation extends Model
      */
     public function scopeUpcoming($query)
     {
-        return $query->where('reserved_at', '>', now());
+        return $query->where('reservation_date', '>=', today());
     }
 
     /**
@@ -177,6 +213,6 @@ class Reservation extends Model
      */
     public function scopeBetweenDates($query, $start, $end)
     {
-        return $query->whereBetween('reserved_at', [$start, $end]);
+        return $query->whereBetween('reservation_date', [$start, $end]);
     }
 }

@@ -1,29 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Floor\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Support\Traits\BelongsToBranch;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Hall extends Model
 {
-    use HasUuid, BelongsToOrganization, BelongsToBranch;
+    use BelongsToBranch;
 
     protected $fillable = [
-        'organization_id',
         'branch_id',
         'name',
-        'floor',
-        'description',
         'sort_order',
         'is_active',
     ];
 
     protected $casts = [
-        'floor' => 'integer',
         'sort_order' => 'integer',
         'is_active' => 'boolean',
     ];
@@ -81,6 +77,6 @@ class Hall extends Model
      */
     public function scopeOrdered($query)
     {
-        return $query->orderBy('floor')->orderBy('sort_order')->orderBy('name');
+        return $query->orderBy('sort_order')->orderBy('name');
     }
 }

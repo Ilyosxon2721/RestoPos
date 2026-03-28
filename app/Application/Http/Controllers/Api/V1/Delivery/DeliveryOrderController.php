@@ -35,24 +35,22 @@ class DeliveryOrderController extends Controller
             'customer_id' => 'nullable|uuid|exists:customers,id',
             'address' => 'required|string|max:500',
             'address_details' => 'nullable|string|max:255',
-            'lat' => 'required|numeric',
-            'lng' => 'required|numeric',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
             'contact_name' => 'required|string|max:255',
             'contact_phone' => 'required|string|max:20',
             'scheduled_at' => 'nullable|date|after:now',
             'notes' => 'nullable|string|max:1000',
         ]);
 
-        $validated['branch_id'] = $request->user()->current_branch_id;
         $validated['status'] = DeliveryStatus::PENDING;
 
         // Find delivery zone
         $zones = DeliveryZone::active()->get();
         foreach ($zones as $zone) {
-            if ($zone->containsPoint($validated['lat'], $validated['lng'])) {
+            if ($zone->containsPoint($validated['latitude'], $validated['longitude'])) {
                 $validated['delivery_zone_id'] = $zone->id;
-                $validated['delivery_price'] = $zone->delivery_price;
-                $validated['estimated_time_minutes'] = $zone->estimated_time_minutes;
+                $validated['delivery_fee'] = $zone->delivery_price;
                 break;
             }
         }
@@ -74,8 +72,8 @@ class DeliveryOrderController extends Controller
         $validated = $request->validate([
             'address' => 'sometimes|string|max:500',
             'address_details' => 'nullable|string|max:255',
-            'lat' => 'sometimes|numeric',
-            'lng' => 'sometimes|numeric',
+            'latitude' => 'sometimes|numeric',
+            'longitude' => 'sometimes|numeric',
             'contact_name' => 'sometimes|string|max:255',
             'contact_phone' => 'sometimes|string|max:20',
             'scheduled_at' => 'nullable|date',

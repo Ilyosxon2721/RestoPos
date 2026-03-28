@@ -51,7 +51,7 @@
                         @forelse ($customers as $customer)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {{ $customer->name }}
+                                    {{ $customer->first_name }} {{ $customer->last_name }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {{ $customer->phone ?? '—' }}
@@ -69,7 +69,7 @@
                                     {{ number_format($customer->total_spent ?? 0, 2, '.', ' ') }} ₽
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ $customer->discount ?? 0 }}%
+                                    {{ $customer->discount_percent ?? 0 }}%
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                                     <button
@@ -123,14 +123,26 @@
                             <div class="space-y-4">
                                 {{-- Имя --}}
                                 <div>
-                                    <label for="name" class="block text-sm font-medium text-gray-700">Имя *</label>
+                                    <label for="firstName" class="block text-sm font-medium text-gray-700">Имя *</label>
                                     <input
                                         type="text"
-                                        id="name"
-                                        wire:model="name"
+                                        id="firstName"
+                                        wire:model="firstName"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     />
-                                    @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    @error('firstName') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
+
+                                {{-- Фамилия --}}
+                                <div>
+                                    <label for="lastName" class="block text-sm font-medium text-gray-700">Фамилия</label>
+                                    <input
+                                        type="text"
+                                        id="lastName"
+                                        wire:model="lastName"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    />
+                                    @error('lastName') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
 
                                 {{-- Телефон --}}
@@ -174,17 +186,17 @@
 
                                 {{-- Скидка --}}
                                 <div>
-                                    <label for="discount" class="block text-sm font-medium text-gray-700">Скидка (%)</label>
+                                    <label for="discountPercent" class="block text-sm font-medium text-gray-700">Скидка (%)</label>
                                     <input
                                         type="number"
-                                        id="discount"
-                                        wire:model="discount"
+                                        id="discountPercent"
+                                        wire:model="discountPercent"
                                         step="0.1"
                                         min="0"
                                         max="100"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     />
-                                    @error('discount') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    @error('discountPercent') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                         </div>

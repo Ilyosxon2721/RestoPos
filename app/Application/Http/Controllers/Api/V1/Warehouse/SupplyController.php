@@ -16,7 +16,7 @@ class SupplyController extends Controller
     {
         $branchId = $request->input('branch_id') ?? app('current.branch_id');
 
-        $supplies = Supply::where('branch_id', $branchId)
+        $supplies = Supply::whereHas('warehouse', fn($q) => $q->where('branch_id', $branchId))
             ->when($request->has('status'), fn($q) => $q->where('status', $request->input('status')))
             ->with(['supplier', 'warehouse'])
             ->latest()
@@ -47,11 +47,10 @@ class SupplyController extends Controller
 
         $supply = DB::transaction(function () use ($request) {
             $supply = Supply::create([
-                'organization_id' => $request->user()->organization_id,
-                'branch_id' => $request->input('branch_id'),
                 'warehouse_id' => $request->input('warehouse_id'),
                 'supplier_id' => $request->input('supplier_id'),
-                'supply_number' => 'SUP-' . now()->format('YmdHis'),
+                'user_id' => $request->user()->id,
+                'number' => 'SUP-' . now()->format('YmdHis'),
                 'status' => 'draft',
                 'notes' => $request->input('notes'),
             ]);
@@ -84,8 +83,8 @@ class SupplyController extends Controller
             foreach ($supply->items as $item) {
                 // Find or create stock record
                 $stock = Stock::firstOrCreate([
-                    'organization_id' => $supply->organization_id,
-                    'branch_id' => $supply->branch_id,
+                    'organization_id' => $supply->warehouse->organization_id ?? $request->user()->organization_id,
+                    'branch_id' => $supply->warehouse->branch_id,
                     'warehouse_id' => $supply->warehouse_id,
                     'ingredient_id' => $item->ingredient_id,
                 ], ['quantity' => 0]);

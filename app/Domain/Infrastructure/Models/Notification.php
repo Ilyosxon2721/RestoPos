@@ -1,40 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Infrastructure\Models;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Organization\Models\Organization;
-use App\Support\Traits\BelongsToOrganization;
-use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Notification extends Model
 {
-    use HasUuid, BelongsToOrganization;
-
     protected $fillable = [
-        'organization_id',
         'user_id',
         'type',
         'title',
         'message',
         'data',
-        'channel',
         'read_at',
-        'sent_at',
     ];
 
     protected $casts = [
         'data' => 'array',
         'read_at' => 'datetime',
-        'sent_at' => 'datetime',
     ];
-
-    public function organization(): BelongsTo
-    {
-        return $this->belongsTo(Organization::class);
-    }
 
     public function user(): BelongsTo
     {
@@ -48,21 +36,9 @@ class Notification extends Model
         }
     }
 
-    public function markAsSent(): void
-    {
-        if (!$this->sent_at) {
-            $this->update(['sent_at' => now()]);
-        }
-    }
-
     public function isRead(): bool
     {
         return $this->read_at !== null;
-    }
-
-    public function isSent(): bool
-    {
-        return $this->sent_at !== null;
     }
 
     public function scopeUnread($query)
@@ -90,17 +66,14 @@ class Notification extends Model
         string $type,
         string $title,
         string $message,
-        array $data = [],
-        string $channel = 'database'
+        array $data = []
     ): self {
         return self::create([
-            'organization_id' => $user->organization_id,
             'user_id' => $user->id,
             'type' => $type,
             'title' => $title,
             'message' => $message,
             'data' => $data,
-            'channel' => $channel,
         ]);
     }
 }

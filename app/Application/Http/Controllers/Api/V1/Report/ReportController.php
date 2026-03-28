@@ -21,20 +21,20 @@ class ReportController extends Controller
         $data = [
             'today' => [
                 'orders' => Order::where('branch_id', $branchId)->whereDate('created_at', $today)->completed()->count(),
-                'revenue' => Order::where('branch_id', $branchId)->whereDate('created_at', $today)->completed()->sum('total'),
-                'avg_check' => Order::where('branch_id', $branchId)->whereDate('created_at', $today)->completed()->avg('total') ?? 0,
+                'revenue' => Order::where('branch_id', $branchId)->whereDate('created_at', $today)->completed()->sum('total_amount'),
+                'avg_check' => Order::where('branch_id', $branchId)->whereDate('created_at', $today)->completed()->avg('total_amount') ?? 0,
                 'new_customers' => Customer::whereDate('created_at', $today)->count(),
             ],
             'week' => [
-                'revenue' => Order::where('branch_id', $branchId)->whereBetween('created_at', [now()->startOfWeek(), now()])->completed()->sum('total'),
+                'revenue' => Order::where('branch_id', $branchId)->whereBetween('created_at', [now()->startOfWeek(), now()])->completed()->sum('total_amount'),
                 'orders' => Order::where('branch_id', $branchId)->whereBetween('created_at', [now()->startOfWeek(), now()])->completed()->count(),
             ],
             'month' => [
-                'revenue' => Order::where('branch_id', $branchId)->whereMonth('created_at', now()->month)->completed()->sum('total'),
+                'revenue' => Order::where('branch_id', $branchId)->whereMonth('created_at', now()->month)->completed()->sum('total_amount'),
                 'orders' => Order::where('branch_id', $branchId)->whereMonth('created_at', now()->month)->completed()->count(),
             ],
             'top_products' => OrderItem::whereHas('order', fn($q) => $q->where('branch_id', $branchId)->whereDate('created_at', $today)->completed())
-                ->select('product_id', 'name', DB::raw('SUM(quantity) as qty'), DB::raw('SUM(total) as revenue'))
+                ->select('product_id', 'name', DB::raw('SUM(quantity) as qty'), DB::raw('SUM(total_price) as revenue'))
                 ->groupBy('product_id', 'name')
                 ->orderByDesc('qty')
                 ->limit(5)
@@ -59,8 +59,8 @@ class ReportController extends Controller
             ->select(
                 DB::raw('DATE(created_at) as date'),
                 DB::raw('COUNT(*) as orders'),
-                DB::raw('SUM(total) as revenue'),
-                DB::raw('AVG(total) as avg_check')
+                DB::raw('SUM(total_amount) as revenue'),
+                DB::raw('AVG(total_amount) as avg_check')
             )
             ->groupBy('date')
             ->orderBy('date')
@@ -70,8 +70,9 @@ class ReportController extends Controller
             ->whereBetween('created_at', [$request->input('start_date'), $request->input('end_date')])
             ->completed())
             ->completed()
-            ->select('method', DB::raw('SUM(amount) as total'))
-            ->groupBy('method')
+            ->join('payment_methods', 'payments.payment_method_id', '=', 'payment_methods.id')
+            ->select('payment_methods.type', 'payment_methods.name', DB::raw('SUM(payments.amount) as total'))
+            ->groupBy('payment_methods.type', 'payment_methods.name')
             ->get();
 
         return response()->json([
@@ -103,7 +104,7 @@ class ReportController extends Controller
                 'product_id',
                 'name',
                 DB::raw('SUM(quantity) as quantity'),
-                DB::raw('SUM(total) as revenue'),
+                DB::raw('SUM(total_price) as revenue'),
                 DB::raw('COUNT(DISTINCT order_id) as orders')
             )
             ->groupBy('product_id', 'name')
@@ -128,8 +129,8 @@ class ReportController extends Controller
             ->select(
                 'user_id',
                 DB::raw('COUNT(*) as orders'),
-                DB::raw('SUM(total) as revenue'),
-                DB::raw('AVG(total) as avg_check')
+                DB::raw('SUM(total_amount) as revenue'),
+                DB::raw('AVG(total_amount) as avg_check')
             )
             ->groupBy('user_id')
             ->with('user:id,first_name,last_name')

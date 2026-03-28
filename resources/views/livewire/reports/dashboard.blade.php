@@ -87,7 +87,7 @@
                         @forelse($this->topProducts as $index => $product)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 text-gray-500">{{ $index + 1 }}</td>
-                                <td class="px-4 py-3 text-gray-800 font-medium">{{ $product->product_name }}</td>
+                                <td class="px-4 py-3 text-gray-800 font-medium">{{ $product->name }}</td>
                                 <td class="px-4 py-3 text-right text-gray-600">{{ $product->total_quantity }}</td>
                                 <td class="px-4 py-3 text-right text-gray-800 font-medium">
                                     {{ number_format((float) $product->total_revenue, 2, ',', ' ') }} ₽
@@ -121,11 +121,11 @@
                         @forelse($this->revenueByPaymentMethod as $payment)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 text-gray-800 font-medium">
-                                    @switch($payment->method)
+                                    @switch($payment->method_type)
                                         @case('cash') Наличные @break
                                         @case('card') Банковская карта @break
                                         @case('online') Онлайн @break
-                                        @default {{ $payment->method }}
+                                        @default {{ $payment->method_name }}
                                     @endswitch
                                 </td>
                                 <td class="px-4 py-3 text-right text-gray-600">{{ $payment->payment_count }}</td>

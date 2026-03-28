@@ -25,7 +25,6 @@ class PaymentController extends Controller
             'order_id' => 'required|exists:orders,id',
             'method' => 'required|string|in:cash,card,transfer,bonus',
             'amount' => 'required|numeric|min:0.01',
-            'tip_amount' => 'nullable|numeric|min:0',
         ]);
 
         $order = Order::findOrFail($request->input('order_id'));
@@ -34,16 +33,29 @@ class PaymentController extends Controller
             return response()->json(['message' => 'Заказ уже оплачен.'], 422);
         }
 
-        $payment = DB::transaction(function () use ($request, $order) {
-            $payment = Payment::create([
-                'organization_id' => $order->organization_id,
+        $paymentMethod = PaymentMethod::where('type', $request->input('method'))->firstOrFail();
+
+        // Определяем текущую кассовую смену
+        $cashShift = \App\Domain\Payment\Models\CashShift::getCurrentForBranch($order->branch_id);
+
+        $payment = DB::transaction(function () use ($request, $order, $paymentMethod, $cashShift) {
+            $paymentData = [
                 'order_id' => $order->id,
+                'payment_method_id' => $paymentMethod->id,
+                'cash_shift_id' => $cashShift?->id,
                 'user_id' => $request->user()->id,
-                'method' => $request->input('method'),
                 'amount' => $request->input('amount'),
-                'tip_amount' => $request->input('tip_amount', 0),
                 'status' => 'completed',
-            ]);
+                'paid_at' => now(),
+            ];
+
+            // Добавляем сдачу для наличных платежей
+            if ($paymentMethod->type->value === 'cash') {
+                $changeAmount = $request->input('amount') - $order->getRemainingAmount();
+                $paymentData['change_amount'] = max(0, $changeAmount);
+            }
+
+            $payment = Payment::create($paymentData);
 
             $order->updatePaymentStatus();
 
@@ -74,13 +86,13 @@ class PaymentController extends Controller
 
         DB::transaction(function () use ($payment, $refundAmount, $request) {
             Payment::create([
-                'organization_id' => $payment->organization_id,
                 'order_id' => $payment->order_id,
+                'payment_method_id' => $payment->payment_method_id,
+                'cash_shift_id' => $payment->cash_shift_id,
                 'user_id' => $request->user()->id,
-                'method' => $payment->method,
                 'amount' => -$refundAmount,
                 'status' => 'completed',
-                'notes' => $request->input('reason'),
+                'paid_at' => now(),
             ]);
 
             $payment->order->updatePaymentStatus();
