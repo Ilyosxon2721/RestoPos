@@ -40,7 +40,7 @@ class DeliveryOrderController extends Controller
             'contact_name' => 'required|string|max:255',
             'contact_phone' => 'required|string|max:20',
             'scheduled_at' => 'nullable|date|after:now',
-            'notes' => 'nullable|string|max:1000',
+            'delivery_notes' => 'nullable|string|max:1000',
         ]);
 
         $validated['status'] = DeliveryStatus::PENDING;
@@ -77,7 +77,7 @@ class DeliveryOrderController extends Controller
             'contact_name' => 'sometimes|string|max:255',
             'contact_phone' => 'sometimes|string|max:20',
             'scheduled_at' => 'nullable|date',
-            'notes' => 'nullable|string|max:1000',
+            'delivery_notes' => 'nullable|string|max:1000',
         ]);
 
         $deliveryOrder->update($validated);
