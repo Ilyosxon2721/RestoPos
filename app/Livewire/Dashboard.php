@@ -29,8 +29,8 @@ final class Dashboard extends Component
     #[Computed]
     public function todayRevenue(): float
     {
-        return (float) Payment::whereDate('created_at', Carbon::today())
-            ->where('status', PaymentStatus::Completed)
+        return (float) Payment::whereDate('paid_at', Carbon::today())
+            ->where('status', 'completed')
             ->sum('amount');
     }
 
@@ -49,7 +49,7 @@ final class Dashboard extends Component
     #[Computed]
     public function occupiedTables(): int
     {
-        return Table::where('status', TableStatus::Occupied)->count();
+        return Table::where('status', TableStatus::OCCUPIED)->count();
     }
 
     #[Computed]

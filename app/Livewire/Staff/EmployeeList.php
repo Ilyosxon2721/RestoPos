@@ -24,25 +24,22 @@ class EmployeeList extends Component
     public ?int $editingId = null;
 
     #[Rule('required|string|max:255')]
-    public string $name = '';
-
-    #[Rule('required|string|max:255')]
     public string $position = '';
-
-    #[Rule('required|string|max:50')]
-    public string $role = '';
-
-    #[Rule('nullable|string|max:20')]
-    public string $phone = '';
 
     #[Rule('nullable|date')]
     public string $hireDate = '';
 
-    #[Rule('nullable|numeric|min:0')]
-    public string $salary = '0';
+    #[Rule('required|string|in:hourly,monthly,percent,mixed')]
+    public string $salaryType = 'monthly';
 
-    #[Rule('required|string|in:active,inactive')]
-    public string $status = 'active';
+    #[Rule('nullable|numeric|min:0')]
+    public string $monthlySalary = '0';
+
+    #[Rule('nullable|numeric|min:0')]
+    public string $hourlyRate = '0';
+
+    #[Rule('nullable|numeric|min:0|max:100')]
+    public string $salesPercent = '0';
 
     public function updatedSearchQuery(): void
     {
@@ -58,16 +55,15 @@ class EmployeeList extends Component
 
     public function openEditModal(int $id): void
     {
-        $employee = Employee::findOrFail($id);
+        $employee = Employee::with('user')->findOrFail($id);
 
         $this->editingId = $employee->id;
-        $this->name = $employee->name;
         $this->position = $employee->position ?? '';
-        $this->role = $employee->role ?? '';
-        $this->phone = $employee->phone ?? '';
         $this->hireDate = $employee->hire_date ? $employee->hire_date->format('Y-m-d') : '';
-        $this->salary = (string) ($employee->salary ?? 0);
-        $this->status = $employee->status ?? 'active';
+        $this->salaryType = $employee->salary_type?->value ?? 'monthly';
+        $this->monthlySalary = (string) ($employee->monthly_salary ?? 0);
+        $this->hourlyRate = (string) ($employee->hourly_rate ?? 0);
+        $this->salesPercent = (string) ($employee->sales_percent ?? 0);
         $this->showModal = true;
     }
 
@@ -76,13 +72,12 @@ class EmployeeList extends Component
         $this->validate();
 
         $data = [
-            'name' => $this->name,
             'position' => $this->position,
-            'role' => $this->role,
-            'phone' => $this->phone ?: null,
             'hire_date' => $this->hireDate ?: null,
-            'salary' => (float) $this->salary,
-            'status' => $this->status,
+            'salary_type' => $this->salaryType,
+            'monthly_salary' => (float) $this->monthlySalary,
+            'hourly_rate' => (float) $this->hourlyRate,
+            'sales_percent' => (float) $this->salesPercent,
         ];
 
         if ($this->editingId) {
@@ -90,6 +85,8 @@ class EmployeeList extends Component
             $employee->update($data);
             session()->flash('success', 'Сотрудник успешно обновлён.');
         } else {
+            // При создании нового сотрудника необходимо указать user_id и branch_id
+            $data['branch_id'] = auth()->user()->branch_id ?? 1;
             Employee::create($data);
             session()->flash('success', 'Сотрудник успешно добавлен.');
         }
@@ -113,26 +110,28 @@ class EmployeeList extends Component
 
     private function resetForm(): void
     {
-        $this->name = '';
         $this->position = '';
-        $this->role = '';
-        $this->phone = '';
         $this->hireDate = '';
-        $this->salary = '0';
-        $this->status = 'active';
+        $this->salaryType = 'monthly';
+        $this->monthlySalary = '0';
+        $this->hourlyRate = '0';
+        $this->salesPercent = '0';
         $this->editingId = null;
         $this->resetValidation();
     }
 
     public function render()
     {
-        $query = Employee::query()->latest();
+        $query = Employee::query()
+            ->with('user')
+            ->latest();
 
         if ($this->searchQuery !== '') {
             $query->where(function ($q) {
-                $q->where('name', 'like', '%' . $this->searchQuery . '%')
-                    ->orWhere('position', 'like', '%' . $this->searchQuery . '%')
-                    ->orWhere('phone', 'like', '%' . $this->searchQuery . '%');
+                $q->where('position', 'like', '%' . $this->searchQuery . '%')
+                    ->orWhereHas('user', function ($uq) {
+                        $uq->where('name', 'like', '%' . $this->searchQuery . '%');
+                    });
             });
         }
 

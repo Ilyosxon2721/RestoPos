@@ -72,7 +72,7 @@ class Terminal extends Component
     #[Computed]
     public function categories(): Collection
     {
-        return Category::where('is_active', true)
+        return Category::where('is_visible', true)
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
@@ -81,7 +81,7 @@ class Terminal extends Component
     #[Computed]
     public function products(): Collection
     {
-        $query = Product::where('is_active', true);
+        $query = Product::where('is_available', true);
 
         if ($this->selectedCategory) {
             $query->where('category_id', $this->selectedCategory);
@@ -146,7 +146,7 @@ class Terminal extends Component
 
         // Загружаем существующий открытый заказ для стола, если есть
         $existingOrder = Order::where('table_id', $tableId)
-            ->whereIn('status', [OrderStatus::Open, OrderStatus::InProgress])
+            ->whereIn('status', [OrderStatus::NEW, OrderStatus::ACCEPTED, OrderStatus::PREPARING])
             ->with('items.product')
             ->first();
 
@@ -155,8 +155,8 @@ class Terminal extends Component
             $this->cart = $existingOrder->items->map(fn ($item): array => [
                 'product_id' => $item->product_id,
                 'name' => $item->product->name,
-                'price' => (float) $item->price,
-                'quantity' => $item->quantity,
+                'price' => (float) $item->unit_price,
+                'quantity' => (int) $item->quantity,
                 'order_item_id' => $item->id,
                 'status' => $item->status->value,
             ])->toArray();
@@ -254,7 +254,7 @@ class Terminal extends Component
             $order = $action->execute([
                 'table_id' => $this->selectedTable,
                 'items' => $items,
-                'user_id' => auth()->id(),
+                'waiter_id' => auth()->id(),
             ]);
 
             $this->currentOrderId = $order->id;
@@ -323,7 +323,7 @@ class Terminal extends Component
         // Освобождаем стол
         $table = Table::find($this->selectedTable);
         if ($table) {
-            $table->update(['status' => TableStatus::Free]);
+            $table->update(['status' => TableStatus::FREE]);
         }
 
         $this->paymentModal = false;
@@ -345,13 +345,13 @@ class Terminal extends Component
         // Если заказ ещё не отправлен на кухню, можно его отменить
         $order = Order::find($this->currentOrderId);
 
-        if ($order && $order->status === OrderStatus::Open) {
-            $order->update(['status' => OrderStatus::Cancelled]);
+        if ($order && $order->status === OrderStatus::NEW) {
+            $order->update(['status' => OrderStatus::CANCELLED]);
             $this->currentOrderId = null;
 
             $table = Table::find($this->selectedTable);
             if ($table) {
-                $table->update(['status' => TableStatus::Free]);
+                $table->update(['status' => TableStatus::FREE]);
             }
         }
     }

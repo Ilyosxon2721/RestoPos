@@ -44,16 +44,17 @@ class Stock extends Component
 
     public function render()
     {
-        // Запрос к складским данным через ingredients и stocks
+        // Запрос к складским данным через ingredients и stock
         $query = DB::table('ingredients')
-            ->leftJoin('stocks', 'ingredients.id', '=', 'stocks.ingredient_id')
+            ->leftJoin('stock', 'ingredients.id', '=', 'stock.ingredient_id')
+            ->leftJoin('units', 'ingredients.unit_id', '=', 'units.id')
             ->select([
                 'ingredients.id',
                 'ingredients.name',
-                'ingredients.unit',
+                'units.short_name as unit',
                 'ingredients.min_stock',
-                DB::raw('COALESCE(stocks.quantity, 0) as current_stock'),
-                DB::raw('COALESCE(stocks.updated_at, ingredients.updated_at) as last_updated'),
+                DB::raw('COALESCE(stock.quantity, 0) as current_stock'),
+                DB::raw('COALESCE(stock.updated_at, ingredients.updated_at) as last_updated'),
             ]);
 
         if ($this->searchQuery !== '') {
@@ -61,7 +62,7 @@ class Stock extends Component
         }
 
         if ($this->showLowStock) {
-            $query->whereRaw('COALESCE(stocks.quantity, 0) <= ingredients.min_stock');
+            $query->whereRaw('COALESCE(stock.quantity, 0) <= ingredients.min_stock');
         }
 
         $query->orderBy('ingredients.name');
