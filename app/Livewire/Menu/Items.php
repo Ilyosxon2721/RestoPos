@@ -59,7 +59,7 @@ final class Items extends Component
 
         $this->categories = Category::query()
             ->where('organization_id', $organizationId)
-            ->where('is_active', true)
+            ->where('is_visible', true)
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
