@@ -94,10 +94,11 @@ class Dashboard extends Component
     public function revenueByPaymentMethod(): Collection
     {
         return Payment::query()
-            ->selectRaw('method, SUM(amount) as total_amount, COUNT(*) as payment_count')
-            ->where('status', PaymentStatus::Completed)
-            ->whereBetween('created_at', [$this->dateFrom . ' 00:00:00', $this->dateTo . ' 23:59:59'])
-            ->groupBy('method')
+            ->join('payment_methods', 'payments.payment_method_id', '=', 'payment_methods.id')
+            ->where('payments.status', 'completed')
+            ->whereBetween('payments.paid_at', [$this->dateFrom, $this->dateTo])
+            ->selectRaw('payment_methods.name as method_name, payment_methods.type as method_type, SUM(payments.amount) as total_amount, COUNT(*) as payment_count')
+            ->groupBy('payment_methods.name', 'payment_methods.type')
             ->orderByDesc('total_amount')
             ->get();
     }

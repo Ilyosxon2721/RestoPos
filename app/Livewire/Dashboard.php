@@ -38,9 +38,11 @@ final class Dashboard extends Component
     public function openOrders(): int
     {
         return Order::whereIn('status', [
-            OrderStatus::New,
-            OrderStatus::InProgress,
-            OrderStatus::Ready,
+            OrderStatus::NEW,
+            OrderStatus::ACCEPTED,
+            OrderStatus::PREPARING,
+            OrderStatus::READY,
+            OrderStatus::SERVED,
         ])->count();
     }
 

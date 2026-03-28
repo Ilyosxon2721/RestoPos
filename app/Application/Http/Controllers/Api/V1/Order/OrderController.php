@@ -48,7 +48,7 @@ class OrderController extends Controller
     {
         $order->load([
             'table.hall',
-            'user',
+            'waiter',
             'customer',
             'items.product',
             'items.modifiers',

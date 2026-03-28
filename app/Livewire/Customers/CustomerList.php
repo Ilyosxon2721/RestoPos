@@ -22,10 +22,13 @@ class CustomerList extends Component
     public bool $showModal = false;
     public ?int $editingId = null;
 
-    #[Rule('required|string|max:255')]
-    public string $name = '';
+    #[Rule('required|string|max:100')]
+    public string $firstName = '';
 
-    #[Rule('required|string|max:20')]
+    #[Rule('nullable|string|max:100')]
+    public string $lastName = '';
+
+    #[Rule('required|string|max:50')]
     public string $phone = '';
 
     #[Rule('nullable|email|max:255')]
@@ -35,7 +38,7 @@ class CustomerList extends Component
     public string $bonusBalance = '0';
 
     #[Rule('nullable|numeric|min:0|max:100')]
-    public string $discount = '0';
+    public string $discountPercent = '0';
 
     public function updatedSearchQuery(): void
     {
@@ -54,11 +57,12 @@ class CustomerList extends Component
         $customer = Customer::findOrFail($id);
 
         $this->editingId = $customer->id;
-        $this->name = $customer->name;
+        $this->firstName = $customer->first_name ?? '';
+        $this->lastName = $customer->last_name ?? '';
         $this->phone = $customer->phone ?? '';
         $this->email = $customer->email ?? '';
         $this->bonusBalance = (string) ($customer->bonus_balance ?? 0);
-        $this->discount = (string) ($customer->discount ?? 0);
+        $this->discountPercent = (string) ($customer->discount_percent ?? 0);
         $this->showModal = true;
     }
 
@@ -67,11 +71,12 @@ class CustomerList extends Component
         $this->validate();
 
         $data = [
-            'name' => $this->name,
+            'first_name' => $this->firstName,
+            'last_name' => $this->lastName ?: null,
             'phone' => $this->phone,
             'email' => $this->email ?: null,
             'bonus_balance' => (float) $this->bonusBalance,
-            'discount' => (float) $this->discount,
+            'discount_percent' => (float) $this->discountPercent,
         ];
 
         if ($this->editingId) {
@@ -79,6 +84,7 @@ class CustomerList extends Component
             $customer->update($data);
             session()->flash('success', 'Клиент успешно обновлён.');
         } else {
+            $data['organization_id'] = auth()->user()->organization_id;
             Customer::create($data);
             session()->flash('success', 'Клиент успешно добавлен.');
         }
@@ -102,11 +108,12 @@ class CustomerList extends Component
 
     private function resetForm(): void
     {
-        $this->name = '';
+        $this->firstName = '';
+        $this->lastName = '';
         $this->phone = '';
         $this->email = '';
         $this->bonusBalance = '0';
-        $this->discount = '0';
+        $this->discountPercent = '0';
         $this->editingId = null;
         $this->resetValidation();
     }
@@ -117,7 +124,8 @@ class CustomerList extends Component
 
         if ($this->searchQuery !== '') {
             $query->where(function ($q) {
-                $q->where('name', 'like', '%' . $this->searchQuery . '%')
+                $q->where('first_name', 'like', '%' . $this->searchQuery . '%')
+                    ->orWhere('last_name', 'like', '%' . $this->searchQuery . '%')
                     ->orWhere('phone', 'like', '%' . $this->searchQuery . '%')
                     ->orWhere('email', 'like', '%' . $this->searchQuery . '%');
             });

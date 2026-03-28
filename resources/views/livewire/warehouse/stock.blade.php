@@ -70,8 +70,15 @@
                                     {{ number_format($minStock, 2, '.', ' ') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-                                        bg-{{ $statusColor }}-100 text-{{ $statusColor }}-800">
+                                    @php
+                                        $stockStatusClasses = match($statusColor) {
+                                            'red' => 'bg-red-100 text-red-800',
+                                            'orange' => 'bg-orange-100 text-orange-800',
+                                            'green' => 'bg-green-100 text-green-800',
+                                            default => 'bg-gray-100 text-gray-800',
+                                        };
+                                    @endphp
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {{ $stockStatusClasses }}">
                                         {{ $statusLabel }}
                                     </span>
                                 </td>

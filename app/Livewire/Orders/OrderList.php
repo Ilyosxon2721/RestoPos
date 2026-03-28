@@ -79,7 +79,7 @@ class OrderList extends Component
 
     public function viewOrder(int $id): void
     {
-        $this->selectedOrder = Order::with(['table', 'waiter', 'items.menuItem'])->findOrFail($id);
+        $this->selectedOrder = Order::with(['table', 'waiter', 'items.product'])->findOrFail($id);
         $this->showDetailModal = true;
     }
 
@@ -93,13 +93,13 @@ class OrderList extends Component
     {
         $order = Order::findOrFail($id);
 
-        if ($order->status === OrderStatus::Completed->value || $order->status === OrderStatus::Cancelled->value) {
+        if ($order->status === OrderStatus::COMPLETED || $order->status === OrderStatus::CANCELLED) {
             session()->flash('error', 'Невозможно отменить этот заказ.');
             return;
         }
 
         $order->update([
-            'status' => OrderStatus::Cancelled->value,
+            'status' => OrderStatus::CANCELLED->value,
         ]);
 
         session()->flash('success', 'Заказ успешно отменён.');

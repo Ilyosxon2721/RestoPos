@@ -315,10 +315,9 @@ class Terminal extends Component
         }
 
         $order->update([
-            'status' => OrderStatus::Paid,
-            'payment_method' => $this->paymentMethod,
-            'paid_amount' => $this->paymentAmount,
-            'paid_at' => now(),
+            'status' => OrderStatus::COMPLETED,
+            'payment_status' => \App\Support\Enums\PaymentStatus::PAID,
+            'closed_at' => now(),
         ]);
 
         // Освобождаем стол

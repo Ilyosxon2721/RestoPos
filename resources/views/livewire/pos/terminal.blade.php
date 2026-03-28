@@ -157,9 +157,13 @@
                             @if($this->currentOrder)
                                 <span class="text-xs font-medium px-2 py-0.5 rounded-full
                                     {{ match($this->currentOrder->status) {
-                                        \App\Support\Enums\OrderStatus::Open => 'bg-blue-100 text-blue-700',
-                                        \App\Support\Enums\OrderStatus::InProgress => 'bg-amber-100 text-amber-700',
-                                        \App\Support\Enums\OrderStatus::Paid => 'bg-emerald-100 text-emerald-700',
+                                        \App\Support\Enums\OrderStatus::NEW => 'bg-blue-100 text-blue-700',
+                                        \App\Support\Enums\OrderStatus::ACCEPTED => 'bg-cyan-100 text-cyan-700',
+                                        \App\Support\Enums\OrderStatus::PREPARING => 'bg-amber-100 text-amber-700',
+                                        \App\Support\Enums\OrderStatus::READY => 'bg-green-100 text-green-700',
+                                        \App\Support\Enums\OrderStatus::SERVED => 'bg-purple-100 text-purple-700',
+                                        \App\Support\Enums\OrderStatus::COMPLETED => 'bg-emerald-100 text-emerald-700',
+                                        \App\Support\Enums\OrderStatus::CANCELLED => 'bg-red-100 text-red-700',
                                         default => 'bg-gray-100 text-gray-700',
                                     } }}">
                                     Заказ #{{ $this->currentOrder->id }}
@@ -197,17 +201,19 @@
                                 @if(isset($item['status']))
                                     <span class="inline-block ml-1 px-1.5 py-0.5 rounded text-xs
                                         {{ match($item['status']) {
-                                            \App\Support\Enums\OrderItemStatus::Pending->value => 'bg-gray-100 text-gray-600',
-                                            \App\Support\Enums\OrderItemStatus::Cooking->value => 'bg-amber-100 text-amber-700',
-                                            \App\Support\Enums\OrderItemStatus::Ready->value => 'bg-emerald-100 text-emerald-700',
-                                            \App\Support\Enums\OrderItemStatus::Served->value => 'bg-blue-100 text-blue-700',
+                                            \App\Support\Enums\OrderItemStatus::PENDING->value => 'bg-gray-100 text-gray-600',
+                                            \App\Support\Enums\OrderItemStatus::SENT->value => 'bg-blue-100 text-blue-700',
+                                            \App\Support\Enums\OrderItemStatus::PREPARING->value => 'bg-amber-100 text-amber-700',
+                                            \App\Support\Enums\OrderItemStatus::READY->value => 'bg-emerald-100 text-emerald-700',
+                                            \App\Support\Enums\OrderItemStatus::SERVED->value => 'bg-purple-100 text-purple-700',
                                             default => 'bg-gray-100 text-gray-600',
                                         } }}">
                                         {{ match($item['status']) {
-                                            \App\Support\Enums\OrderItemStatus::Pending->value => 'Ожидает',
-                                            \App\Support\Enums\OrderItemStatus::Cooking->value => 'Готовится',
-                                            \App\Support\Enums\OrderItemStatus::Ready->value => 'Готово',
-                                            \App\Support\Enums\OrderItemStatus::Served->value => 'Подано',
+                                            \App\Support\Enums\OrderItemStatus::PENDING->value => 'Ожидает',
+                                            \App\Support\Enums\OrderItemStatus::SENT->value => 'Отправлен',
+                                            \App\Support\Enums\OrderItemStatus::PREPARING->value => 'Готовится',
+                                            \App\Support\Enums\OrderItemStatus::READY->value => 'Готово',
+                                            \App\Support\Enums\OrderItemStatus::SERVED->value => 'Подано',
                                             default => $item['status'],
                                         } }}
                                     </span>

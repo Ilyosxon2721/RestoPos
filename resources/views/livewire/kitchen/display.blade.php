@@ -127,15 +127,15 @@
                             @foreach($order->items as $item)
                                 @php
                                     $statusColor = match($item->status) {
-                                        \App\Support\Enums\OrderItemStatus::Sent => 'border-yellow-500 bg-yellow-500/10',
-                                        \App\Support\Enums\OrderItemStatus::Preparing => 'border-orange-500 bg-orange-500/10',
-                                        \App\Support\Enums\OrderItemStatus::Ready => 'border-green-500 bg-green-500/10',
+                                        \App\Support\Enums\OrderItemStatus::SENT => 'border-yellow-500 bg-yellow-500/10',
+                                        \App\Support\Enums\OrderItemStatus::PREPARING => 'border-orange-500 bg-orange-500/10',
+                                        \App\Support\Enums\OrderItemStatus::READY => 'border-green-500 bg-green-500/10',
                                         default => 'border-gray-600 bg-gray-700',
                                     };
                                     $dotColor = match($item->status) {
-                                        \App\Support\Enums\OrderItemStatus::Sent => 'bg-yellow-500',
-                                        \App\Support\Enums\OrderItemStatus::Preparing => 'bg-orange-500',
-                                        \App\Support\Enums\OrderItemStatus::Ready => 'bg-green-500',
+                                        \App\Support\Enums\OrderItemStatus::SENT => 'bg-yellow-500',
+                                        \App\Support\Enums\OrderItemStatus::PREPARING => 'bg-orange-500',
+                                        \App\Support\Enums\OrderItemStatus::READY => 'bg-green-500',
                                         default => 'bg-gray-500',
                                     };
                                 @endphp
@@ -157,7 +157,7 @@
 
                                     {{-- Кнопки действий --}}
                                     <div class="mt-2 ml-4 flex gap-2">
-                                        @if($item->status === \App\Support\Enums\OrderItemStatus::Sent)
+                                        @if($item->status === \App\Support\Enums\OrderItemStatus::SENT)
                                             <button
                                                 wire:click="startPreparing({{ $item->id }})"
                                                 class="px-3 py-1 text-xs font-medium rounded bg-orange-600 hover:bg-orange-500 text-white transition-colors"
@@ -166,7 +166,7 @@
                                             </button>
                                         @endif
 
-                                        @if($item->status === \App\Support\Enums\OrderItemStatus::Preparing)
+                                        @if($item->status === \App\Support\Enums\OrderItemStatus::PREPARING)
                                             <button
                                                 wire:click="markReady({{ $item->id }})"
                                                 class="px-3 py-1 text-xs font-medium rounded bg-green-600 hover:bg-green-500 text-white transition-colors"
@@ -175,7 +175,7 @@
                                             </button>
                                         @endif
 
-                                        @if($item->status === \App\Support\Enums\OrderItemStatus::Ready)
+                                        @if($item->status === \App\Support\Enums\OrderItemStatus::READY)
                                             <button
                                                 wire:click="markServed({{ $item->id }})"
                                                 class="px-3 py-1 text-xs font-medium rounded bg-blue-600 hover:bg-blue-500 text-white transition-colors"
