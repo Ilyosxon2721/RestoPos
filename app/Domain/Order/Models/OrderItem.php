@@ -2,7 +2,6 @@
 
 namespace App\Domain\Order\Models;
 
-use App\Support\Traits\HasUuid;
 use App\Support\Enums\OrderItemStatus;
 use App\Domain\Menu\Models\Product;
 use Illuminate\Database\Eloquent\Model;
@@ -11,8 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OrderItem extends Model
 {
-    use HasUuid;
-
     protected $fillable = [
         'order_id',
         'product_id',
@@ -20,12 +17,15 @@ class OrderItem extends Model
         'quantity',
         'unit_price',
         'discount_amount',
-        'total',
+        'total_price',
+        'cost_price',
+        'course',
         'status',
-        'notes',
+        'comment',
         'sent_to_kitchen_at',
-        'prepared_at',
-        'served_at',
+        'ready_at',
+        'cancelled_reason',
+        'cancelled_by',
     ];
 
     protected function casts(): array
@@ -35,10 +35,11 @@ class OrderItem extends Model
             'quantity' => 'decimal:3',
             'unit_price' => 'decimal:2',
             'discount_amount' => 'decimal:2',
-            'total' => 'decimal:2',
+            'total_price' => 'decimal:2',
+            'cost_price' => 'decimal:2',
+            'course' => 'integer',
             'sent_to_kitchen_at' => 'datetime',
-            'prepared_at' => 'datetime',
-            'served_at' => 'datetime',
+            'ready_at' => 'datetime',
         ];
     }
 
@@ -86,9 +87,9 @@ class OrderItem extends Model
      */
     public function calculateTotal(): void
     {
-        $modifiersTotal = $this->modifiers()->sum('price');
+        $modifiersTotal = $this->modifiers()->sum('price_adjustment');
         $baseTotal = ($this->unit_price + $modifiersTotal) * $this->quantity;
-        $this->total = $baseTotal - ($this->discount_amount ?? 0);
+        $this->total_price = $baseTotal - ($this->discount_amount ?? 0);
     }
 
     /**
@@ -117,7 +118,7 @@ class OrderItem extends Model
     {
         $this->update([
             'status' => OrderItemStatus::READY,
-            'prepared_at' => now(),
+            'ready_at' => now(),
         ]);
     }
 
@@ -128,16 +129,19 @@ class OrderItem extends Model
     {
         $this->update([
             'status' => OrderItemStatus::SERVED,
-            'served_at' => now(),
         ]);
     }
 
     /**
      * Cancel item.
      */
-    public function cancel(): void
+    public function cancel(?string $reason = null, ?int $cancelledById = null): void
     {
-        $this->update(['status' => OrderItemStatus::CANCELLED]);
+        $this->update([
+            'status' => OrderItemStatus::CANCELLED,
+            'cancelled_reason' => $reason,
+            'cancelled_by' => $cancelledById,
+        ]);
     }
 
     /**

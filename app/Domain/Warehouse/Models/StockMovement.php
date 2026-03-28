@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Warehouse\Models;
 
-use App\Support\Traits\HasUuid;
+use App\Domain\Auth\Models\User;
 use App\Support\Enums\StockMovementType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StockMovement extends Model
 {
-    use HasUuid;
-
     protected $fillable = [
-        'stock_id',
+        'warehouse_id',
+        'ingredient_id',
+        'user_id',
         'type',
         'quantity',
         'cost_price',
@@ -21,14 +23,27 @@ class StockMovement extends Model
         'notes',
     ];
 
-    protected $casts = [
-        'type' => StockMovementType::class,
-        'quantity' => 'decimal:3',
-        'cost_price' => 'decimal:2',
-    ];
-
-    public function stock(): BelongsTo
+    protected function casts(): array
     {
-        return $this->belongsTo(Stock::class);
+        return [
+            'type' => StockMovementType::class,
+            'quantity' => 'decimal:3',
+            'cost_price' => 'decimal:4',
+        ];
+    }
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+
+    public function ingredient(): BelongsTo
+    {
+        return $this->belongsTo(Ingredient::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

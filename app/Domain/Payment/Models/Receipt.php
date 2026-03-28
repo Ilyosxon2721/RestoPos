@@ -1,31 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Payment\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Domain\Order\Models\Order;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Receipt extends Model
 {
-    use HasUuid, BelongsToOrganization;
-
     protected $fillable = [
-        'organization_id',
         'order_id',
         'payment_id',
-        'receipt_number',
+        'type',
+        'number',
         'fiscal_number',
-        'data',
+        'fiscal_sign',
+        'amount',
+        'status',
+        'error_message',
+        'receipt_data',
         'printed_at',
     ];
 
-    protected $casts = [
-        'data' => 'array',
-        'printed_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'receipt_data' => 'array',
+            'amount' => 'decimal:2',
+            'printed_at' => 'datetime',
+        ];
+    }
 
     public function order(): BelongsTo
     {

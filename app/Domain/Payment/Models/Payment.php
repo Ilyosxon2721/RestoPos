@@ -3,7 +3,6 @@
 namespace App\Domain\Payment\Models;
 
 use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Domain\Order\Models\Order;
 use App\Domain\Auth\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -12,24 +11,28 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Payment extends Model
 {
-    use HasUuid, BelongsToOrganization;
+    use HasUuid;
+
+    public $timestamps = false;
 
     protected $fillable = [
-        'organization_id',
         'order_id',
         'payment_method_id',
+        'cash_shift_id',
         'user_id',
-        'method',
         'amount',
-        'tip_amount',
+        'change_amount',
         'status',
         'transaction_id',
-        'notes',
+        'payment_data',
+        'paid_at',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'tip_amount' => 'decimal:2',
+        'change_amount' => 'decimal:2',
+        'payment_data' => 'json',
+        'paid_at' => 'datetime',
     ];
 
     public function order(): BelongsTo
@@ -40,6 +43,11 @@ class Payment extends Model
     public function paymentMethod(): BelongsTo
     {
         return $this->belongsTo(PaymentMethod::class);
+    }
+
+    public function cashShift(): BelongsTo
+    {
+        return $this->belongsTo(CashShift::class);
     }
 
     public function user(): BelongsTo

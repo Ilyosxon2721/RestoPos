@@ -1,33 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Warehouse\Models;
 
-use App\Support\Traits\HasUuid;
 use App\Support\Traits\BelongsToOrganization;
 use App\Domain\Menu\Models\Unit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ingredient extends Model
 {
-    use HasUuid, BelongsToOrganization;
+    use BelongsToOrganization, SoftDeletes;
 
     protected $fillable = [
         'organization_id',
-        'unit_id',
         'category_id',
+        'unit_id',
         'name',
         'sku',
         'barcode',
-        'cost_price',
+        'min_stock',
+        'current_cost',
+        'loss_percent',
+        'shelf_life_days',
         'is_active',
     ];
 
-    protected $casts = [
-        'cost_price' => 'decimal:2',
-        'is_active' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'min_stock' => 'decimal:3',
+            'current_cost' => 'decimal:4',
+            'loss_percent' => 'decimal:2',
+            'shelf_life_days' => 'integer',
+            'is_active' => 'boolean',
+        ];
+    }
 
     public function unit(): BelongsTo
     {

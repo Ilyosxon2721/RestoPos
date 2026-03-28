@@ -2,8 +2,6 @@
 
 namespace App\Domain\Payment\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Support\Traits\BelongsToBranch;
 use App\Support\Enums\CashShiftStatus;
 use App\Domain\Auth\Models\User;
@@ -13,28 +11,27 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CashShift extends Model
 {
-    use HasUuid, BelongsToOrganization, BelongsToBranch;
+    use BelongsToBranch;
+
+    public $timestamps = false;
 
     protected $fillable = [
-        'organization_id',
         'branch_id',
         'terminal_id',
-        'user_id',
-        'closed_by_id',
-        'shift_number',
-        'status',
+        'opened_by',
+        'closed_by',
         'opened_at',
         'closed_at',
         'opening_cash',
+        'closing_cash',
         'expected_cash',
-        'actual_cash',
-        'difference',
+        'cash_difference',
         'total_sales',
-        'total_cash',
-        'total_card',
-        'total_other',
         'total_refunds',
-        'orders_count',
+        'total_cash_payments',
+        'total_card_payments',
+        'total_orders',
+        'status',
         'notes',
     ];
 
@@ -45,57 +42,31 @@ class CashShift extends Model
             'opened_at' => 'datetime',
             'closed_at' => 'datetime',
             'opening_cash' => 'decimal:2',
+            'closing_cash' => 'decimal:2',
             'expected_cash' => 'decimal:2',
-            'actual_cash' => 'decimal:2',
-            'difference' => 'decimal:2',
+            'cash_difference' => 'decimal:2',
             'total_sales' => 'decimal:2',
-            'total_cash' => 'decimal:2',
-            'total_card' => 'decimal:2',
-            'total_other' => 'decimal:2',
             'total_refunds' => 'decimal:2',
-            'orders_count' => 'integer',
+            'total_cash_payments' => 'decimal:2',
+            'total_card_payments' => 'decimal:2',
+            'total_orders' => 'integer',
         ];
     }
 
-    protected static function booted(): void
-    {
-        static::creating(function ($shift) {
-            if (empty($shift->shift_number)) {
-                $shift->shift_number = static::generateShiftNumber($shift->branch_id);
-            }
-            if (empty($shift->opened_at)) {
-                $shift->opened_at = now();
-            }
-        });
-    }
-
     /**
-     * Generate shift number.
+     * Get the user who opened the shift.
      */
-    public static function generateShiftNumber(int $branchId): string
+    public function openedByUser(): BelongsTo
     {
-        $today = now()->format('Ymd');
-        $count = static::where('branch_id', $branchId)
-            ->whereDate('created_at', today())
-            ->count();
-
-        return 'S' . $today . '-' . str_pad($count + 1, 2, '0', STR_PAD_LEFT);
-    }
-
-    /**
-     * Get the cashier who opened the shift.
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'opened_by');
     }
 
     /**
      * Get the user who closed the shift.
      */
-    public function closedBy(): BelongsTo
+    public function closedByUser(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'closed_by_id');
+        return $this->belongsTo(User::class, 'closed_by');
     }
 
     /**
@@ -137,24 +108,27 @@ class CashShift extends Model
     {
         $orders = $this->orders()->completed()->get();
 
-        $this->orders_count = $orders->count();
-        $this->total_sales = $orders->sum('total');
-        $this->total_refunds = $orders->sum('refund_amount');
+        $this->total_orders = $orders->count();
+        $this->total_sales = $orders->sum('total_amount');
 
-        // Calculate by payment method
+        // Рассчитываем по способам оплаты через связь payment_method
         $payments = Payment::whereIn('order_id', $orders->pluck('id'))
             ->where('status', 'completed')
             ->get();
 
-        $this->total_cash = $payments->where('method', 'cash')->sum('amount');
-        $this->total_card = $payments->where('method', 'card')->sum('amount');
-        $this->total_other = $payments->whereNotIn('method', ['cash', 'card'])->sum('amount');
+        $this->total_cash_payments = $payments->filter(function ($payment) {
+            return $payment->paymentMethod && $payment->paymentMethod->type === 'cash';
+        })->sum('amount');
 
-        // Calculate expected cash
-        $cashIn = $this->cashOperations()->where('type', 'in')->sum('amount');
-        $cashOut = $this->cashOperations()->where('type', 'out')->sum('amount');
+        $this->total_card_payments = $payments->filter(function ($payment) {
+            return $payment->paymentMethod && $payment->paymentMethod->type === 'card';
+        })->sum('amount');
 
-        $this->expected_cash = $this->opening_cash + $this->total_cash + $cashIn - $cashOut - $this->total_refunds;
+        // Рассчитываем ожидаемую сумму наличных
+        $cashIn = $this->cashOperations()->where('type', 'deposit')->sum('amount');
+        $cashOut = $this->cashOperations()->where('type', 'withdrawal')->sum('amount');
+
+        $this->expected_cash = $this->opening_cash + $this->total_cash_payments + $cashIn - $cashOut;
 
         $this->save();
     }
@@ -162,16 +136,16 @@ class CashShift extends Model
     /**
      * Close the shift.
      */
-    public function close(float $actualCash, int $closedById, ?string $notes = null): void
+    public function close(float $closingCash, int $closedById, ?string $notes = null): void
     {
         $this->calculateTotals();
 
         $this->update([
             'status' => CashShiftStatus::CLOSED,
             'closed_at' => now(),
-            'closed_by_id' => $closedById,
-            'actual_cash' => $actualCash,
-            'difference' => $actualCash - $this->expected_cash,
+            'closed_by' => $closedById,
+            'closing_cash' => $closingCash,
+            'cash_difference' => $closingCash - $this->expected_cash,
             'notes' => $notes,
         ]);
     }
@@ -183,7 +157,7 @@ class CashShift extends Model
     {
         return static::where('branch_id', $branchId)
             ->where('status', CashShiftStatus::OPEN)
-            ->latest()
+            ->latest('opened_at')
             ->first();
     }
 
