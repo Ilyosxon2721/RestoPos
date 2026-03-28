@@ -1,33 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Warehouse\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
-use App\Support\Traits\BelongsToBranch;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Stock extends Model
 {
-    use HasUuid, BelongsToOrganization, BelongsToBranch;
+    // Таблица stock не имеет created_at, только updated_at
+    const CREATED_AT = null;
+
+    protected $table = 'stock';
 
     protected $fillable = [
-        'organization_id',
-        'branch_id',
         'warehouse_id',
         'ingredient_id',
         'quantity',
-        'min_quantity',
-        'max_quantity',
-        'unit_id',
+        'reserved_quantity',
+        'average_cost',
+        'last_supply_date',
+        'last_supply_price',
     ];
 
     protected $casts = [
         'quantity' => 'decimal:3',
-        'min_quantity' => 'decimal:3',
-        'max_quantity' => 'decimal:3',
+        'reserved_quantity' => 'decimal:3',
+        'average_cost' => 'decimal:4',
+        'last_supply_date' => 'datetime',
+        'last_supply_price' => 'decimal:4',
     ];
 
     public function warehouse(): BelongsTo
@@ -42,21 +45,34 @@ class Stock extends Model
 
     public function batches(): HasMany
     {
-        return $this->hasMany(StockBatch::class);
+        return $this->hasMany(StockBatch::class, 'warehouse_id', 'warehouse_id')
+            ->whereColumn('stock_batches.ingredient_id', 'stock.ingredient_id');
     }
 
     public function movements(): HasMany
     {
-        return $this->hasMany(StockMovement::class);
+        return $this->hasMany(StockMovement::class, 'warehouse_id', 'warehouse_id')
+            ->whereColumn('stock_movements.ingredient_id', 'stock.ingredient_id');
     }
 
+    /**
+     * Доступное количество (за вычетом резерва).
+     */
+    public function getAvailableQuantity(): float
+    {
+        return (float) $this->quantity - (float) $this->reserved_quantity;
+    }
+
+    /**
+     * Проверить, низкий ли остаток (количество <= 0).
+     */
     public function isLow(): bool
     {
-        return $this->min_quantity && $this->quantity <= $this->min_quantity;
+        return (float) $this->quantity <= 0;
     }
 
     public function scopeLowStock($query)
     {
-        return $query->whereColumn('quantity', '<=', 'min_quantity');
+        return $query->where('quantity', '<=', 0);
     }
 }
