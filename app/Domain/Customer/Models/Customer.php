@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Customer\Models;
 
 use App\Support\Traits\HasUuid;
@@ -22,20 +24,24 @@ class Customer extends Model
         'email',
         'birth_date',
         'gender',
-        'address',
-        'notes',
+        'loyalty_card_number',
         'bonus_balance',
         'total_spent',
-        'orders_count',
-        'is_active',
+        'total_orders',
+        'discount_percent',
+        'notes',
+        'tags',
+        'last_visit_at',
     ];
 
     protected $casts = [
         'birth_date' => 'date',
         'bonus_balance' => 'decimal:2',
         'total_spent' => 'decimal:2',
-        'orders_count' => 'integer',
-        'is_active' => 'boolean',
+        'total_orders' => 'integer',
+        'discount_percent' => 'decimal:2',
+        'tags' => 'array',
+        'last_visit_at' => 'datetime',
     ];
 
     public function group(): BelongsTo
@@ -63,7 +69,6 @@ class Customer extends Model
         $this->increment('bonus_balance', $amount);
 
         return $this->bonusTransactions()->create([
-            'organization_id' => $this->organization_id,
             'amount' => $amount,
             'type' => $type,
             'description' => $description,
@@ -80,7 +85,6 @@ class Customer extends Model
         $this->decrement('bonus_balance', $amount);
 
         return $this->bonusTransactions()->create([
-            'organization_id' => $this->organization_id,
             'amount' => -$amount,
             'type' => 'spend',
             'description' => $description,

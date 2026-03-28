@@ -1,26 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Payment\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Support\Traits\BelongsToBranch;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Terminal extends Model
 {
-    use HasUuid, BelongsToOrganization, BelongsToBranch;
+    use BelongsToBranch;
 
     protected $fillable = [
-        'organization_id',
         'branch_id',
         'name',
-        'code',
+        'device_id',
+        'type',
+        'settings',
+        'last_seen_at',
         'is_active',
     ];
 
     protected $casts = [
+        'settings' => 'array',
+        'last_seen_at' => 'datetime',
         'is_active' => 'boolean',
     ];
 

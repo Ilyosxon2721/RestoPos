@@ -1,19 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Payment\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Domain\Auth\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CashOperation extends Model
 {
-    use HasUuid, BelongsToOrganization;
-
     protected $fillable = [
-        'organization_id',
         'cash_shift_id',
         'user_id',
         'type',
@@ -43,34 +40,34 @@ class CashOperation extends Model
     }
 
     /**
-     * Check if it's a cash in operation.
+     * Check if it's a deposit operation.
      */
     public function isCashIn(): bool
     {
-        return $this->type === 'in';
+        return $this->type === 'deposit';
     }
 
     /**
-     * Check if it's a cash out operation.
+     * Check if it's a withdrawal operation.
      */
     public function isCashOut(): bool
     {
-        return $this->type === 'out';
+        return $this->type === 'withdrawal';
     }
 
     /**
-     * Scope for cash in operations.
+     * Scope for deposit operations.
      */
     public function scopeCashIn($query)
     {
-        return $query->where('type', 'in');
+        return $query->where('type', 'deposit');
     }
 
     /**
-     * Scope for cash out operations.
+     * Scope for withdrawal operations.
      */
     public function scopeCashOut($query)
     {
-        return $query->where('type', 'out');
+        return $query->where('type', 'withdrawal');
     }
 }

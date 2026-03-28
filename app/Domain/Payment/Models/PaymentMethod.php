@@ -1,28 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Payment\Models;
 
-use App\Support\Traits\HasUuid;
 use App\Support\Traits\BelongsToOrganization;
 use App\Support\Enums\PaymentMethodType;
 use Illuminate\Database\Eloquent\Model;
 
 class PaymentMethod extends Model
 {
-    use HasUuid, BelongsToOrganization;
+    use BelongsToOrganization;
 
     protected $fillable = [
         'organization_id',
         'name',
         'type',
-        'settings',
+        'is_fiscal',
         'is_active',
+        'sort_order',
     ];
 
     protected $casts = [
         'type' => PaymentMethodType::class,
-        'settings' => 'array',
+        'is_fiscal' => 'boolean',
         'is_active' => 'boolean',
+        'sort_order' => 'integer',
     ];
 
     public function scopeActive($query)
