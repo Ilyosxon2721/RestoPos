@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Livewire\Reports;
 
-use App\Domain\Order\Enums\OrderStatus;
+use App\Support\Enums\OrderStatus;
 use App\Domain\Order\Models\Order;
 use App\Domain\Order\Models\OrderItem;
-use App\Domain\Payment\Enums\PaymentStatus;
+use App\Support\Enums\PaymentStatus;
 use App\Domain\Payment\Models\Payment;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -61,7 +61,7 @@ class Dashboard extends Component
     public function salesData(): array
     {
         $query = Order::query()
-            ->where('status', OrderStatus::Paid)
+            ->where('status', OrderStatus::COMPLETED)
             ->whereBetween('created_at', [$this->dateFrom . ' 00:00:00', $this->dateTo . ' 23:59:59']);
 
         $totalSales = (float) $query->sum('total_amount');
@@ -79,12 +79,12 @@ class Dashboard extends Component
     public function topProducts(): Collection
     {
         return OrderItem::query()
-            ->selectRaw('product_name, SUM(quantity) as total_quantity, SUM(quantity * price) as total_revenue')
+            ->selectRaw('name, SUM(quantity) as total_quantity, SUM(quantity * unit_price) as total_revenue')
             ->whereHas('order', function ($query) {
-                $query->where('status', OrderStatus::Paid)
+                $query->where('status', OrderStatus::COMPLETED)
                     ->whereBetween('created_at', [$this->dateFrom . ' 00:00:00', $this->dateTo . ' 23:59:59']);
             })
-            ->groupBy('product_name')
+            ->groupBy('name')
             ->orderByDesc('total_quantity')
             ->limit(10)
             ->get();
@@ -107,7 +107,7 @@ class Dashboard extends Component
     {
         return Order::query()
             ->selectRaw('HOUR(created_at) as hour, COUNT(*) as order_count')
-            ->where('status', OrderStatus::Paid)
+            ->where('status', OrderStatus::COMPLETED)
             ->whereBetween('created_at', [$this->dateFrom . ' 00:00:00', $this->dateTo . ' 23:59:59'])
             ->groupByRaw('HOUR(created_at)')
             ->orderBy('hour')

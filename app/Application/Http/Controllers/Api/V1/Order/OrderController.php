@@ -28,8 +28,8 @@ class OrderController extends Controller
             ->when($request->boolean('today'), fn($q) => $q->today())
             ->when($request->has('status'), fn($q) => $q->where('status', $request->input('status')))
             ->when($request->has('table_id'), fn($q) => $q->forTable($request->input('table_id')))
-            ->when($request->has('user_id'), fn($q) => $q->where('user_id', $request->input('user_id')))
-            ->with(['table.hall', 'user', 'customer'])
+            ->when($request->has('waiter_id'), fn($q) => $q->where('waiter_id', $request->input('waiter_id')))
+            ->with(['table.hall', 'waiter', 'customer'])
             ->latest();
 
         $orders = $request->boolean('paginate', true)
@@ -71,18 +71,17 @@ class OrderController extends Controller
             'customer_id' => 'nullable|exists:customers,id',
             'type' => 'nullable|string|in:dine_in,takeaway,delivery,preorder',
             'source' => 'nullable|string|in:pos,website,app,aggregator,phone,qr',
-            'guest_count' => 'nullable|integer|min:1',
+            'guests_count' => 'nullable|integer|min:1',
             'notes' => 'nullable|string',
         ]);
 
         try {
             $order = $action->execute([
-                'organization_id' => $request->user()->organization_id,
-                'user_id' => $request->user()->id,
-                ...$request->only(['branch_id', 'table_id', 'customer_id', 'type', 'source', 'guest_count', 'notes']),
+                'waiter_id' => $request->user()->employee?->id,
+                ...$request->only(['branch_id', 'table_id', 'customer_id', 'type', 'source', 'guests_count', 'notes']),
             ]);
 
-            $order->load(['table.hall', 'user']);
+            $order->load(['table.hall', 'waiter']);
 
             return response()->json([
                 'message' => 'Заказ успешно создан.',

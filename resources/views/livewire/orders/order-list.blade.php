@@ -99,20 +99,33 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
                                         $statusEnum = \App\Support\Enums\OrderStatus::tryFrom($order->status);
-                                        $color = $statusEnum ? $statusEnum->color() : 'gray';
+                                        $statusClasses = match($statusEnum) {
+                                            \App\Support\Enums\OrderStatus::NEW => 'bg-blue-100 text-blue-800',
+                                            \App\Support\Enums\OrderStatus::ACCEPTED => 'bg-cyan-100 text-cyan-800',
+                                            \App\Support\Enums\OrderStatus::PREPARING => 'bg-orange-100 text-orange-800',
+                                            \App\Support\Enums\OrderStatus::READY => 'bg-green-100 text-green-800',
+                                            \App\Support\Enums\OrderStatus::SERVED => 'bg-purple-100 text-purple-800',
+                                            \App\Support\Enums\OrderStatus::COMPLETED => 'bg-gray-100 text-gray-800',
+                                            \App\Support\Enums\OrderStatus::CANCELLED => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800',
+                                        };
                                     @endphp
-                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-                                        bg-{{ $color }}-100 text-{{ $color }}-800">
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {{ $statusClasses }}">
                                         {{ $statusEnum?->label() ?? $order->status }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
                                         $paymentEnum = \App\Support\Enums\PaymentStatus::tryFrom($order->payment_status);
-                                        $payColor = $paymentEnum ? $paymentEnum->color() : 'gray';
+                                        $paymentClasses = match($paymentEnum) {
+                                            \App\Support\Enums\PaymentStatus::UNPAID => 'bg-red-100 text-red-800',
+                                            \App\Support\Enums\PaymentStatus::PARTIAL => 'bg-orange-100 text-orange-800',
+                                            \App\Support\Enums\PaymentStatus::PAID => 'bg-green-100 text-green-800',
+                                            \App\Support\Enums\PaymentStatus::REFUNDED => 'bg-gray-100 text-gray-800',
+                                            default => 'bg-gray-100 text-gray-800',
+                                        };
                                     @endphp
-                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-                                        bg-{{ $payColor }}-100 text-{{ $payColor }}-800">
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {{ $paymentClasses }}">
                                         {{ $paymentEnum?->label() ?? $order->payment_status }}
                                     </span>
                                 </td>
@@ -126,7 +139,7 @@
                                     >
                                         Просмотр
                                     </button>
-                                    @if (!in_array($order->status, [\App\Support\Enums\OrderStatus::Completed->value, \App\Support\Enums\OrderStatus::Cancelled->value]))
+                                    @if (!in_array($order->status, [\App\Support\Enums\OrderStatus::COMPLETED->value, \App\Support\Enums\OrderStatus::CANCELLED->value]))
                                         <button
                                             wire:click="cancelOrder({{ $order->id }})"
                                             wire:confirm="Вы уверены, что хотите отменить заказ?"
