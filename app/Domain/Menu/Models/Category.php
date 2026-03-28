@@ -6,6 +6,7 @@ namespace App\Domain\Menu\Models;
 
 use App\Support\Traits\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +14,7 @@ use Spatie\Translatable\HasTranslations;
 
 class Category extends Model
 {
-    use BelongsToOrganization, HasTranslations, SoftDeletes;
+    use HasFactory, BelongsToOrganization, HasTranslations, SoftDeletes;
 
     public array $translatable = ['name', 'description'];
 
@@ -117,4 +118,10 @@ class Category extends Model
     {
         return $query->orderBy('sort_order')->orderBy('name');
     }
+
+    protected static function newFactory(): \Database\Factories\CategoryFactory
+    {
+        return \Database\Factories\CategoryFactory::new();
+    }
+
 }

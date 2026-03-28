@@ -13,12 +13,13 @@ use App\Domain\Staff\Models\Employee;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Payment\Models\CashShift;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
-    use HasUuid, BelongsToBranch;
+    use HasFactory, HasUuid, BelongsToBranch;
 
     protected $fillable = [
         'branch_id',
@@ -277,4 +278,10 @@ class Order extends Model
     {
         return $query->where('table_id', $tableId);
     }
+
+    protected static function newFactory(): \Database\Factories\OrderFactory
+    {
+        return \Database\Factories\OrderFactory::new();
+    }
+
 }

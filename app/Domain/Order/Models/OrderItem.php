@@ -5,6 +5,7 @@ namespace App\Domain\Order\Models;
 use App\Support\Enums\OrderItemStatus;
 use App\Domain\Menu\Models\Product;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -196,4 +197,10 @@ class OrderItem extends Model
     {
         return $query->where('status', OrderItemStatus::READY);
     }
+
+    protected static function newFactory(): \Database\Factories\OrderItemFactory
+    {
+        return \Database\Factories\OrderItemFactory::new();
+    }
+
 }

@@ -6,12 +6,13 @@ use App\Support\Traits\BelongsToBranch;
 use App\Support\Enums\CashShiftStatus;
 use App\Domain\Auth\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CashShift extends Model
 {
-    use BelongsToBranch;
+    use HasFactory, BelongsToBranch;
 
     public $timestamps = false;
 
@@ -176,4 +177,10 @@ class CashShift extends Model
     {
         return $query->whereDate('opened_at', today());
     }
+
+    protected static function newFactory(): \Database\Factories\CashShiftFactory
+    {
+        return \Database\Factories\CashShiftFactory::new();
+    }
+
 }

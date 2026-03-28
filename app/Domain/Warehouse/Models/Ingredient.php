@@ -7,13 +7,14 @@ namespace App\Domain\Warehouse\Models;
 use App\Support\Traits\BelongsToOrganization;
 use App\Domain\Menu\Models\Unit;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ingredient extends Model
 {
-    use BelongsToOrganization, SoftDeletes;
+    use HasFactory, BelongsToOrganization, SoftDeletes;
 
     protected $fillable = [
         'organization_id',
@@ -54,4 +55,10 @@ class Ingredient extends Model
     {
         return $query->where('is_active', true);
     }
+
+    protected static function newFactory(): \Database\Factories\IngredientFactory
+    {
+        return \Database\Factories\IngredientFactory::new();
+    }
+
 }

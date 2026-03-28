@@ -8,12 +8,13 @@ use App\Support\Traits\BelongsToBranch;
 use App\Support\Enums\SalaryType;
 use App\Domain\Auth\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Employee extends Model
 {
-    use BelongsToBranch;
+    use HasFactory, BelongsToBranch;
 
     protected $fillable = [
         'user_id',
@@ -114,4 +115,10 @@ class Employee extends Model
 
         return $shift;
     }
+
+    protected static function newFactory(): \Database\Factories\EmployeeFactory
+    {
+        return \Database\Factories\EmployeeFactory::new();
+    }
+
 }

@@ -120,4 +120,10 @@ class Branch extends Model
 
         return $value;
     }
+
+    protected static function newFactory(): \Database\Factories\BranchFactory
+    {
+        return \Database\Factories\BranchFactory::new();
+    }
+
 }

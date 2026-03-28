@@ -6,12 +6,13 @@ use App\Support\Traits\HasUuid;
 use App\Domain\Order\Models\Order;
 use App\Domain\Auth\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Payment extends Model
 {
-    use HasUuid;
+    use HasFactory, HasUuid;
 
     public $timestamps = false;
 
@@ -69,4 +70,10 @@ class Payment extends Model
     {
         return $query->where('status', 'completed');
     }
+
+    protected static function newFactory(): \Database\Factories\PaymentFactory
+    {
+        return \Database\Factories\PaymentFactory::new();
+    }
+
 }
