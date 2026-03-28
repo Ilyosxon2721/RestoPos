@@ -22,7 +22,7 @@ class CashShiftController extends Controller
             ->where('branch_id', $branchId)
             ->when($request->boolean('today'), fn($q) => $q->today())
             ->when($request->has('status'), fn($q) => $q->where('status', $request->input('status')))
-            ->with(['user', 'closedBy', 'terminal'])
+            ->with(['openedByUser', 'closedByUser', 'terminal'])
             ->latest('opened_at');
 
         $shifts = $request->boolean('paginate', true)
@@ -50,7 +50,7 @@ class CashShiftController extends Controller
             ]);
         }
 
-        $shift->load(['user', 'terminal', 'cashOperations']);
+        $shift->load(['openedByUser', 'terminal', 'cashOperations']);
 
         return response()->json([
             'data' => $shift,
@@ -62,7 +62,7 @@ class CashShiftController extends Controller
      */
     public function show(CashShift $cashShift): JsonResponse
     {
-        $cashShift->load(['user', 'closedBy', 'terminal', 'cashOperations', 'orders']);
+        $cashShift->load(['openedByUser', 'closedByUser', 'terminal', 'cashOperations', 'orders']);
 
         // Calculate stats
         $cashShift->calculateTotals();
@@ -93,15 +93,15 @@ class CashShiftController extends Controller
         }
 
         $shift = CashShift::create([
-            'organization_id' => $request->user()->organization_id,
             'branch_id' => $branchId,
             'terminal_id' => $request->input('terminal_id'),
-            'user_id' => $request->user()->id,
+            'opened_by' => $request->user()->id,
             'status' => CashShiftStatus::OPEN,
+            'opened_at' => now(),
             'opening_cash' => $request->input('opening_cash'),
         ]);
 
-        $shift->load(['user', 'terminal']);
+        $shift->load(['openedByUser', 'terminal']);
 
         return response()->json([
             'message' => 'Смена открыта.',
@@ -141,7 +141,7 @@ class CashShiftController extends Controller
 
         return response()->json([
             'message' => 'Смена закрыта.',
-            'data' => $cashShift->fresh(['user', 'closedBy']),
+            'data' => $cashShift->fresh(['openedByUser', 'closedByUser']),
         ]);
     }
 
@@ -164,7 +164,6 @@ class CashShiftController extends Controller
         }
 
         $operation = $cashShift->cashOperations()->create([
-            'organization_id' => $cashShift->organization_id,
             'user_id' => $request->user()->id,
             'type' => $request->input('type'),
             'amount' => $request->input('amount'),
@@ -187,28 +186,26 @@ class CashShiftController extends Controller
 
         $report = [
             'shift' => [
-                'number' => $cashShift->shift_number,
                 'opened_at' => $cashShift->opened_at,
                 'closed_at' => $cashShift->closed_at,
-                'cashier' => $cashShift->user->full_name,
-                'closed_by' => $cashShift->closedBy?->full_name,
+                'cashier' => $cashShift->openedByUser->full_name,
+                'closed_by' => $cashShift->closedByUser?->full_name,
             ],
             'summary' => [
-                'orders_count' => $cashShift->orders_count,
+                'orders_count' => $cashShift->total_orders,
                 'total_sales' => $cashShift->total_sales,
                 'total_refunds' => $cashShift->total_refunds,
                 'net_sales' => $cashShift->total_sales - $cashShift->total_refunds,
             ],
             'payments' => [
-                'cash' => $cashShift->total_cash,
-                'card' => $cashShift->total_card,
-                'other' => $cashShift->total_other,
+                'cash' => $cashShift->total_cash_payments,
+                'card' => $cashShift->total_card_payments,
             ],
             'cash_drawer' => [
                 'opening_cash' => $cashShift->opening_cash,
                 'expected_cash' => $cashShift->expected_cash,
-                'actual_cash' => $cashShift->actual_cash,
-                'difference' => $cashShift->difference,
+                'closing_cash' => $cashShift->closing_cash,
+                'cash_difference' => $cashShift->cash_difference,
             ],
             'operations' => $cashShift->cashOperations->map(fn($op) => [
                 'type' => $op->type,

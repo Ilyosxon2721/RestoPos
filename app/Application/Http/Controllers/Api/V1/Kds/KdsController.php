@@ -90,9 +90,9 @@ class KdsController extends Controller
             'ready' => OrderItem::whereHas('order', fn($q) => $q->where('branch_id', $branchId)->open())
                 ->where('status', OrderItemStatus::READY)->count(),
             'avg_prep_time' => OrderItem::whereHas('order', fn($q) => $q->where('branch_id', $branchId))
-                ->whereNotNull('prepared_at')
+                ->whereNotNull('ready_at')
                 ->whereDate('created_at', today())
-                ->selectRaw('AVG(TIMESTAMPDIFF(MINUTE, sent_to_kitchen_at, prepared_at)) as avg_time')
+                ->selectRaw('AVG(TIMESTAMPDIFF(MINUTE, sent_to_kitchen_at, ready_at)) as avg_time')
                 ->value('avg_time') ?? 0,
         ];
 

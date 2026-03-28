@@ -1,31 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Customer\Models;
 
-use App\Support\Traits\HasUuid;
 use App\Support\Traits\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CustomerGroup extends Model
 {
-    use HasUuid, BelongsToOrganization;
+    use BelongsToOrganization;
 
     protected $fillable = [
         'organization_id',
         'name',
         'discount_percent',
-        'bonus_percent',
-        'min_spent',
+        'bonus_earn_percent',
+        'min_spent_to_join',
         'color',
-        'is_default',
     ];
 
     protected $casts = [
         'discount_percent' => 'decimal:2',
-        'bonus_percent' => 'decimal:2',
-        'min_spent' => 'decimal:2',
-        'is_default' => 'boolean',
+        'bonus_earn_percent' => 'decimal:2',
+        'min_spent_to_join' => 'decimal:2',
     ];
 
     public function customers(): HasMany

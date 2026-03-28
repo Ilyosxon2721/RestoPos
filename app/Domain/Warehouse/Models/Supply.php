@@ -1,34 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Warehouse\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
-use App\Support\Traits\BelongsToBranch;
+use App\Domain\Auth\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Supply extends Model
 {
-    use HasUuid, BelongsToOrganization, BelongsToBranch;
-
     protected $fillable = [
-        'organization_id',
-        'branch_id',
         'warehouse_id',
         'supplier_id',
-        'supply_number',
-        'status',
+        'user_id',
+        'number',
+        'document_number',
+        'document_date',
         'total_amount',
-        'notes',
+        'status',
         'received_at',
+        'notes',
     ];
 
-    protected $casts = [
-        'total_amount' => 'decimal:2',
-        'received_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'total_amount' => 'decimal:2',
+            'document_date' => 'date',
+            'received_at' => 'datetime',
+        ];
+    }
 
     public function warehouse(): BelongsTo
     {
@@ -40,6 +43,11 @@ class Supply extends Model
         return $this->belongsTo(Supplier::class);
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(SupplyItem::class);
@@ -47,7 +55,7 @@ class Supply extends Model
 
     public function calculateTotal(): void
     {
-        $this->total_amount = $this->items()->sum(\DB::raw('quantity * unit_price'));
+        $this->total_amount = $this->items()->sum(\DB::raw('quantity * price'));
         $this->save();
     }
 }

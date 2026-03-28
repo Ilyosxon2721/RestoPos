@@ -8,16 +8,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItemModifier extends Model
 {
+    public $timestamps = false;
+
     protected $fillable = [
         'order_item_id',
         'modifier_id',
         'name',
-        'price',
+        'price_adjustment',
         'quantity',
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
+        'price_adjustment' => 'decimal:2',
         'quantity' => 'integer',
     ];
 
@@ -42,6 +44,6 @@ class OrderItemModifier extends Model
      */
     public function getTotalAttribute(): float
     {
-        return $this->price * $this->quantity;
+        return $this->price_adjustment * $this->quantity;
     }
 }

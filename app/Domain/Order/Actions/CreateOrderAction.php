@@ -24,17 +24,16 @@ class CreateOrderAction
             }
 
             $order = Order::create([
-                'organization_id' => $data['organization_id'],
                 'branch_id' => $data['branch_id'],
                 'table_id' => $data['table_id'] ?? null,
-                'user_id' => $data['user_id'],
+                'waiter_id' => $data['waiter_id'] ?? null,
                 'customer_id' => $data['customer_id'] ?? null,
                 'cash_shift_id' => $cashShift->id,
                 'type' => $data['type'] ?? OrderType::DINE_IN,
                 'source' => $data['source'] ?? OrderSource::POS,
                 'status' => OrderStatus::NEW,
                 'payment_status' => PaymentStatus::UNPAID,
-                'guest_count' => $data['guest_count'] ?? 1,
+                'guests_count' => $data['guests_count'] ?? 1,
                 'notes' => $data['notes'] ?? null,
             ]);
 

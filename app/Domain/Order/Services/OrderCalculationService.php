@@ -64,7 +64,7 @@ class OrderCalculationService
         }
 
         // Create new order with selected items
-        $newOrder = $order->replicate(['order_number', 'subtotal', 'total', 'paid_amount']);
+        $newOrder = $order->replicate(['order_number', 'subtotal', 'total_amount']);
         $newOrder->save();
 
         // Move items to new order
@@ -82,7 +82,7 @@ class OrderCalculationService
      */
     public function splitEqually(Order $order, int $guests): array
     {
-        $total = $order->total;
+        $total = $order->total_amount;
         $perPerson = round($total / $guests, 2);
         $remainder = $total - ($perPerson * $guests);
 

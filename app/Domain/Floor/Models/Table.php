@@ -1,10 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Floor\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
-use App\Support\Traits\BelongsToBranch;
 use App\Support\Enums\TableStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,22 +12,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Table extends Model
 {
-    use HasUuid, BelongsToOrganization, BelongsToBranch;
-
     protected $fillable = [
-        'organization_id',
-        'branch_id',
         'hall_id',
         'name',
-        'number',
         'capacity',
-        'min_capacity',
-        'status',
+        'shape',
         'pos_x',
         'pos_y',
         'width',
         'height',
-        'shape',
+        'status',
         'sort_order',
         'is_active',
     ];
@@ -38,7 +31,6 @@ class Table extends Model
         return [
             'status' => TableStatus::class,
             'capacity' => 'integer',
-            'min_capacity' => 'integer',
             'pos_x' => 'integer',
             'pos_y' => 'integer',
             'width' => 'integer',
@@ -135,7 +127,7 @@ class Table extends Model
      */
     public function getDisplayNameAttribute(): string
     {
-        return $this->name ?: "Стол {$this->number}";
+        return $this->name ?: "Стол #{$this->id}";
     }
 
     /**
@@ -175,6 +167,6 @@ class Table extends Model
      */
     public function scopeOrdered($query)
     {
-        return $query->orderBy('sort_order')->orderBy('number');
+        return $query->orderBy('sort_order')->orderBy('name');
     }
 }

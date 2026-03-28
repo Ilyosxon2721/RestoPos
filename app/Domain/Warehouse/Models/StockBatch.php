@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Warehouse\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -8,24 +10,34 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class StockBatch extends Model
 {
     protected $fillable = [
-        'stock_id',
+        'warehouse_id',
+        'ingredient_id',
         'supply_item_id',
-        'quantity',
+        'initial_quantity',
         'remaining_quantity',
         'cost_price',
         'expiry_date',
+        'batch_number',
     ];
 
-    protected $casts = [
-        'quantity' => 'decimal:3',
-        'remaining_quantity' => 'decimal:3',
-        'cost_price' => 'decimal:2',
-        'expiry_date' => 'date',
-    ];
-
-    public function stock(): BelongsTo
+    protected function casts(): array
     {
-        return $this->belongsTo(Stock::class);
+        return [
+            'initial_quantity' => 'decimal:3',
+            'remaining_quantity' => 'decimal:3',
+            'cost_price' => 'decimal:4',
+            'expiry_date' => 'date',
+        ];
+    }
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+
+    public function ingredient(): BelongsTo
+    {
+        return $this->belongsTo(Ingredient::class);
     }
 
     public function supplyItem(): BelongsTo

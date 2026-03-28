@@ -1,73 +1,55 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Delivery\Models;
 
-use App\Domain\Customer\Models\Customer;
 use App\Domain\Order\Models\Order;
-use App\Domain\Organization\Models\Branch;
 use App\Support\Enums\DeliveryStatus;
-use App\Support\Traits\BelongsToBranch;
-use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DeliveryOrder extends Model
 {
-    use HasUuid, BelongsToBranch, SoftDeletes;
-
     protected $fillable = [
-        'branch_id',
         'order_id',
-        'customer_id',
         'courier_id',
         'delivery_zone_id',
-        'status',
         'address',
         'address_details',
-        'lat',
-        'lng',
+        'latitude',
+        'longitude',
         'contact_name',
         'contact_phone',
+        'delivery_fee',
         'scheduled_at',
+        'estimated_delivery_at',
+        'status',
+        'assigned_at',
         'picked_up_at',
         'delivered_at',
-        'delivery_price',
-        'distance_km',
-        'estimated_time_minutes',
-        'actual_time_minutes',
-        'notes',
-        'rating',
-        'rating_comment',
+        'delivery_notes',
+        'failure_reason',
     ];
 
-    protected $casts = [
-        'status' => DeliveryStatus::class,
-        'lat' => 'decimal:8',
-        'lng' => 'decimal:8',
-        'scheduled_at' => 'datetime',
-        'picked_up_at' => 'datetime',
-        'delivered_at' => 'datetime',
-        'delivery_price' => 'decimal:2',
-        'distance_km' => 'decimal:2',
-        'estimated_time_minutes' => 'integer',
-        'actual_time_minutes' => 'integer',
-        'rating' => 'integer',
-    ];
-
-    public function branch(): BelongsTo
+    protected function casts(): array
     {
-        return $this->belongsTo(Branch::class);
+        return [
+            'status' => DeliveryStatus::class,
+            'latitude' => 'decimal:8',
+            'longitude' => 'decimal:8',
+            'delivery_fee' => 'decimal:2',
+            'scheduled_at' => 'datetime',
+            'estimated_delivery_at' => 'datetime',
+            'assigned_at' => 'datetime',
+            'picked_up_at' => 'datetime',
+            'delivered_at' => 'datetime',
+        ];
     }
 
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
-    }
-
-    public function customer(): BelongsTo
-    {
-        return $this->belongsTo(Customer::class);
     }
 
     public function courier(): BelongsTo
@@ -85,6 +67,7 @@ class DeliveryOrder extends Model
         $this->update([
             'courier_id' => $courier->id,
             'status' => DeliveryStatus::ASSIGNED,
+            'assigned_at' => now(),
         ]);
 
         $courier->setBusy();
@@ -100,13 +83,9 @@ class DeliveryOrder extends Model
 
     public function markDelivered(): void
     {
-        $pickedUpAt = $this->picked_up_at ?? now();
-        $actualTime = now()->diffInMinutes($pickedUpAt);
-
         $this->update([
             'status' => DeliveryStatus::DELIVERED,
             'delivered_at' => now(),
-            'actual_time_minutes' => $actualTime,
         ]);
 
         if ($this->courier) {
@@ -118,20 +97,12 @@ class DeliveryOrder extends Model
     {
         $this->update([
             'status' => DeliveryStatus::FAILED,
-            'notes' => $reason ? $this->notes . "\nОтмена: " . $reason : $this->notes,
+            'failure_reason' => $reason,
         ]);
 
         if ($this->courier) {
             $this->courier->setAvailable();
         }
-    }
-
-    public function setRating(int $rating, string $comment = null): void
-    {
-        $this->update([
-            'rating' => $rating,
-            'rating_comment' => $comment,
-        ]);
     }
 
     public function getFullAddressAttribute(): string

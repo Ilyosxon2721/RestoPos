@@ -1,43 +1,46 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Staff\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Support\Traits\BelongsToBranch;
 use App\Support\Enums\SalaryType;
 use App\Domain\Auth\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employee extends Model
 {
-    use HasUuid, BelongsToOrganization, BelongsToBranch, SoftDeletes;
+    use BelongsToBranch;
 
     protected $fillable = [
-        'organization_id',
-        'branch_id',
         'user_id',
+        'branch_id',
         'position',
+        'hire_date',
+        'birth_date',
+        'passport_series',
+        'passport_number',
+        'address',
+        'emergency_contact',
+        'emergency_phone',
         'salary_type',
-        'salary_amount',
+        'hourly_rate',
+        'monthly_salary',
         'sales_percent',
-        'hired_at',
-        'fired_at',
-        'is_active',
     ];
 
     protected function casts(): array
     {
         return [
             'salary_type' => SalaryType::class,
-            'salary_amount' => 'decimal:2',
+            'hourly_rate' => 'decimal:2',
+            'monthly_salary' => 'decimal:2',
             'sales_percent' => 'decimal:2',
-            'hired_at' => 'date',
-            'fired_at' => 'date',
-            'is_active' => 'boolean',
+            'hire_date' => 'date',
+            'birth_date' => 'date',
         ];
     }
 
@@ -70,7 +73,7 @@ class Employee extends Model
      */
     public function isWorking(): bool
     {
-        return $this->is_active && $this->fired_at === null;
+        return $this->hire_date !== null;
     }
 
     /**
@@ -90,7 +93,6 @@ class Employee extends Model
     public function clockIn(): EmployeeShift
     {
         return $this->shifts()->create([
-            'organization_id' => $this->organization_id,
             'branch_id' => $this->branch_id,
             'clock_in' => now(),
         ]);

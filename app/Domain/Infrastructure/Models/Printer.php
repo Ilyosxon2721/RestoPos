@@ -1,17 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Infrastructure\Models;
 
 use App\Domain\Organization\Models\Branch;
 use App\Support\Traits\BelongsToBranch;
-use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Printer extends Model
 {
-    use HasUuid, BelongsToBranch, SoftDeletes;
+    use BelongsToBranch;
 
     protected $fillable = [
         'branch_id',
@@ -20,13 +20,8 @@ class Printer extends Model
         'connection_type',
         'ip_address',
         'port',
-        'usb_path',
         'paper_width',
         'is_default',
-        'print_kitchen_tickets',
-        'print_receipts',
-        'print_reports',
-        'workshop_ids',
         'is_active',
     ];
 
@@ -34,10 +29,6 @@ class Printer extends Model
         'port' => 'integer',
         'paper_width' => 'integer',
         'is_default' => 'boolean',
-        'print_kitchen_tickets' => 'boolean',
-        'print_receipts' => 'boolean',
-        'print_reports' => 'boolean',
-        'workshop_ids' => 'array',
         'is_active' => 'boolean',
     ];
 
@@ -52,30 +43,23 @@ class Printer extends Model
             return "tcp://{$this->ip_address}:{$this->port}";
         }
 
-        return $this->usb_path ?? '';
+        return '';
     }
 
-    public function isPosReceipt(): bool
+    /**
+     * Check if this is a receipt printer.
+     */
+    public function isReceiptPrinter(): bool
     {
-        return $this->type === 'receipt' && $this->print_receipts;
+        return $this->type === 'receipt';
     }
 
+    /**
+     * Check if this is a kitchen printer.
+     */
     public function isKitchenPrinter(): bool
     {
-        return $this->type === 'kitchen' && $this->print_kitchen_tickets;
-    }
-
-    public function shouldPrintForWorkshop(int $workshopId): bool
-    {
-        if (!$this->print_kitchen_tickets) {
-            return false;
-        }
-
-        if (empty($this->workshop_ids)) {
-            return true;
-        }
-
-        return in_array($workshopId, $this->workshop_ids);
+        return $this->type === 'kitchen';
     }
 
     public function scopeActive($query)
@@ -88,13 +72,8 @@ class Printer extends Model
         return $query->where('is_default', true);
     }
 
-    public function scopeForReceipts($query)
+    public function scopeOfType($query, string $type)
     {
-        return $query->where('print_receipts', true);
-    }
-
-    public function scopeForKitchen($query)
-    {
-        return $query->where('print_kitchen_tickets', true);
+        return $query->where('type', $type);
     }
 }

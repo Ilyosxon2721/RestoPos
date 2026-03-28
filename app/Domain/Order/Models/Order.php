@@ -3,30 +3,27 @@
 namespace App\Domain\Order\Models;
 
 use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Support\Traits\BelongsToBranch;
 use App\Support\Enums\OrderStatus;
 use App\Support\Enums\OrderType;
 use App\Support\Enums\OrderSource;
 use App\Support\Enums\PaymentStatus;
 use App\Domain\Floor\Models\Table;
-use App\Domain\Auth\Models\User;
+use App\Domain\Staff\Models\Employee;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Payment\Models\CashShift;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
-    use HasUuid, BelongsToOrganization, BelongsToBranch, SoftDeletes;
+    use HasUuid, BelongsToBranch;
 
     protected $fillable = [
-        'organization_id',
         'branch_id',
         'table_id',
-        'user_id',
+        'waiter_id',
         'customer_id',
         'cash_shift_id',
         'order_number',
@@ -34,16 +31,18 @@ class Order extends Model
         'source',
         'status',
         'payment_status',
-        'guest_count',
+        'guests_count',
         'subtotal',
         'discount_amount',
         'discount_percent',
+        'discount_reason',
         'service_charge',
         'tax_amount',
-        'total',
-        'paid_amount',
+        'total_amount',
         'notes',
         'opened_at',
+        'accepted_at',
+        'ready_at',
         'closed_at',
     ];
 
@@ -54,15 +53,16 @@ class Order extends Model
             'source' => OrderSource::class,
             'status' => OrderStatus::class,
             'payment_status' => PaymentStatus::class,
-            'guest_count' => 'integer',
+            'guests_count' => 'integer',
             'subtotal' => 'decimal:2',
             'discount_amount' => 'decimal:2',
             'discount_percent' => 'decimal:2',
             'service_charge' => 'decimal:2',
             'tax_amount' => 'decimal:2',
-            'total' => 'decimal:2',
-            'paid_amount' => 'decimal:2',
+            'total_amount' => 'decimal:2',
             'opened_at' => 'datetime',
+            'accepted_at' => 'datetime',
+            'ready_at' => 'datetime',
             'closed_at' => 'datetime',
         ];
     }
@@ -101,11 +101,11 @@ class Order extends Model
     }
 
     /**
-     * Get the waiter/user.
+     * Get the waiter (employee).
      */
-    public function user(): BelongsTo
+    public function waiter(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Employee::class, 'waiter_id');
     }
 
     /**
@@ -145,7 +145,7 @@ class Order extends Model
      */
     public function calculateTotals(): void
     {
-        $subtotal = $this->items()->sum('total');
+        $subtotal = $this->items()->sum('total_price');
 
         $discountAmount = $this->discount_percent
             ? $subtotal * ($this->discount_percent / 100)
@@ -159,16 +159,21 @@ class Order extends Model
         $this->update([
             'subtotal' => $subtotal,
             'discount_amount' => $discountAmount,
-            'total' => $total,
+            'total_amount' => $total,
         ]);
     }
 
     /**
      * Get remaining amount to pay.
+     * Рассчитывается из суммы завершённых платежей.
      */
     public function getRemainingAmount(): float
     {
-        return max(0, $this->total - $this->paid_amount);
+        $paidAmount = $this->payments()
+            ->where('status', 'completed')
+            ->sum('amount');
+
+        return max(0, $this->total_amount - $paidAmount);
     }
 
     /**
@@ -196,16 +201,17 @@ class Order extends Model
     }
 
     /**
-     * Update payment status based on paid amount.
+     * Update payment status based on payments sum.
      */
     public function updatePaymentStatus(): void
     {
-        $paidAmount = $this->payments()->where('status', 'completed')->sum('amount');
-        $this->paid_amount = $paidAmount;
+        $paidAmount = $this->payments()
+            ->where('status', 'completed')
+            ->sum('amount');
 
         if ($paidAmount <= 0) {
             $this->payment_status = PaymentStatus::UNPAID;
-        } elseif ($paidAmount < $this->total) {
+        } elseif ($paidAmount < $this->total_amount) {
             $this->payment_status = PaymentStatus::PARTIAL;
         } else {
             $this->payment_status = PaymentStatus::PAID;

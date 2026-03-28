@@ -1,42 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Delivery\Models;
 
 use App\Domain\Organization\Models\Branch;
 use App\Domain\Staff\Models\Employee;
 use App\Support\Enums\CourierStatus;
-use App\Support\Traits\BelongsToBranch;
-use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Courier extends Model
 {
-    use HasUuid, BelongsToBranch, SoftDeletes;
-
     protected $fillable = [
-        'branch_id',
         'employee_id',
+        'branch_id',
         'name',
         'phone',
         'vehicle_type',
         'vehicle_number',
         'status',
-        'current_lat',
-        'current_lng',
+        'current_location_lat',
+        'current_location_lng',
         'last_location_at',
         'is_active',
     ];
 
-    protected $casts = [
-        'status' => CourierStatus::class,
-        'current_lat' => 'decimal:8',
-        'current_lng' => 'decimal:8',
-        'last_location_at' => 'datetime',
-        'is_active' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'status' => CourierStatus::class,
+            'current_location_lat' => 'decimal:8',
+            'current_location_lng' => 'decimal:8',
+            'last_location_at' => 'datetime',
+            'is_active' => 'boolean',
+        ];
+    }
 
     public function branch(): BelongsTo
     {
@@ -62,8 +62,8 @@ class Courier extends Model
     public function updateLocation(float $lat, float $lng): void
     {
         $this->update([
-            'current_lat' => $lat,
-            'current_lng' => $lng,
+            'current_location_lat' => $lat,
+            'current_location_lng' => $lng,
             'last_location_at' => now(),
         ]);
     }

@@ -24,30 +24,50 @@ class Product extends Model
         'category_id',
         'workshop_id',
         'unit_id',
+        'type',
         'name',
+        'name_uz',
+        'name_en',
+        'slug',
         'sku',
         'barcode',
         'description',
+        'description_uz',
+        'description_en',
         'image',
-        'type',
+        'price',
         'cost_price',
+        'calories',
+        'proteins',
+        'fats',
+        'carbohydrates',
+        'weight',
+        'cooking_time',
+        'is_weighable',
+        'is_visible',
+        'is_available',
+        'in_stop_list',
+        'stop_list_reason',
         'sort_order',
-        'prep_time',
-        'is_active',
-        'is_popular',
-        'is_new',
     ];
 
     protected function casts(): array
     {
         return [
             'type' => ProductType::class,
+            'price' => 'decimal:2',
             'cost_price' => 'decimal:2',
+            'calories' => 'integer',
+            'proteins' => 'decimal:2',
+            'fats' => 'decimal:2',
+            'carbohydrates' => 'decimal:2',
+            'weight' => 'decimal:3',
+            'cooking_time' => 'integer',
+            'is_weighable' => 'boolean',
+            'is_visible' => 'boolean',
+            'is_available' => 'boolean',
+            'in_stop_list' => 'boolean',
             'sort_order' => 'integer',
-            'prep_time' => 'integer',
-            'is_active' => 'boolean',
-            'is_popular' => 'boolean',
-            'is_new' => 'boolean',
         ];
     }
 
@@ -141,15 +161,15 @@ class Product extends Model
      */
     public function scopeActive($query)
     {
-        return $query->where('is_active', true);
+        return $query->where('is_available', true);
     }
 
     /**
-     * Scope for popular products.
+     * Scope for visible products.
      */
-    public function scopePopular($query)
+    public function scopeVisible($query)
     {
-        return $query->where('is_popular', true);
+        return $query->where('is_visible', true);
     }
 
     /**

@@ -1,35 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Infrastructure\Models;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Organization\Models\Organization;
 use App\Support\Traits\BelongsToOrganization;
-use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ActivityLog extends Model
 {
-    use HasUuid, BelongsToOrganization;
+    use BelongsToOrganization;
 
     protected $table = 'activity_logs';
 
     protected $fillable = [
         'organization_id',
         'user_id',
-        'subject_type',
-        'subject_id',
         'action',
-        'description',
-        'properties',
+        'entity_type',
+        'entity_id',
+        'old_values',
+        'new_values',
         'ip_address',
         'user_agent',
     ];
 
     protected $casts = [
-        'properties' => 'array',
+        'old_values' => 'array',
+        'new_values' => 'array',
     ];
 
     public function organization(): BelongsTo
@@ -42,31 +43,31 @@ class ActivityLog extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function subject(): MorphTo
+    /**
+     * Get the related entity.
+     */
+    public function entity(): ?Model
     {
-        return $this->morphTo();
+        if (!$this->entity_type || !$this->entity_id) {
+            return null;
+        }
+
+        return $this->entity_type::find($this->entity_id);
     }
 
     public function getChangesAttribute(): array
     {
-        return $this->properties['changes'] ?? [];
+        $old = $this->old_values ?? [];
+        $new = $this->new_values ?? [];
+
+        return array_diff_assoc($new, $old);
     }
 
-    public function getOldValuesAttribute(): array
-    {
-        return $this->properties['old'] ?? [];
-    }
-
-    public function getNewValuesAttribute(): array
-    {
-        return $this->properties['new'] ?? [];
-    }
-
-    public function scopeForSubject($query, Model $subject)
+    public function scopeForEntity($query, Model $entity)
     {
         return $query
-            ->where('subject_type', get_class($subject))
-            ->where('subject_id', $subject->id);
+            ->where('entity_type', get_class($entity))
+            ->where('entity_id', $entity->id);
     }
 
     public function scopeByUser($query, $userId)
@@ -86,45 +87,37 @@ class ActivityLog extends Model
 
     public static function log(
         string $action,
-        Model $subject = null,
-        string $description = null,
-        array $properties = []
+        ?Model $subject = null,
+        array $oldValues = [],
+        array $newValues = []
     ): self {
         $user = auth()->user();
 
         return self::create([
             'organization_id' => $user?->organization_id,
             'user_id' => $user?->id,
-            'subject_type' => $subject ? get_class($subject) : null,
-            'subject_id' => $subject?->id,
+            'entity_type' => $subject ? get_class($subject) : null,
+            'entity_id' => $subject?->id,
             'action' => $action,
-            'description' => $description,
-            'properties' => $properties,
+            'old_values' => $oldValues ?: null,
+            'new_values' => $newValues ?: null,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);
     }
 
-    public static function logCreate(Model $model, string $description = null): self
+    public static function logCreate(Model $model): self
     {
-        return self::log('created', $model, $description, [
-            'new' => $model->toArray(),
-        ]);
+        return self::log('created', $model, [], $model->toArray());
     }
 
-    public static function logUpdate(Model $model, array $oldValues, string $description = null): self
+    public static function logUpdate(Model $model, array $oldValues): self
     {
-        return self::log('updated', $model, $description, [
-            'old' => $oldValues,
-            'new' => $model->toArray(),
-            'changes' => $model->getChanges(),
-        ]);
+        return self::log('updated', $model, $oldValues, $model->toArray());
     }
 
-    public static function logDelete(Model $model, string $description = null): self
+    public static function logDelete(Model $model): self
     {
-        return self::log('deleted', $model, $description, [
-            'old' => $model->toArray(),
-        ]);
+        return self::log('deleted', $model, $model->toArray(), []);
     }
 }

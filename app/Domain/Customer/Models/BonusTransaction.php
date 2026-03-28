@@ -1,29 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Customer\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BonusTransaction extends Model
 {
-    use HasUuid, BelongsToOrganization;
-
     protected $fillable = [
-        'organization_id',
         'customer_id',
         'order_id',
-        'amount',
         'type',
-        'description',
+        'amount',
         'balance_after',
+        'description',
+        'expires_at',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'balance_after' => 'decimal:2',
+        'expires_at' => 'datetime',
     ];
 
     public function customer(): BelongsTo
