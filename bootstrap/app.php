@@ -17,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'branch.access' => \App\Application\Http\Middleware\BranchAccess::class,
             'permission' => \App\Application\Http\Middleware\CheckPermission::class,
             'role' => \App\Application\Http\Middleware\CheckRole::class,
+            'super_admin' => \App\Application\Http\Middleware\SuperAdmin::class,
+            'client_role' => \App\Application\Http\Middleware\ClientRole::class,
         ]);
 
         $middleware->api(prepend: [
