@@ -173,7 +173,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('{deliveryOrder}/cancel', [DeliveryOrderController::class, 'cancel']);
                     Route::post('{deliveryOrder}/rate', [DeliveryOrderController::class, 'rate']);
                 });
-                Route::apiResource('orders', DeliveryOrderController::class)->except(['destroy']);
+                Route::apiResource('orders', DeliveryOrderController::class)->except(['destroy'])->names('delivery.orders');
             });
 
             // Printers
