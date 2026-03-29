@@ -335,8 +335,101 @@ class DemoDataSeeder extends Seeder
             ['organization_id' => $orgId, 'name' => 'Платина', 'discount_percent' => 15, 'bonus_earn_percent' => 10, 'min_spent_to_join' => 15000000, 'color' => '#78909C', 'created_at' => $now],
         ]);
 
+        // Создаём Super Admin платформы
+        DB::table('platform_admins')->insert([
+            'uuid' => Str::uuid(),
+            'email' => 'superadmin@restopos.uz',
+            'password' => Hash::make('superadmin'),
+            'first_name' => 'Super',
+            'last_name' => 'Admin',
+            'is_active' => true,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        // Создаём тарифные планы
+        $plans = [
+            [
+                'uuid' => Str::uuid(),
+                'name' => 'Стартовый',
+                'slug' => 'starter',
+                'description' => 'Для небольших заведений',
+                'price' => 99000,
+                'currency' => 'UZS',
+                'billing_period' => 'monthly',
+                'max_branches' => 1,
+                'max_users' => 3,
+                'max_products' => 100,
+                'features' => json_encode(['pos', 'kds', 'orders']),
+                'is_active' => true,
+                'sort_order' => 1,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'uuid' => Str::uuid(),
+                'name' => 'Бизнес',
+                'slug' => 'business',
+                'description' => 'Для растущих заведений',
+                'price' => 249000,
+                'currency' => 'UZS',
+                'billing_period' => 'monthly',
+                'max_branches' => 3,
+                'max_users' => 10,
+                'max_products' => 500,
+                'features' => json_encode(['pos', 'kds', 'orders', 'warehouse', 'crm', 'analytics']),
+                'is_active' => true,
+                'sort_order' => 2,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'uuid' => Str::uuid(),
+                'name' => 'Премиум',
+                'slug' => 'premium',
+                'description' => 'Для сетей и франшиз',
+                'price' => 499000,
+                'currency' => 'UZS',
+                'billing_period' => 'monthly',
+                'max_branches' => 999,
+                'max_users' => 999,
+                'max_products' => 99999,
+                'features' => json_encode(['pos', 'kds', 'orders', 'warehouse', 'crm', 'analytics', 'api', 'priority_support']),
+                'is_active' => true,
+                'sort_order' => 3,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ];
+
+        foreach ($plans as $plan) {
+            DB::table('plans')->insert($plan);
+        }
+
+        // Создаём подписку для демо-организации
+        $businessPlanId = DB::table('plans')->where('slug', 'business')->value('id');
+        DB::table('subscriptions')->insert([
+            'uuid' => Str::uuid(),
+            'organization_id' => $orgId,
+            'plan_id' => $businessPlanId,
+            'status' => 'active',
+            'starts_at' => $now,
+            'ends_at' => $now->copy()->addYear(),
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
         $this->command->info('Demo data seeded successfully!');
-        $this->command->info('Login: admin@restopos.uz / password');
-        $this->command->info('PIN: 1234');
+        $this->command->info('');
+        $this->command->info('=== Super Admin ===');
+        $this->command->info('URL:   /admin/login');
+        $this->command->info('Email: superadmin@restopos.uz');
+        $this->command->info('Pass:  superadmin');
+        $this->command->info('');
+        $this->command->info('=== Client Admin (Владелец) ===');
+        $this->command->info('URL:   /login');
+        $this->command->info('Email: admin@restopos.uz');
+        $this->command->info('Pass:  password');
+        $this->command->info('PIN:   1234');
     }
 }
