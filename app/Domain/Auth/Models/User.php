@@ -62,11 +62,12 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the roles for the user.
+     * Get the roles for the user (without organization scope, since system roles have null organization_id).
      */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_roles')
+            ->withoutGlobalScope('organization')
             ->withPivot('branch_id');
     }
 
