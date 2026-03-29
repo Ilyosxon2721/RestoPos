@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/menu/items', \App\Livewire\Menu\Items::class)->name('manager.menu.items');
         Route::get('/floor', \App\Livewire\Manager\Floor::class)->name('manager.floor');
         Route::get('/staff', \App\Livewire\Staff\EmployeeList::class)->name('manager.staff');
+        Route::get('/customers', \App\Livewire\Customers\CustomerList::class)->name('manager.customers');
         Route::get('/warehouse', \App\Livewire\Warehouse\Stock::class)->name('manager.warehouse');
         Route::get('/reports', \App\Livewire\Reports\Dashboard::class)->name('manager.reports');
         Route::get('/settings', \App\Livewire\Settings\General::class)->name('manager.settings');
