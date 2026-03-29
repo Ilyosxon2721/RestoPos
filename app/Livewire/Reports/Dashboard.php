@@ -11,13 +11,14 @@ use App\Support\Enums\PaymentStatus;
 use App\Domain\Payment\Models\Payment;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use App\Support\Traits\ResolvesLayout;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('components.layouts.app')]
 class Dashboard extends Component
 {
+    use ResolvesLayout;
+
     public string $period = 'today';
 
     public ?string $dateFrom = null;
@@ -117,6 +118,7 @@ class Dashboard extends Component
 
     public function render()
     {
-        return view('livewire.reports.dashboard');
+        return view('livewire.reports.dashboard')
+            ->layout($this->resolveLayout());
     }
 }

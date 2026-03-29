@@ -8,15 +8,14 @@ use App\Domain\Menu\Models\Category;
 use App\Domain\Menu\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
+use App\Support\Traits\ResolvesLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.app')]
 final class Items extends Component
 {
-    use WithPagination;
+    use WithPagination, ResolvesLayout;
 
     public Collection $categories;
 
@@ -180,6 +179,8 @@ final class Items extends Component
 
     public function render()
     {
-        return view('livewire.menu.items');
+        return view('livewire.menu.items')
+            ->layout($this->resolveLayout());
     }
+
 }
