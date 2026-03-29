@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Auth\Actions;
 
 use App\Domain\Auth\Models\User;
@@ -8,41 +10,40 @@ use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Models\Branch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class RegisterOrganizationAction
 {
     /**
-     * Register a new organization with owner user.
+     * Регистрация новой организации с владельцем.
      */
     public function execute(array $data): array
     {
         return DB::transaction(function () use ($data) {
-            // Create organization
+            // Создаём организацию (только существующие колонки)
             $organization = Organization::create([
                 'name' => $data['organization_name'],
-                'slug' => $data['organization_slug'] ?? \Str::slug($data['organization_name']),
-                'subdomain' => $data['subdomain'] ?? \Str::slug($data['organization_name']),
+                'subdomain' => $data['subdomain'] ?? Str::slug($data['organization_name']),
                 'legal_name' => $data['legal_name'] ?? null,
-                'tax_id' => $data['tax_id'] ?? null,
-                'phone' => $data['organization_phone'] ?? null,
-                'email' => $data['organization_email'] ?? null,
-                'timezone' => $data['timezone'] ?? 'Asia/Tashkent',
-                'currency' => $data['currency'] ?? 'UZS',
-                'locale' => $data['locale'] ?? 'ru',
-                'is_active' => true,
+                'inn' => $data['tax_id'] ?? null,
                 'subscription_plan' => 'trial',
-                'subscription_ends_at' => now()->addDays(14),
+                'subscription_expires_at' => now()->addDays(14),
+                'settings' => [
+                    'timezone' => $data['timezone'] ?? 'Asia/Tashkent',
+                    'currency' => $data['currency'] ?? 'UZS',
+                    'locale' => $data['locale'] ?? 'ru',
+                ],
+                'is_active' => true,
             ]);
 
-            // Create default branch
+            // Создаём филиал по умолчанию
             $branch = Branch::create([
                 'organization_id' => $organization->id,
                 'name' => $data['branch_name'] ?? 'Главный филиал',
-                'code' => 'MAIN',
                 'is_active' => true,
             ]);
 
-            // Create owner user
+            // Создаём пользователя-владельца
             $user = User::create([
                 'organization_id' => $organization->id,
                 'email' => $data['email'],
@@ -55,14 +56,17 @@ class RegisterOrganizationAction
                 'email_verified_at' => now(),
             ]);
 
-            // Assign owner role (null branch_id = access to all branches)
-            $ownerRole = Role::where('organization_id', $organization->id)
+            // Назначаем роль owner (branch_id = null = доступ ко всем филиалам)
+            $ownerRole = Role::withoutGlobalScopes()
                 ->where('slug', 'owner')
+                ->where(function ($q) use ($organization) {
+                    $q->where('organization_id', $organization->id)
+                      ->orWhereNull('organization_id');
+                })
                 ->first();
 
-            if (!$ownerRole) {
-                // Create owner role if it doesn't exist
-                $ownerRole = Role::create([
+            if (! $ownerRole) {
+                $ownerRole = Role::withoutGlobalScopes()->create([
                     'organization_id' => $organization->id,
                     'name' => 'Владелец',
                     'slug' => 'owner',
@@ -73,14 +77,10 @@ class RegisterOrganizationAction
 
             $user->roles()->attach($ownerRole->id, ['branch_id' => null]);
 
-            // Create token
-            $token = $user->createToken('api-token');
-
             return [
                 'organization' => $organization,
                 'branch' => $branch,
                 'user' => $user,
-                'token' => $token->plainTextToken,
             ];
         });
     }

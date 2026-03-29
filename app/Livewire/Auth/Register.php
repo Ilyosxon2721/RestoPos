@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Livewire\Auth;
 
 use App\Domain\Auth\Actions\RegisterOrganizationAction;
-use App\Domain\Organization\Models\Organization;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
@@ -72,13 +71,8 @@ final class Register extends Component
         Auth::login($result['user']);
         session()->regenerate();
 
-        // Redirect to their new subdomain
-        $baseDomain = config('restopos.base_domain');
-        $scheme = request()->isSecure() ? 'https' : 'http';
-        $port = request()->getPort();
-        $portSuffix = in_array($port, [80, 443]) ? '' : ':' . $port;
-
-        $this->redirect("{$scheme}://{$this->subdomain}.{$baseDomain}{$portSuffix}/cabinet/dashboard");
+        // Редирект на панель — RedirectByRole определит куда
+        $this->redirect('/redirect', navigate: true);
     }
 
     public function render(): \Illuminate\View\View
