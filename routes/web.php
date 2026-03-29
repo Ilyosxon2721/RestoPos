@@ -6,20 +6,58 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Landing Page (Публичная)
+| Общий middleware tenant — определяет организацию по субдомену
+|--------------------------------------------------------------------------
+| Работает на всех маршрутах. Если субдомен найден — привязывает tenant.
+| Если нет — пропускает (главный домен resto.uz).
 |--------------------------------------------------------------------------
 */
-Route::get('/', fn () => view('landing'))->name('landing');
 
 /*
 |--------------------------------------------------------------------------
-| Регистрация
+| Landing Page (Главный домен — resto.uz)
 |--------------------------------------------------------------------------
 */
-Route::middleware('guest')->group(function () {
-    Route::get('/login', \App\Livewire\Auth\Login::class)->name('login');
-    Route::get('/register', fn () => redirect('/login')); // TODO: Registration form
-});
+Route::get('/', function () {
+    if (app()->bound('tenant')) {
+        // На субдомене / → перенаправляем на логин или дашборд
+        if (auth()->check()) {
+            return redirect('/redirect');
+        }
+        return redirect('/login');
+    }
+    return view('landing');
+})->name('landing');
+
+/*
+|--------------------------------------------------------------------------
+| Регистрация (только на главном домене resto.uz)
+|--------------------------------------------------------------------------
+*/
+Route::get('/register', \App\Livewire\Auth\Register::class)
+    ->middleware('guest')
+    ->name('register');
+
+/*
+|--------------------------------------------------------------------------
+| Login — работает и на главном домене, и на субдомене
+|--------------------------------------------------------------------------
+*/
+Route::get('/login', \App\Livewire\Auth\Login::class)
+    ->middleware('guest')
+    ->name('login');
+
+/*
+|--------------------------------------------------------------------------
+| Logout — работает везде
+|--------------------------------------------------------------------------
+*/
+Route::post('/logout', function () {
+    auth()->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/login');
+})->name('logout');
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +65,6 @@ Route::middleware('guest')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')->group(function () {
-    // Гостевые маршруты Super Admin
     Route::get('/login', \App\Livewire\Admin\Login::class)->name('admin.login');
     Route::post('/logout', function () {
         auth('platform')->logout();
@@ -36,7 +73,6 @@ Route::prefix('admin')->group(function () {
         return redirect()->route('admin.login');
     })->name('admin.logout');
 
-    // Защищённые маршруты Super Admin
     Route::middleware('super_admin')->group(function () {
         Route::get('/', fn () => redirect()->route('admin.dashboard'));
         Route::get('/dashboard', \App\Livewire\Admin\Dashboard::class)->name('admin.dashboard');
@@ -49,20 +85,26 @@ Route::prefix('admin')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Client Routes (Require Authentication)
+| Redirect — определяет панель по роли пользователя
+|--------------------------------------------------------------------------
+| Единая точка входа после логина. Если на главном домене и у
+| организации есть субдомен — перенаправляет на субдомен.
+|--------------------------------------------------------------------------
+*/
+Route::get('/redirect', [\App\Application\Http\Middleware\RedirectByRole::class, 'handle'])
+    ->middleware('auth')
+    ->name('role.redirect');
+
+/*
+|--------------------------------------------------------------------------
+| Client Panel Routes (Require Authentication)
+|--------------------------------------------------------------------------
+| Все панели: cabinet, manager, cashier, waiter, kitchen, warehouse.
+| Работают на субдомене (lolotea.resto.uz/cabinet/dashboard)
+| и на главном домене (для обратной совместимости).
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
-
-    // Redirect after login based on role
-    Route::get('/redirect', [\App\Application\Http\Middleware\RedirectByRole::class, 'handle'])->name('role.redirect');
-
-    Route::post('/logout', function () {
-        auth()->logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
-        return redirect('/login');
-    })->name('logout');
 
     /*
     |----------------------------------------------------------------------
@@ -149,7 +191,7 @@ Route::middleware('auth')->group(function () {
     | Legacy routes (backward compatibility)
     |----------------------------------------------------------------------
     */
-    Route::get('/dashboard', fn () => redirect()->route('cabinet.dashboard'))->name('dashboard');
+    Route::get('/dashboard', fn () => redirect('/redirect'))->name('dashboard');
     Route::get('/pos', fn () => redirect()->route('cashier.terminal'))->name('pos');
     Route::get('/orders', fn () => redirect()->route('manager.orders'))->name('orders');
 });

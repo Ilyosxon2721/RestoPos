@@ -3,6 +3,9 @@
         {{-- Форма входа по Email/Пароль --}}
         <form wire:submit="login" class="space-y-5">
             <div>
+                @if ($tenantName)
+                    <p class="text-indigo-600 text-sm font-semibold text-center mb-1">{{ $tenantName }}</p>
+                @endif
                 <h2 class="text-2xl font-bold text-gray-800 text-center">Вход в систему</h2>
                 <p class="text-gray-500 text-sm text-center mt-1">Введите данные для входа</p>
             </div>
@@ -74,6 +77,14 @@
                 class="w-full rounded-lg border-2 border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors">
             Войти по PIN-коду
         </button>
+
+        @if (! $tenantName)
+            {{-- Ссылка на регистрацию --}}
+            <p class="mt-4 text-center text-sm text-gray-500">
+                Нет аккаунта?
+                <a href="/register" class="font-medium text-indigo-600 hover:text-indigo-500">Зарегистрироваться</a>
+            </p>
+        @endif
 
         {{-- Подсказка --}}
         <div class="mt-6 rounded-lg bg-gray-50 p-3">

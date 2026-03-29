@@ -19,6 +19,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Application\Http\Middleware\CheckRole::class,
             'super_admin' => \App\Application\Http\Middleware\SuperAdmin::class,
             'client_role' => \App\Application\Http\Middleware\ClientRole::class,
+            'tenant' => \App\Application\Http\Middleware\ResolveSubdomain::class,
+        ]);
+
+        // Resolve tenant (organization) from subdomain on every web request
+        $middleware->web(append: [
+            \App\Application\Http\Middleware\ResolveSubdomain::class,
         ]);
 
         $middleware->api(prepend: [
