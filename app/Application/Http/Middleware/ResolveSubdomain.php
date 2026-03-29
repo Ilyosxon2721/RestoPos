@@ -51,7 +51,7 @@ class ResolveSubdomain
         $host = $request->getHost();
         $baseDomain = config('restopos.base_domain');
 
-        // Match: subdomain.resto.uz, subdomain.resto.test, etc.
+        // Match: subdomain.restopos.uz, subdomain.resto.test, etc.
         if (str_ends_with($host, '.' . $baseDomain)) {
             $subdomain = str_replace('.' . $baseDomain, '', $host);
 

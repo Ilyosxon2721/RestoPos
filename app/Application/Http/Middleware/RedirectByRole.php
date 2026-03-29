@@ -67,7 +67,7 @@ class RedirectByRole
         $baseDomain = config('restopos.base_domain');
         $host = $request->getHost();
 
-        // Только если мы на base_domain (resto.uz), а не на forge/другом хостинге
+        // Только если мы на base_domain (restopos.uz), а не на forge/другом хостинге
         return $host === $baseDomain || str_ends_with($host, '.' . $baseDomain);
     }
 
