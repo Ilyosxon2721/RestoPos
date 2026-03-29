@@ -21,6 +21,7 @@ class RegisterOrganizationAction
             $organization = Organization::create([
                 'name' => $data['organization_name'],
                 'slug' => $data['organization_slug'] ?? \Str::slug($data['organization_name']),
+                'subdomain' => $data['subdomain'] ?? \Str::slug($data['organization_name']),
                 'legal_name' => $data['legal_name'] ?? null,
                 'tax_id' => $data['tax_id'] ?? null,
                 'phone' => $data['organization_phone'] ?? null,

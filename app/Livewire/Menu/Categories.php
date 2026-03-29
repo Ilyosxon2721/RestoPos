@@ -6,13 +6,14 @@ namespace App\Livewire\Menu;
 
 use App\Domain\Menu\Models\Category;
 use Illuminate\Database\Eloquent\Collection;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
+use App\Support\Traits\ResolvesLayout;
 use Livewire\Component;
 
-#[Layout('components.layouts.app')]
 final class Categories extends Component
 {
+    use ResolvesLayout;
+
     public Collection $categories;
 
     public bool $showModal = false;
@@ -126,6 +127,8 @@ final class Categories extends Component
 
     public function render()
     {
-        return view('livewire.menu.categories');
+        return view('livewire.menu.categories')
+            ->layout($this->resolveLayout());
     }
+
 }

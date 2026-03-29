@@ -20,6 +20,7 @@ class DemoDataSeeder extends Seeder
         $orgId = DB::table('organizations')->insertGetId([
             'uuid' => Str::uuid(),
             'name' => 'RestoPOS Demo',
+            'subdomain' => 'demo',
             'legal_name' => 'ООО "RestoPOS Demo"',
             'inn' => '123456789',
             'subscription_plan' => 'business',

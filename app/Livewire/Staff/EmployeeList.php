@@ -6,16 +6,15 @@ namespace App\Livewire\Staff;
 
 use App\Domain\Staff\Models\Employee;
 use App\Domain\Auth\Models\User;
-use Livewire\Attributes\Layout;
+use App\Support\Traits\ResolvesLayout;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.app')]
 class EmployeeList extends Component
 {
-    use WithPagination;
+    use WithPagination, ResolvesLayout;
 
     #[Url]
     public string $searchQuery = '';
@@ -137,6 +136,6 @@ class EmployeeList extends Component
 
         return view('livewire.staff.employee-list', [
             'employees' => $query->paginate(15),
-        ]);
+        ])->layout($this->resolveLayout());
     }
 }

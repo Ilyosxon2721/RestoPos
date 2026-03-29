@@ -14,8 +14,20 @@ class ClientRole
     {
         $user = auth()->user();
 
-        if (!$user) {
+        if (! $user) {
+            // If on tenant subdomain, redirect to tenant login
+            if (app()->bound('tenant')) {
+                return redirect('/login');
+            }
+
             return redirect()->route('login');
+        }
+
+        // Verify user belongs to current tenant
+        $tenant = app()->bound('tenant') ? app('tenant') : null;
+        if ($tenant && $user->organization_id !== $tenant->id) {
+            auth()->logout();
+            return redirect('/login');
         }
 
         foreach ($roles as $role) {

@@ -6,13 +6,14 @@ namespace App\Livewire\Settings;
 
 use App\Domain\Organization\Models\Branch;
 use App\Domain\Organization\Models\Organization;
-use Livewire\Attributes\Layout;
+use App\Support\Traits\ResolvesLayout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-#[Layout('components.layouts.app')]
 class General extends Component
 {
+    use ResolvesLayout;
+
     #[Validate('required|string|max:255')]
     public string $organizationName = '';
 
@@ -107,6 +108,7 @@ class General extends Component
 
     public function render()
     {
-        return view('livewire.settings.general');
+        return view('livewire.settings.general')
+            ->layout($this->resolveLayout());
     }
 }

@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Livewire\Warehouse;
 
+use App\Support\Traits\ResolvesLayout;
 use Illuminate\Support\Facades\DB;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.app')]
 class Stock extends Component
 {
-    use WithPagination;
+    use WithPagination, ResolvesLayout;
 
     #[Url]
     public string $searchQuery = '';
@@ -71,6 +70,6 @@ class Stock extends Component
 
         return view('livewire.warehouse.stock', [
             'items' => $items,
-        ]);
+        ])->layout($this->resolveLayout());
     }
 }

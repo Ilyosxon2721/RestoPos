@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace App\Livewire\Customers;
 
 use App\Domain\Customer\Models\Customer;
-use Livewire\Attributes\Layout;
+use App\Support\Traits\ResolvesLayout;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.app')]
 class CustomerList extends Component
 {
-    use WithPagination;
+    use WithPagination, ResolvesLayout;
 
     #[Url]
     public string $searchQuery = '';
@@ -133,6 +132,6 @@ class CustomerList extends Component
 
         return view('livewire.customers.customer-list', [
             'customers' => $query->paginate(15),
-        ]);
+        ])->layout($this->resolveLayout());
     }
 }

@@ -15,8 +15,13 @@
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm mb-4">
                 <span class="text-3xl">🍽️</span>
             </div>
-            <h1 class="text-3xl font-bold text-white tracking-wide">RestoPOS</h1>
-            <p class="text-indigo-200 mt-1 text-sm">Система управления рестораном</p>
+            @if (isset($tenant))
+                <h1 class="text-3xl font-bold text-white tracking-wide">{{ $tenant->name }}</h1>
+                <p class="text-indigo-200 mt-1 text-sm">Powered by RestoPOS</p>
+            @else
+                <h1 class="text-3xl font-bold text-white tracking-wide">RestoPOS</h1>
+                <p class="text-indigo-200 mt-1 text-sm">Система управления рестораном</p>
+            @endif
         </div>
 
         {{-- Контент --}}
