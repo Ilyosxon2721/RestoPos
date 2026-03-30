@@ -114,16 +114,45 @@ Route::middleware('auth')->group(function () {
     Route::prefix('cabinet')->middleware('client_role:owner')->group(function () {
         Route::get('/', fn () => redirect()->route('cabinet.dashboard'));
         Route::get('/dashboard', \App\Livewire\Cabinet\Dashboard::class)->name('cabinet.dashboard');
-        Route::get('/branches', \App\Livewire\Cabinet\Branches::class)->name('cabinet.branches');
-        Route::get('/menu', \App\Livewire\Menu\Categories::class)->name('cabinet.menu');
-        Route::get('/menu/items', \App\Livewire\Menu\Items::class)->name('cabinet.menu.items');
-        Route::get('/staff', \App\Livewire\Cabinet\Staff::class)->name('cabinet.staff');
-        Route::get('/customers', \App\Livewire\Customers\CustomerList::class)->name('cabinet.customers');
-        Route::get('/warehouse', \App\Livewire\Warehouse\Stock::class)->name('cabinet.warehouse');
         Route::get('/finance', \App\Livewire\Cabinet\Finance::class)->name('cabinet.finance');
         Route::get('/reports', \App\Livewire\Cabinet\Reports::class)->name('cabinet.reports');
-        Route::get('/subscription', \App\Livewire\Cabinet\Subscription::class)->name('cabinet.subscription');
+
+        // Меню
+        Route::get('/menu', \App\Livewire\Menu\Categories::class)->name('cabinet.menu');
+        Route::get('/menu/items', \App\Livewire\Menu\Items::class)->name('cabinet.menu.items');
+
+        // Склад
+        Route::get('/warehouse', \App\Livewire\Warehouse\Stock::class)->name('cabinet.warehouse');
+        Route::get('/warehouse/supplies', \App\Livewire\Cabinet\Warehouse\Supplies::class)->name('cabinet.warehouse.supplies');
+        Route::get('/warehouse/production', \App\Livewire\Cabinet\Warehouse\Production::class)->name('cabinet.warehouse.production');
+        Route::get('/warehouse/transfers', \App\Livewire\Cabinet\Warehouse\Transfers::class)->name('cabinet.warehouse.transfers');
+        Route::get('/warehouse/write-offs', \App\Livewire\Cabinet\Warehouse\WriteOffs::class)->name('cabinet.warehouse.write-offs');
+        Route::get('/warehouse/movement', \App\Livewire\Cabinet\Warehouse\Movement::class)->name('cabinet.warehouse.movement');
+        Route::get('/warehouse/inventory', \App\Livewire\Cabinet\Warehouse\Inventory::class)->name('cabinet.warehouse.inventory');
+        Route::get('/warehouse/suppliers', \App\Livewire\Cabinet\Warehouse\Suppliers::class)->name('cabinet.warehouse.suppliers');
+        Route::get('/warehouse/locations', \App\Livewire\Cabinet\Warehouse\Locations::class)->name('cabinet.warehouse.locations');
+        Route::get('/warehouse/packaging', \App\Livewire\Cabinet\Warehouse\Packaging::class)->name('cabinet.warehouse.packaging');
+
+        // Маркетинг
+        Route::get('/customers', \App\Livewire\Customers\CustomerList::class)->name('cabinet.customers');
+        Route::get('/marketing/groups', \App\Livewire\Cabinet\Marketing\Groups::class)->name('cabinet.marketing.groups');
+        Route::get('/marketing/loyalty', \App\Livewire\Cabinet\Marketing\Loyalty::class)->name('cabinet.marketing.loyalty');
+        Route::get('/marketing/promotions', \App\Livewire\Cabinet\Marketing\Promotions::class)->name('cabinet.marketing.promotions');
+
+        // Доступ
+        Route::get('/staff', \App\Livewire\Cabinet\Staff::class)->name('cabinet.staff');
+        Route::get('/roles', \App\Livewire\Cabinet\Roles::class)->name('cabinet.roles');
+        Route::get('/branches', \App\Livewire\Cabinet\Branches::class)->name('cabinet.branches');
+
+        // Настройки
         Route::get('/settings', \App\Livewire\Cabinet\Settings::class)->name('cabinet.settings');
+        Route::get('/subscription', \App\Livewire\Cabinet\Subscription::class)->name('cabinet.subscription');
+        Route::get('/settings/orders', \App\Livewire\Cabinet\Settings\Orders::class)->name('cabinet.settings.orders');
+        Route::get('/settings/delivery', \App\Livewire\Cabinet\Settings\Delivery::class)->name('cabinet.settings.delivery');
+        Route::get('/settings/tables', \App\Livewire\Cabinet\Settings\Tables::class)->name('cabinet.settings.tables');
+        Route::get('/settings/security', \App\Livewire\Cabinet\Settings\Security::class)->name('cabinet.settings.security');
+        Route::get('/settings/receipt', \App\Livewire\Cabinet\Settings\Receipt::class)->name('cabinet.settings.receipt');
+        Route::get('/settings/taxes', \App\Livewire\Cabinet\Settings\Taxes::class)->name('cabinet.settings.taxes');
     });
 
     /*
