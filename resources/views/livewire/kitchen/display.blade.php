@@ -1,8 +1,81 @@
 <div class="min-h-screen bg-gray-900 text-white" wire:poll.5s>
+
+    {{-- ========== PIN-ЭКРАН АВТОРИЗАЦИИ ========== --}}
+    @if ($pinLocked)
+        <div class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900">
+            <div class="w-full max-w-sm mx-auto text-center">
+                {{-- Логотип --}}
+                <div class="mb-8">
+                    <div class="w-20 h-20 mx-auto rounded-2xl bg-orange-600/20 flex items-center justify-center mb-4">
+                        <svg class="w-10 h-10 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white">Кухонный дисплей</h1>
+                    <p class="text-gray-400 text-sm mt-1">Введите PIN-код повара</p>
+                </div>
+
+                {{-- Индикатор PIN --}}
+                <div class="flex justify-center gap-4 mb-6">
+                    @for ($i = 0; $i < 4; $i++)
+                        <div class="h-4 w-4 rounded-full border-2 transition-all duration-200 {{ strlen($pin) > $i ? 'bg-orange-500 border-orange-500 scale-110' : 'border-gray-600' }}"></div>
+                    @endfor
+                </div>
+
+                @error('pin')
+                    <p class="text-red-400 text-sm mb-4">{{ $message }}</p>
+                @enderror
+
+                {{-- Цифровая клавиатура --}}
+                <div class="grid grid-cols-3 gap-3 max-w-xs mx-auto">
+                    @foreach (range(1, 9) as $digit)
+                        <button wire:click="appendPin('{{ $digit }}')"
+                                class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 active:bg-orange-600 text-2xl font-bold text-white transition-all duration-150 active:scale-95">
+                            {{ $digit }}
+                        </button>
+                    @endforeach
+                    <button wire:click="clearPin"
+                            class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 text-sm font-bold text-red-400 transition-all duration-150">
+                        Сброс
+                    </button>
+                    <button wire:click="appendPin('0')"
+                            class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 active:bg-orange-600 text-2xl font-bold text-white transition-all duration-150 active:scale-95">
+                        0
+                    </button>
+                    <button wire:click="backspacePin"
+                            class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 text-xl font-bold text-gray-400 transition-all duration-150 flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l7-7 12 0v14H10l-7-7z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                {{-- Кнопка выхода --}}
+                <div class="mt-8">
+                    <a href="/redirect" class="text-gray-500 hover:text-gray-300 text-sm transition">
+                        &larr; Вернуться в панель
+                    </a>
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{-- Верхняя панель фильтров --}}
     <div class="bg-gray-800 border-b border-gray-700 px-6 py-4">
         <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold">Кухонный дисплей</h1>
+            <div class="flex items-center gap-4">
+                <h1 class="text-2xl font-bold">Кухонный дисплей</h1>
+                @if ($operatorName)
+                    <button wire:click="lockKitchen"
+                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-600/20 text-orange-300 hover:bg-orange-600/30 text-sm font-medium transition"
+                            title="Сменить повара">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        {{ $operatorName }}
+                    </button>
+                @endif
+            </div>
 
             <div class="flex items-center gap-2">
                 <button

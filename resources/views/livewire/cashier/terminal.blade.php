@@ -1,6 +1,66 @@
 <div class="flex h-screen bg-gray-900 text-white overflow-hidden" x-data="{ notification: null }"
      @notify.window="notification = $event.detail; setTimeout(() => notification = null, 3000)">
 
+    {{-- ========== PIN-ЭКРАН АВТОРИЗАЦИИ ========== --}}
+    @if ($pinLocked)
+        <div class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900">
+            <div class="w-full max-w-sm mx-auto text-center">
+                {{-- Логотип --}}
+                <div class="mb-8">
+                    <div class="w-20 h-20 mx-auto rounded-2xl bg-indigo-600/20 flex items-center justify-center mb-4">
+                        <svg class="w-10 h-10 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white">POS Терминал</h1>
+                    <p class="text-gray-400 text-sm mt-1">Введите PIN-код кассира</p>
+                </div>
+
+                {{-- Индикатор PIN --}}
+                <div class="flex justify-center gap-4 mb-6">
+                    @for ($i = 0; $i < 4; $i++)
+                        <div class="h-4 w-4 rounded-full border-2 transition-all duration-200 {{ strlen($pin) > $i ? 'bg-indigo-500 border-indigo-500 scale-110' : 'border-gray-600' }}"></div>
+                    @endfor
+                </div>
+
+                @error('pin')
+                    <p class="text-red-400 text-sm mb-4">{{ $message }}</p>
+                @enderror
+
+                {{-- Цифровая клавиатура --}}
+                <div class="grid grid-cols-3 gap-3 max-w-xs mx-auto">
+                    @foreach (range(1, 9) as $digit)
+                        <button wire:click="appendPin('{{ $digit }}')"
+                                class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 active:bg-indigo-600 text-2xl font-bold text-white transition-all duration-150 active:scale-95">
+                            {{ $digit }}
+                        </button>
+                    @endforeach
+                    <button wire:click="clearPin"
+                            class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 text-sm font-bold text-red-400 transition-all duration-150">
+                        Сброс
+                    </button>
+                    <button wire:click="appendPin('0')"
+                            class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 active:bg-indigo-600 text-2xl font-bold text-white transition-all duration-150 active:scale-95">
+                        0
+                    </button>
+                    <button wire:click="backspacePin"
+                            class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 text-xl font-bold text-gray-400 transition-all duration-150 flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l7-7 12 0v14H10l-7-7z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                {{-- Кнопка выхода --}}
+                <div class="mt-8">
+                    <a href="/redirect" class="text-gray-500 hover:text-gray-300 text-sm transition">
+                        &larr; Вернуться в панель
+                    </a>
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{-- ========== ЛЕВАЯ ПАНЕЛЬ: Категории ========== --}}
     <div class="w-24 bg-gray-950 flex flex-col border-r border-gray-800 overflow-y-auto scrollbar-hide">
         {{-- Все категории --}}
@@ -32,8 +92,20 @@
 
     {{-- ========== ЦЕНТРАЛЬНАЯ ПАНЕЛЬ: Товары ========== --}}
     <div class="flex-1 flex flex-col min-w-0">
-        {{-- Шапка: поиск + тип заказа + кнопки --}}
+        {{-- Шапка: оператор + поиск + тип заказа + кнопки --}}
         <div class="flex items-center gap-2 px-3 py-2 border-b border-gray-800" style="background: #1a1d23;">
+            {{-- Оператор --}}
+            @if ($operatorName)
+                <button wire:click="lockTerminal"
+                        class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600/30 text-sm font-medium transition shrink-0"
+                        title="Сменить кассира">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    {{ $operatorName }}
+                </button>
+            @endif
+
             {{-- Поиск --}}
             <div class="relative flex-1 max-w-sm">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
