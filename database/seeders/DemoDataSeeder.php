@@ -121,6 +121,80 @@ class DemoDataSeeder extends Seeder
             'updated_at' => $now,
         ]);
 
+        // Создаём демо-кассира
+        $cashierUserId = DB::table('users')->insertGetId([
+            'uuid' => Str::uuid(),
+            'organization_id' => $orgId,
+            'email' => 'cashier@restopos.uz',
+            'phone' => '+998901234569',
+            'password' => Hash::make('password'),
+            'pin_code' => '2222',
+            'first_name' => 'Дилноза',
+            'last_name' => 'Рахимова',
+            'locale' => 'ru',
+            'is_active' => true,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        $cashierRoleId = DB::table('roles')->where('slug', 'cashier')->value('id');
+        if ($cashierRoleId) {
+            DB::table('user_roles')->insert([
+                'user_id' => $cashierUserId,
+                'role_id' => $cashierRoleId,
+                'branch_id' => $branchId,
+            ]);
+        }
+
+        DB::table('employees')->insert([
+            'user_id' => $cashierUserId,
+            'branch_id' => $branchId,
+            'position' => 'Кассир',
+            'hire_date' => now()->subMonths(6),
+            'salary_type' => 'fixed',
+            'monthly_salary' => 4000000,
+            'sales_percent' => 0,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        // Создаём демо-повара
+        $cookUserId = DB::table('users')->insertGetId([
+            'uuid' => Str::uuid(),
+            'organization_id' => $orgId,
+            'email' => 'cook@restopos.uz',
+            'phone' => '+998901234570',
+            'password' => Hash::make('password'),
+            'pin_code' => '3333',
+            'first_name' => 'Бахтиёр',
+            'last_name' => 'Усманов',
+            'locale' => 'ru',
+            'is_active' => true,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        $cookRoleId = DB::table('roles')->where('slug', 'cook')->value('id');
+        if ($cookRoleId) {
+            DB::table('user_roles')->insert([
+                'user_id' => $cookUserId,
+                'role_id' => $cookRoleId,
+                'branch_id' => $branchId,
+            ]);
+        }
+
+        DB::table('employees')->insert([
+            'user_id' => $cookUserId,
+            'branch_id' => $branchId,
+            'position' => 'Повар',
+            'hire_date' => now()->subYear(),
+            'salary_type' => 'fixed',
+            'monthly_salary' => 5000000,
+            'sales_percent' => 0,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
         // Создаём единицы измерения
         $units = [
             ['name' => 'Штука', 'short_name' => 'шт', 'is_default' => true],
