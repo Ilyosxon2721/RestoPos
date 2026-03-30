@@ -24,12 +24,28 @@ class RedirectByRole
         'courier' => '/waiter/orders',
     ];
 
+    /**
+     * Вызывается как action из маршрута GET /redirect
+     */
+    public function __invoke(Request $request): Response
+    {
+        return $this->performRedirect($request);
+    }
+
+    /**
+     * Вызывается как middleware
+     */
     public function handle(Request $request, Closure $next): Response
+    {
+        return $this->performRedirect($request);
+    }
+
+    private function performRedirect(Request $request): \Illuminate\Http\RedirectResponse
     {
         $user = auth()->user();
 
         if (! $user) {
-            return $next($request);
+            return redirect('/login');
         }
 
         $userRoles = $user->roles()->pluck('slug')->toArray();
