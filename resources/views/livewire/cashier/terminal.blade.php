@@ -1,280 +1,500 @@
-<div class="flex h-screen overflow-hidden bg-gray-100" x-data="{ showTableModal: false }">
-    {{-- Левая часть: Меню (60%) --}}
-    <div class="flex w-3/5 flex-col overflow-hidden border-r border-gray-200">
-        {{-- Верхняя панель: выбор стола и зала --}}
-        <div class="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3">
-            {{-- Кнопка выбора стола --}}
-            <button
-                @click="showTableModal = true"
-                class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z"/>
-                </svg>
-                @if($selectedTable)
-                    Стол {{ $this->tables->firstWhere('id', $selectedTable)?->number ?? $selectedTable }}
+<div class="flex h-screen bg-gray-900 text-white overflow-hidden" x-data="{ notification: null }"
+     @notify.window="notification = $event.detail; setTimeout(() => notification = null, 3000)">
+
+    {{-- ========== ЛЕВАЯ ПАНЕЛЬ: Категории ========== --}}
+    <div class="w-24 bg-gray-950 flex flex-col border-r border-gray-800 overflow-y-auto scrollbar-hide">
+        {{-- Все категории --}}
+        <button wire:click="selectCategory(null)"
+                class="flex flex-col items-center justify-center px-2 py-4 text-xs font-medium border-b border-gray-800 transition
+                       {{ !$selectedCategory ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+            </svg>
+            Все
+        </button>
+
+        @foreach ($this->categories as $category)
+            <button wire:click="selectCategory({{ $category->id }})"
+                    class="flex flex-col items-center justify-center px-2 py-4 text-xs font-medium border-b border-gray-800 transition min-h-[72px]
+                           {{ $selectedCategory == $category->id ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+                @if ($category->image)
+                    <img src="{{ $category->image }}" alt="" class="w-8 h-8 rounded-lg mb-1 object-cover">
                 @else
-                    Выбрать стол
+                    <div class="w-8 h-8 rounded-lg mb-1 flex items-center justify-center text-lg"
+                         style="background: {{ $category->color ?? '#4F46E5' }}20">
+                        {{ mb_substr($category->name, 0, 1) }}
+                    </div>
                 @endif
+                <span class="text-center leading-tight line-clamp-2">{{ $category->name }}</span>
             </button>
+        @endforeach
+    </div>
 
+    {{-- ========== ЦЕНТРАЛЬНАЯ ПАНЕЛЬ: Товары ========== --}}
+    <div class="flex-1 flex flex-col min-w-0">
+        {{-- Шапка: поиск + тип заказа + кнопки --}}
+        <div class="flex items-center gap-2 px-3 py-2 border-b border-gray-800" style="background: #1a1d23;">
             {{-- Поиск --}}
-            <div class="relative flex-1">
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                </div>
-                <input
-                    wire:model.live.debounce.300ms="searchProduct"
-                    type="text"
-                    placeholder="Поиск блюда..."
-                    class="block w-full rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                >
+            <div class="relative flex-1 max-w-sm">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input wire:model.live.debounce.300ms="searchProduct"
+                       type="text"
+                       placeholder="Поиск товара..."
+                       class="w-full bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder-gray-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none">
             </div>
-        </div>
 
-        {{-- Категории --}}
-        <div class="flex gap-2 overflow-x-auto border-b border-gray-200 bg-white px-4 py-2 scrollbar-thin">
-            <button
-                wire:click="selectCategory(null)"
-                @class([
-                    'flex-shrink-0 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
-                    'bg-emerald-600 text-white' => $selectedCategory === null,
-                    'bg-gray-100 text-gray-700 hover:bg-gray-200' => $selectedCategory !== null,
-                ])
-            >
-                Все
+            {{-- Стол / Тип заказа --}}
+            <button wire:click="openTableModal"
+                    class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition
+                           {{ $selectedTable || $selectedTableName ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-gray-700 hover:bg-gray-600' }}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+                {{ $selectedTableName ?? 'Выбрать стол' }}
             </button>
-            @foreach($this->categories as $category)
-                <button
-                    wire:click="selectCategory({{ $category->id }})"
-                    @class([
-                        'flex-shrink-0 rounded-lg px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap',
-                        'bg-emerald-600 text-white' => $selectedCategory === $category->id,
-                        'bg-gray-100 text-gray-700 hover:bg-gray-200' => $selectedCategory !== $category->id,
-                    ])
-                >
-                    {{ $category->name }}
-                </button>
-            @endforeach
+
+            {{-- Открытые заказы --}}
+            <button wire:click="$set('showOrdersModal', true)"
+                    class="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                Заказы
+            </button>
         </div>
 
-        {{-- Сетка продуктов --}}
-        <div class="flex-1 overflow-y-auto p-4">
-            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                @forelse($this->products as $product)
-                    <button
-                        wire:click="addToCart({{ $product->id }})"
-                        class="flex flex-col items-center rounded-xl border border-gray-200 bg-white p-4 text-center shadow-sm transition-all hover:border-emerald-300 hover:shadow-md active:scale-95"
-                    >
-                        @if($product->image)
-                            <img src="{{ $product->image }}" alt="{{ $product->name }}" class="mb-2 h-16 w-16 rounded-lg object-cover">
+        {{-- Сетка товаров --}}
+        <div class="flex-1 overflow-y-auto p-3">
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
+                @forelse ($this->products as $product)
+                    <button wire:click="addToCart({{ $product->id }})"
+                            class="group flex flex-col bg-gray-800 rounded-xl overflow-hidden hover:ring-1 hover:ring-indigo-500 transition-all active:scale-95 {{ $product->in_stop_list ? 'opacity-40 pointer-events-none' : '' }}"
+                            style="min-height: 120px;">
+                        @if ($product->image)
+                            <div class="aspect-square w-full overflow-hidden">
+                                <img src="{{ $product->image }}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                            </div>
                         @else
-                            <div class="mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100">
-                                <svg class="h-8 w-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
+                            <div class="aspect-square w-full flex items-center justify-center text-3xl"
+                                 style="background: {{ $product->category?->color ?? '#4F46E5' }}15">
+                                {{ mb_substr($product->name, 0, 1) }}
                             </div>
                         @endif
-                        <span class="text-sm font-medium text-gray-800 line-clamp-2">{{ $product->name }}</span>
-                        <span class="mt-1 text-sm font-bold text-emerald-600">{{ number_format((float) $product->price, 0, ',', ' ') }}</span>
+                        <div class="p-2 flex-1 flex flex-col justify-between">
+                            <p class="text-xs font-medium text-gray-200 line-clamp-2 leading-tight">{{ $product->name }}</p>
+                            <p class="text-sm font-bold text-emerald-400 mt-1">{{ number_format($product->price, 0, '.', ' ') }}</p>
+                        </div>
                     </button>
                 @empty
-                    <div class="col-span-full py-12 text-center text-sm text-gray-500">
-                        Товары не найдены
+                    <div class="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
+                        <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                        <p class="text-lg">Товары не найдены</p>
                     </div>
                 @endforelse
             </div>
         </div>
     </div>
 
-    {{-- Правая часть: Корзина (40%) --}}
-    <div class="flex w-2/5 flex-col bg-white">
-        {{-- Информация о столе --}}
-        <div class="border-b border-gray-200 px-5 py-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900">
-                        @if($selectedTable)
-                            Стол {{ $this->tables->firstWhere('id', $selectedTable)?->number ?? $selectedTable }}
-                        @else
-                            Стол не выбран
-                        @endif
-                    </h2>
-                    <p class="text-xs text-gray-500">{{ count($cart) }} позиций</p>
-                </div>
-                @if(count($cart) > 0)
-                    <button
-                        wire:click="clearCart"
-                        class="text-sm text-red-500 hover:text-red-700 transition-colors"
-                    >
-                        Очистить
-                    </button>
-                @endif
+    {{-- ========== ПРАВАЯ ПАНЕЛЬ: Чек / Корзина ========== --}}
+    <div class="w-80 lg:w-96 border-l border-gray-800 flex flex-col" style="background: #1a1d23;">
+        {{-- Заголовок чека --}}
+        <div class="px-4 py-3 border-b border-gray-800 flex items-center justify-between">
+            <div>
+                <h3 class="text-sm font-bold text-white">
+                    @if ($currentOrderId)
+                        Заказ #{{ $currentOrderId }}
+                    @else
+                        Новый заказ
+                    @endif
+                </h3>
+                <p class="text-xs text-gray-500">
+                    {{ $selectedTableName ?? 'Стол не выбран' }}
+                    @if (count($cart) > 0)
+                        &middot; {{ $this->cartItemsCount }} поз.
+                    @endif
+                </p>
             </div>
+            @if (count($cart) > 0)
+                <button wire:click="clearCart" class="text-gray-500 hover:text-red-400 transition p-1" title="Очистить">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                </button>
+            @endif
         </div>
 
-        {{-- Позиции корзины --}}
-        <div class="flex-1 overflow-y-auto px-5 py-3">
-            @forelse($cart as $index => $item)
-                <div class="flex items-center gap-3 border-b border-gray-100 py-3" wire:key="cart-{{ $index }}">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-800 truncate">{{ $item['name'] }}</p>
-                        <p class="text-xs text-gray-500">{{ number_format($item['price'], 0, ',', ' ') }} x {{ $item['quantity'] }}</p>
+        {{-- Позиции чека --}}
+        <div class="flex-1 overflow-y-auto">
+            @forelse ($cart as $index => $item)
+                <div class="px-4 py-2.5 border-b border-gray-800/60 {{ ($item['sent'] ?? false) ? 'bg-gray-800/30' : '' }}">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-200 truncate">
+                                {{ $item['name'] }}
+                                @if ($item['sent'] ?? false)
+                                    <span class="text-[10px] text-emerald-500 font-normal ml-1">КУХНЯ</span>
+                                @endif
+                            </p>
+                            <p class="text-xs text-gray-500 mt-0.5">
+                                {{ number_format($item['price'], 0, '.', ' ') }} x {{ $item['quantity'] }}
+                            </p>
+                        </div>
+                        <span class="text-sm font-semibold text-white whitespace-nowrap">
+                            {{ number_format($item['subtotal'], 0, '.', ' ') }}
+                        </span>
                     </div>
 
-                    {{-- Управление количеством --}}
-                    <div class="flex items-center gap-1">
-                        <button
-                            wire:click="updateQuantity({{ $index }}, {{ $item['quantity'] - 1 }})"
-                            class="flex h-7 w-7 items-center justify-center rounded-md border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 transition-colors"
-                        >
-                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
-                            </svg>
-                        </button>
-                        <span class="w-8 text-center text-sm font-medium text-gray-800">{{ $item['quantity'] }}</span>
-                        <button
-                            wire:click="updateQuantity({{ $index }}, {{ $item['quantity'] + 1 }})"
-                            class="flex h-7 w-7 items-center justify-center rounded-md border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 transition-colors"
-                        >
-                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                        </button>
+                    {{-- Кнопки +/- --}}
+                    <div class="flex items-center justify-between mt-1.5">
+                        <div class="flex items-center gap-1">
+                            @if (! ($item['sent'] ?? false))
+                                <button wire:click="decrementItem({{ $index }})"
+                                        class="w-7 h-7 flex items-center justify-center rounded-md bg-gray-700 hover:bg-red-600 text-gray-300 hover:text-white transition text-sm">
+                                    @if ($item['quantity'] == 1)
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    @else
+                                        &minus;
+                                    @endif
+                                </button>
+                            @endif
+                            <span class="w-8 text-center text-sm font-medium text-gray-300">{{ $item['quantity'] }}</span>
+                            <button wire:click="incrementItem({{ $index }})"
+                                    class="w-7 h-7 flex items-center justify-center rounded-md bg-gray-700 hover:bg-indigo-600 text-gray-300 hover:text-white transition text-sm">
+                                +
+                            </button>
+                        </div>
                     </div>
-
-                    {{-- Сумма --}}
-                    <div class="w-20 text-right">
-                        <span class="text-sm font-bold text-gray-900">{{ number_format($item['subtotal'], 0, ',', ' ') }}</span>
-                    </div>
-
-                    {{-- Удалить --}}
-                    <button
-                        wire:click="removeFromCart({{ $index }})"
-                        class="flex h-7 w-7 items-center justify-center rounded-md text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
-                    >
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
                 </div>
             @empty
-                <div class="flex flex-col items-center justify-center py-16 text-gray-400">
-                    <svg class="mb-3 h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex flex-col items-center justify-center py-16 text-gray-600">
+                    <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
                     </svg>
                     <p class="text-sm">Корзина пуста</p>
-                    <p class="mt-1 text-xs">Выберите блюда из меню</p>
+                    <p class="text-xs mt-1">Выберите товар из меню</p>
                 </div>
             @endforelse
         </div>
 
-        {{-- Итого и кнопки --}}
-        <div class="border-t border-gray-200 px-5 py-4">
-            <div class="mb-4 flex items-center justify-between">
-                <span class="text-lg font-bold text-gray-900">Итого:</span>
-                <span class="text-2xl font-bold text-emerald-600">{{ number_format($this->cartTotal, 0, ',', ' ') }} сум</span>
-            </div>
+        {{-- Итоги --}}
+        @if (count($cart) > 0)
+            <div class="border-t border-gray-700 px-4 py-3 space-y-1.5">
+                <div class="flex justify-between text-sm text-gray-400">
+                    <span>Подитог</span>
+                    <span>{{ number_format($this->cartTotal, 0, '.', ' ') }}</span>
+                </div>
 
-            <div class="flex gap-3">
-                <button
-                    @class([
-                        'flex-1 rounded-lg py-3 text-sm font-medium transition-colors',
-                        'bg-blue-600 text-white hover:bg-blue-700' => count($cart) > 0 && $selectedTable,
-                        'bg-gray-200 text-gray-400 cursor-not-allowed' => count($cart) === 0 || !$selectedTable,
-                    ])
-                    @disabled(count($cart) === 0 || !$selectedTable)
-                >
-                    Отправить на кухню
+                @if ($this->totalDiscount > 0)
+                    <div class="flex justify-between text-sm text-orange-400">
+                        <span>Скидка {{ $discountPercent > 0 ? "({$discountPercent}%)" : '' }}</span>
+                        <span>-{{ number_format($this->totalDiscount, 0, '.', ' ') }}</span>
+                    </div>
+                @endif
+
+                <div class="flex justify-between text-lg font-bold text-white pt-1 border-t border-gray-700">
+                    <span>Итого</span>
+                    <span class="text-emerald-400">{{ number_format($this->totalWithDiscount, 0, '.', ' ') }}</span>
+                </div>
+            </div>
+        @endif
+
+        {{-- Кнопки действий --}}
+        <div class="p-3 border-t border-gray-700 space-y-2">
+            @if ($this->totalDiscount == 0 && count($cart) > 0)
+                <button wire:click="openDiscountModal"
+                        class="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-sm font-medium text-gray-300 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                    Скидка
                 </button>
-                <button
-                    @class([
-                        'flex-1 rounded-lg py-3 text-sm font-medium transition-colors',
-                        'bg-emerald-600 text-white hover:bg-emerald-700' => count($cart) > 0,
-                        'bg-gray-200 text-gray-400 cursor-not-allowed' => count($cart) === 0,
-                    ])
-                    @disabled(count($cart) === 0)
-                >
-                    Оплатить
+            @elseif ($this->totalDiscount > 0)
+                <button wire:click="removeDiscount"
+                        class="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-orange-600/20 hover:bg-orange-600/30 text-sm font-medium text-orange-400 transition">
+                    Убрать скидку ({{ $discountPercent > 0 ? "{$discountPercent}%" : number_format($discountAmount, 0, '.', ' ') }})
+                </button>
+            @endif
+
+            <div class="grid grid-cols-2 gap-2">
+                <button wire:click="sendToKitchen"
+                        @disabled(empty($cart))
+                        class="flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 disabled:opacity-30 disabled:cursor-not-allowed text-sm font-bold text-white transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10s4-1 5-3c1.5 2.5 3 3.5 3 5a4 4 0 01-4 4z"/>
+                    </svg>
+                    Кухня
+                </button>
+
+                <button wire:click="openPaymentModal"
+                        @disabled(empty($cart))
+                        class="flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed text-sm font-bold text-white transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    Оплата
                 </button>
             </div>
         </div>
     </div>
 
-    {{-- Модальное окно выбора стола --}}
-    <div
-        x-show="showTableModal"
-        x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-150"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-        @click.self="showTableModal = false"
-        style="display: none;"
-    >
-        <div
-            class="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 scale-95"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-95"
-        >
-            <div class="mb-4 flex items-center justify-between">
-                <h3 class="text-lg font-bold text-gray-900">Выберите стол</h3>
-                <button @click="showTableModal = false" class="text-gray-400 hover:text-gray-600">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-
-            {{-- Залы --}}
-            <div class="mb-4 flex gap-2">
-                @foreach($this->halls as $hall)
-                    <button
-                        wire:click="selectHall({{ $hall->id }})"
-                        @class([
-                            'rounded-lg px-4 py-2 text-sm font-medium transition-colors',
-                            'bg-emerald-600 text-white' => $selectedHall === $hall->id,
-                            'bg-gray-100 text-gray-700 hover:bg-gray-200' => $selectedHall !== $hall->id,
-                        ])
-                    >
-                        {{ $hall->name }}
+    {{-- ========== МОДАЛКА: Выбор стола ========== --}}
+    @if ($showTableModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70" wire:click.self="$set('showTableModal', false)">
+            <div class="bg-gray-900 rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden border border-gray-700 shadow-2xl">
+                <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+                    <h3 class="text-lg font-bold">Выберите стол или тип заказа</h3>
+                    <button wire:click="$set('showTableModal', false)" class="text-gray-500 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
                     </button>
-                @endforeach
-            </div>
+                </div>
 
-            {{-- Столы --}}
-            <div class="grid grid-cols-4 gap-3 max-h-80 overflow-y-auto">
-                @foreach($this->tables as $table)
-                    @php
-                        $isOccupied = $table->status === 'occupied';
-                        $isFree = in_array($table->status, ['free', 'available']);
-                    @endphp
-                    <button
-                        wire:click="selectTable({{ $table->id }})"
-                        @click="showTableModal = false"
-                        @class([
-                            'flex flex-col items-center justify-center rounded-xl border-2 p-4 transition-all',
-                            'border-emerald-500 bg-emerald-50' => $selectedTable === $table->id,
-                            'border-emerald-200 bg-emerald-50 hover:border-emerald-400' => $isFree && $selectedTable !== $table->id,
-                            'border-red-200 bg-red-50 hover:border-red-400' => $isOccupied && $selectedTable !== $table->id,
-                            'border-amber-200 bg-amber-50 hover:border-amber-400' => $table->status === 'reserved' && $selectedTable !== $table->id,
-                        ])
-                    >
-                        <span class="text-lg font-bold text-gray-800">{{ $table->number }}</span>
-                        <span class="text-xs text-gray-500">
-                            @if($isFree) Свободен @elseif($isOccupied) Занят @else Бронь @endif
-                        </span>
+                {{-- Быстрый выбор типа --}}
+                <div class="px-6 py-3 flex gap-2 border-b border-gray-800">
+                    <button wire:click="setOrderType('takeaway')"
+                            class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-sm font-medium transition">
+                        С собой
                     </button>
-                @endforeach
+                    <button wire:click="setOrderType('delivery')"
+                            class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-sm font-medium transition">
+                        Доставка
+                    </button>
+                </div>
+
+                {{-- Залы --}}
+                <div class="px-6 py-2 flex gap-2 overflow-x-auto">
+                    @foreach ($this->halls as $hall)
+                        <button wire:click="selectHall({{ $hall->id }})"
+                                class="px-4 py-1.5 rounded-full text-sm font-medium transition whitespace-nowrap
+                                       {{ $selectedHall == $hall->id ? 'bg-indigo-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700' }}">
+                            {{ $hall->name }}
+                        </button>
+                    @endforeach
+                </div>
+
+                {{-- Сетка столов --}}
+                <div class="px-6 py-4 overflow-y-auto max-h-[50vh]">
+                    <div class="grid grid-cols-4 sm:grid-cols-5 gap-3">
+                        @foreach ($this->tables as $table)
+                            <button wire:click="selectTable({{ $table->id }})"
+                                    class="aspect-square flex flex-col items-center justify-center rounded-xl border-2 transition font-medium
+                                           {{ $table->has_order ? 'border-amber-500 bg-amber-500/10 text-amber-400' : 'border-gray-700 bg-gray-800 text-gray-300 hover:border-emerald-500 hover:bg-emerald-500/10' }}">
+                                <span class="text-lg font-bold">{{ $table->number }}</span>
+                                <span class="text-[10px] mt-0.5">{{ $table->seats ?? '' }} мест</span>
+                                @if ($table->has_order)
+                                    <span class="text-[10px] text-amber-500 mt-0.5">Занят</span>
+                                @endif
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
             </div>
         </div>
+    @endif
+
+    {{-- ========== МОДАЛКА: Оплата ========== --}}
+    @if ($showPaymentModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70" wire:click.self="$set('showPaymentModal', false)">
+            <div class="bg-gray-900 rounded-2xl w-full max-w-md border border-gray-700 shadow-2xl">
+                <div class="px-6 py-4 border-b border-gray-800">
+                    <h3 class="text-lg font-bold">Оплата заказа</h3>
+                </div>
+
+                <div class="px-6 py-4 space-y-4">
+                    {{-- Сумма к оплате --}}
+                    <div class="text-center py-4 bg-gray-800 rounded-xl">
+                        <p class="text-sm text-gray-400 mb-1">К оплате</p>
+                        <p class="text-4xl font-bold text-emerald-400">{{ number_format($this->totalWithDiscount, 0, '.', ' ') }}</p>
+                        <p class="text-xs text-gray-500 mt-1">сум</p>
+                    </div>
+
+                    {{-- Способ оплаты --}}
+                    <div class="grid grid-cols-3 gap-2">
+                        <button wire:click="$set('paymentMethod', 'cash')"
+                                class="py-3 rounded-xl text-sm font-bold transition
+                                       {{ $paymentMethod === 'cash' ? 'bg-emerald-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700' }}">
+                            Наличные
+                        </button>
+                        <button wire:click="$set('paymentMethod', 'card')"
+                                class="py-3 rounded-xl text-sm font-bold transition
+                                       {{ $paymentMethod === 'card' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700' }}">
+                            Карта
+                        </button>
+                        <button wire:click="$set('paymentMethod', 'mixed')"
+                                class="py-3 rounded-xl text-sm font-bold transition
+                                       {{ $paymentMethod === 'mixed' ? 'bg-purple-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700' }}">
+                            Смешанный
+                        </button>
+                    </div>
+
+                    {{-- Ввод наличных --}}
+                    @if ($paymentMethod === 'cash')
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Получено наличными</label>
+                            <input wire:model.live="cashReceived"
+                                   type="number"
+                                   class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-lg font-bold text-white text-center focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                   placeholder="0">
+                            @if ($this->changeAmount > 0)
+                                <p class="text-center text-amber-400 font-bold mt-2">
+                                    Сдача: {{ number_format($this->changeAmount, 0, '.', ' ') }} сум
+                                </p>
+                            @endif
+
+                            {{-- Быстрые суммы --}}
+                            <div class="grid grid-cols-4 gap-2 mt-2">
+                                @foreach ([10000, 20000, 50000, 100000] as $amount)
+                                    <button wire:click="$set('cashReceived', '{{ $amount }}')"
+                                            class="py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs font-medium text-gray-400 transition">
+                                        {{ number_format($amount, 0, '.', ' ') }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="px-6 py-4 border-t border-gray-800 flex gap-3">
+                    <button wire:click="$set('showPaymentModal', false)"
+                            class="flex-1 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-sm font-bold transition">
+                        Отмена
+                    </button>
+                    <button wire:click="processPayment"
+                            class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-sm font-bold transition">
+                        Оплатить
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- ========== МОДАЛКА: Скидка ========== --}}
+    @if ($showDiscountModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70" wire:click.self="$set('showDiscountModal', false)">
+            <div class="bg-gray-900 rounded-2xl w-full max-w-sm border border-gray-700 shadow-2xl">
+                <div class="px-6 py-4 border-b border-gray-800">
+                    <h3 class="text-lg font-bold">Скидка</h3>
+                </div>
+
+                <div class="px-6 py-4 space-y-4">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button wire:click="$set('discountType', 'percent')"
+                                class="py-2 rounded-lg text-sm font-bold transition
+                                       {{ $discountType === 'percent' ? 'bg-indigo-600 text-white' : 'bg-gray-800 text-gray-400' }}">
+                            Процент %
+                        </button>
+                        <button wire:click="$set('discountType', 'fixed')"
+                                class="py-2 rounded-lg text-sm font-bold transition
+                                       {{ $discountType === 'fixed' ? 'bg-indigo-600 text-white' : 'bg-gray-800 text-gray-400' }}">
+                            Фикс. сумма
+                        </button>
+                    </div>
+
+                    @if ($discountType === 'percent')
+                        <input wire:model="discountPercent"
+                               type="number" min="0" max="100" step="1"
+                               class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-2xl font-bold text-white text-center focus:border-indigo-500 focus:outline-none"
+                               placeholder="0">
+                        <div class="grid grid-cols-4 gap-2">
+                            @foreach ([5, 10, 15, 20] as $p)
+                                <button wire:click="$set('discountPercent', {{ $p }})"
+                                        class="py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-sm font-medium text-gray-400 transition">
+                                    {{ $p }}%
+                                </button>
+                            @endforeach
+                        </div>
+                    @else
+                        <input wire:model="discountAmount"
+                               type="number" min="0"
+                               class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-2xl font-bold text-white text-center focus:border-indigo-500 focus:outline-none"
+                               placeholder="0">
+                    @endif
+                </div>
+
+                <div class="px-6 py-4 border-t border-gray-800 flex gap-3">
+                    <button wire:click="$set('showDiscountModal', false)"
+                            class="flex-1 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-sm font-bold transition">
+                        Отмена
+                    </button>
+                    <button wire:click="applyDiscount"
+                            class="flex-1 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-sm font-bold transition">
+                        Применить
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- ========== МОДАЛКА: Открытые заказы ========== --}}
+    @if ($showOrdersModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70" wire:click.self="$set('showOrdersModal', false)">
+            <div class="bg-gray-900 rounded-2xl w-full max-w-lg max-h-[80vh] overflow-hidden border border-gray-700 shadow-2xl">
+                <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+                    <h3 class="text-lg font-bold">Открытые заказы</h3>
+                    <button wire:click="$set('showOrdersModal', false)" class="text-gray-500 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="overflow-y-auto max-h-[60vh]">
+                    @forelse ($this->openOrders as $order)
+                        <button wire:click="loadOrder({{ $order->id }})"
+                                class="w-full text-left px-6 py-4 border-b border-gray-800 hover:bg-gray-800 transition">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-white">#{{ $order->order_number }}</span>
+                                    <span class="text-sm text-gray-500 ml-2">
+                                        {{ $order->table ? "Стол {$order->table->number}" : ($order->type === 'takeaway' ? 'С собой' : 'Доставка') }}
+                                    </span>
+                                </div>
+                                <span class="text-sm font-bold text-emerald-400">
+                                    {{ number_format($order->total_amount, 0, '.', ' ') }}
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between mt-1">
+                                <span class="text-xs text-gray-500">
+                                    {{ $order->items->count() }} поз. &middot; {{ $order->created_at->format('H:i') }}
+                                </span>
+                                <span class="text-xs px-2 py-0.5 rounded-full font-medium
+                                    {{ match($order->status) {
+                                        'new' => 'bg-blue-500/20 text-blue-400',
+                                        'preparing' => 'bg-amber-500/20 text-amber-400',
+                                        'ready' => 'bg-emerald-500/20 text-emerald-400',
+                                        default => 'bg-gray-500/20 text-gray-400',
+                                    } }}">
+                                    {{ match($order->status) {
+                                        'new' => 'Новый',
+                                        'accepted' => 'Принят',
+                                        'preparing' => 'Готовится',
+                                        'ready' => 'Готов',
+                                        default => $order->status,
+                                    } }}
+                                </span>
+                            </div>
+                        </button>
+                    @empty
+                        <div class="px-6 py-12 text-center text-gray-500">
+                            <p>Нет открытых заказов</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- ========== Уведомление ========== --}}
+    <div x-show="notification" x-transition
+         class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl shadow-2xl text-sm font-medium"
+         :class="notification?.type === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'"
+         x-text="notification?.message">
     </div>
 </div>
