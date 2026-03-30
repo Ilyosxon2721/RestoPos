@@ -358,8 +358,8 @@
                             <button wire:click="selectTable({{ $table->id }})"
                                     class="aspect-square flex flex-col items-center justify-center rounded-xl border-2 transition font-medium
                                            {{ $table->has_order ? 'border-amber-500 bg-amber-500/10 text-amber-400' : 'border-gray-700 bg-gray-800 text-gray-300 hover:border-emerald-500 hover:bg-emerald-500/10' }}">
-                                <span class="text-lg font-bold">{{ $table->number }}</span>
-                                <span class="text-[10px] mt-0.5">{{ $table->seats ?? '' }} мест</span>
+                                <span class="text-lg font-bold">{{ $table->name }}</span>
+                                <span class="text-[10px] mt-0.5">{{ $table->capacity ?? 4 }} мест</span>
                                 @if ($table->has_order)
                                     <span class="text-[10px] text-amber-500 mt-0.5">Занят</span>
                                 @endif
@@ -525,7 +525,7 @@
                                 <div>
                                     <span class="font-bold text-white">#{{ $order->order_number }}</span>
                                     <span class="text-sm text-gray-500 ml-2">
-                                        {{ $order->table ? "Стол {$order->table->number}" : ($order->type === 'takeaway' ? 'С собой' : 'Доставка') }}
+                                        {{ $order->table ? "Стол {$order->table->name}" : ($order->type === 'takeaway' ? 'С собой' : 'Доставка') }}
                                     </span>
                                 </div>
                                 <span class="text-sm font-bold text-emerald-400">

@@ -56,63 +56,52 @@
 
     {{-- Модальное окно создания/редактирования --}}
     @if ($showModal)
-        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                {{-- Затемнение --}}
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="$set('showModal', false)"></div>
+        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50" wire:click.self="$set('showModal', false)">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4">
+                <form wire:submit="save">
+                    <div class="px-6 pt-6 pb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                            {{ $editingId ? 'Редактировать филиал' : 'Новый филиал' }}
+                        </h3>
 
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Название <span class="text-red-500">*</span></label>
+                                <input type="text" id="name" wire:model="name"
+                                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                       placeholder="Название филиала">
+                                @error('name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                            </div>
 
-                {{-- Модальное окно --}}
-                <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                    <form wire:submit="save">
-                        <div class="bg-white px-6 pt-6 pb-4">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4" id="modal-title">
-                                {{ $editingId ? 'Редактировать филиал' : 'Новый филиал' }}
-                            </h3>
+                            <div>
+                                <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Адрес</label>
+                                <input type="text" id="address" wire:model="address"
+                                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                       placeholder="Адрес филиала">
+                                @error('address') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                            </div>
 
-                            <div class="space-y-4">
-                                {{-- Название --}}
-                                <div>
-                                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Название <span class="text-red-500">*</span></label>
-                                    <input type="text" id="name" wire:model="name"
-                                           class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                           placeholder="Название филиала">
-                                    @error('name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                                </div>
-
-                                {{-- Адрес --}}
-                                <div>
-                                    <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Адрес</label>
-                                    <input type="text" id="address" wire:model="address"
-                                           class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                           placeholder="Адрес филиала">
-                                    @error('address') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                                </div>
-
-                                {{-- Телефон --}}
-                                <div>
-                                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
-                                    <input type="text" id="phone" wire:model="phone"
-                                           class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                           placeholder="+998 XX XXX XX XX">
-                                    @error('phone') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                                </div>
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
+                                <input type="text" id="phone" wire:model="phone"
+                                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                       placeholder="+998 XX XXX XX XX">
+                                @error('phone') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                             </div>
                         </div>
+                    </div>
 
-                        <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
-                            <button type="button" wire:click="$set('showModal', false)"
-                                    class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors">
-                                Отмена
-                            </button>
-                            <button type="submit"
-                                    class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 transition-colors">
-                                {{ $editingId ? 'Сохранить' : 'Создать' }}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="bg-gray-50 px-6 py-4 rounded-b-xl flex justify-end space-x-3">
+                        <button type="button" wire:click="$set('showModal', false)"
+                                class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors">
+                            Отмена
+                        </button>
+                        <button type="submit"
+                                class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 transition-colors">
+                            {{ $editingId ? 'Сохранить' : 'Создать' }}
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     @endif

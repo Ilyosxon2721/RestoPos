@@ -154,7 +154,7 @@ class Terminal extends Component
         if (! $table) return;
 
         $this->selectedTable = $tableId;
-        $this->selectedTableName = $table->name ?? "Стол #{$table->number}";
+        $this->selectedTableName = "Стол {$table->name}";
         $this->showTableModal = false;
         $this->orderType = 'dine_in';
 
@@ -485,7 +485,7 @@ class Terminal extends Component
         if (! $this->selectedHall) return collect();
 
         return Table::where('hall_id', $this->selectedHall)
-            ->orderBy('number')
+            ->orderBy('sort_order')
             ->get()
             ->map(function ($table) {
                 $table->has_order = Order::where('table_id', $table->id)
@@ -545,7 +545,7 @@ class Terminal extends Component
 
         $this->currentOrderId = $order->id;
         $this->selectedTable = $order->table_id;
-        $this->selectedTableName = $order->table ? ($order->table->name ?? "Стол #{$order->table->number}") : 'Без стола';
+        $this->selectedTableName = $order->table ? "Стол {$order->table->name}" : 'Без стола';
         $this->orderType = $order->type ?? 'dine_in';
 
         $this->cart = [];
