@@ -89,7 +89,7 @@
                 </a>
 
                 {{-- ===== Склад (раскрывающийся) ===== --}}
-                <div x-data x-show="sidebarOpen">
+                <div x-show="sidebarOpen">
                     <button @click="openMenu = openMenu === 'warehouse' ? '' : 'warehouse'"
                             class="w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                                    {{ request()->is('cabinet/warehouse*') ? 'text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
@@ -120,7 +120,7 @@
                 </a>
 
                 {{-- ===== Маркетинг (раскрывающийся) ===== --}}
-                <div x-data x-show="sidebarOpen">
+                <div x-show="sidebarOpen">
                     <button @click="openMenu = openMenu === 'marketing' ? '' : 'marketing'"
                             class="w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                                    {{ request()->is('cabinet/marketing*', 'cabinet/customers*') ? 'text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
@@ -144,7 +144,7 @@
                 </a>
 
                 {{-- ===== Доступ (раскрывающийся) ===== --}}
-                <div x-data x-show="sidebarOpen">
+                <div x-show="sidebarOpen">
                     <button @click="openMenu = openMenu === 'access' ? '' : 'access'"
                             class="w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                                    {{ request()->is('cabinet/staff*', 'cabinet/branches*', 'cabinet/roles*') ? 'text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
@@ -167,7 +167,7 @@
                 </a>
 
                 {{-- ===== Настройки (раскрывающийся) ===== --}}
-                <div x-data x-show="sidebarOpen">
+                <div x-show="sidebarOpen">
                     <button @click="openMenu = openMenu === 'settings' ? '' : 'settings'"
                             class="w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                                    {{ request()->is('cabinet/settings*', 'cabinet/subscription*') ? 'text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
