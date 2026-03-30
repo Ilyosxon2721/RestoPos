@@ -34,8 +34,8 @@ class RedirectByRole
 
         $userRoles = $user->roles()->pluck('slug')->toArray();
 
-        // Determine target path based on role
-        $targetPath = '/cabinet/dashboard'; // default
+        // Определяем путь по роли
+        $targetPath = '/cabinet/dashboard';
         foreach (self::ROLE_ROUTES as $role => $path) {
             if (in_array($role, $userRoles)) {
                 $targetPath = $path;
@@ -43,17 +43,41 @@ class RedirectByRole
             }
         }
 
-        // If user is on main domain and has a subdomain, redirect to subdomain
-        $tenant = app()->bound('tenant') ? app('tenant') : null;
-        if (! $tenant && $user->organization?->subdomain) {
-            $baseDomain = config('restopos.base_domain');
-            $scheme = $request->isSecure() ? 'https' : 'http';
-            $port = $request->getPort();
-            $portSuffix = in_array($port, [80, 443]) ? '' : ':' . $port;
-
-            return redirect("{$scheme}://{$user->organization->subdomain}.{$baseDomain}{$portSuffix}{$targetPath}");
+        // Если на главном домене и субдомены активны — редирект на субдомен
+        if ($this->shouldRedirectToSubdomain($request, $user)) {
+            return $this->redirectToSubdomain($request, $user->organization->subdomain, $targetPath);
         }
 
         return redirect($targetPath);
+    }
+
+    private function shouldRedirectToSubdomain(Request $request, $user): bool
+    {
+        // Уже на субдомене — не нужно
+        if (app()->bound('tenant')) {
+            return false;
+        }
+
+        // У организации нет субдомена
+        if (! $user->organization?->subdomain) {
+            return false;
+        }
+
+        // Проверяем что текущий хост заканчивается на base_domain
+        $baseDomain = config('restopos.base_domain');
+        $host = $request->getHost();
+
+        // Только если мы на base_domain (restopos.uz), а не на forge/другом хостинге
+        return $host === $baseDomain || str_ends_with($host, '.' . $baseDomain);
+    }
+
+    private function redirectToSubdomain(Request $request, string $subdomain, string $targetPath): \Illuminate\Http\RedirectResponse
+    {
+        $baseDomain = config('restopos.base_domain');
+        $scheme = $request->isSecure() ? 'https' : 'http';
+        $port = $request->getPort();
+        $portSuffix = in_array($port, [80, 443]) ? '' : ':' . $port;
+
+        return redirect("{$scheme}://{$subdomain}.{$baseDomain}{$portSuffix}{$targetPath}");
     }
 }

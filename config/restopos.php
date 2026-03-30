@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'multi_tenant' => env('RESTOPOS_MULTI_TENANT', true),
-    'base_domain' => env('RESTOPOS_BASE_DOMAIN', 'resto.uz'),
+    'base_domain' => env('RESTOPOS_BASE_DOMAIN', 'restopos.uz'),
     'admin_subdomain' => env('RESTOPOS_ADMIN_SUBDOMAIN', 'admin'),
 
     /*

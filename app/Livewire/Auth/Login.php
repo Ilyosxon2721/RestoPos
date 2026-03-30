@@ -45,7 +45,7 @@ final class Login extends Component
         $tenant = app()->bound('tenant') ? app('tenant') : null;
 
         if ($tenant) {
-            // Subdomain login: only authenticate users from this organization
+            // Субдоменный логин: только пользователи этой организации
             $user = User::where('email', $this->email)
                 ->where('organization_id', $tenant->id)
                 ->where('is_active', true)
@@ -58,24 +58,16 @@ final class Login extends Component
 
             Auth::login($user, $this->remember);
         } else {
-            // Main domain login: find user by email across all organizations
+            // Главный домен: ищем по email среди всех организаций
             if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
                 $this->addError('email', 'Неверный email или пароль.');
-                return;
-            }
-
-            $user = Auth::user();
-
-            // Redirect to their subdomain if organization has one
-            if ($user->organization?->subdomain) {
-                session()->regenerate();
-                $this->redirectToSubdomain($user->organization->subdomain);
                 return;
             }
         }
 
         session()->regenerate();
 
+        // RedirectByRole определит куда (включая субдомен если нужно)
         $this->redirect('/redirect', navigate: true);
     }
 
@@ -103,12 +95,6 @@ final class Login extends Component
 
         Auth::login($user, remember: true);
         session()->regenerate();
-
-        // If on main domain, redirect to subdomain
-        if (! $tenant && $user->organization?->subdomain) {
-            $this->redirectToSubdomain($user->organization->subdomain);
-            return;
-        }
 
         $this->redirect('/redirect', navigate: true);
     }
@@ -140,16 +126,6 @@ final class Login extends Component
     public function backspacePin(): void
     {
         $this->pin = mb_substr($this->pin, 0, -1);
-    }
-
-    private function redirectToSubdomain(string $subdomain): void
-    {
-        $baseDomain = config('restopos.base_domain');
-        $scheme = request()->isSecure() ? 'https' : 'http';
-        $port = request()->getPort();
-        $portSuffix = in_array($port, [80, 443]) ? '' : ':' . $port;
-
-        $this->redirect("{$scheme}://{$subdomain}.{$baseDomain}{$portSuffix}/redirect");
     }
 
     public function render(): \Illuminate\View\View
