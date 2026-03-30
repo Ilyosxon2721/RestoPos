@@ -13,34 +13,34 @@ class ResolveSubdomain
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $subdomain = $this->extractSubdomain($request);
+        try {
+            $subdomain = $this->extractSubdomain($request);
 
-        // No subdomain detected — this is the main domain
-        if (! $subdomain) {
-            return $next($request);
+            if (! $subdomain) {
+                return $next($request);
+            }
+
+            $organization = Organization::where('subdomain', $subdomain)
+                ->where('is_active', true)
+                ->first();
+
+            if (! $organization) {
+                abort(404, 'Организация не найдена. Проверьте адрес.');
+            }
+
+            app()->instance('tenant', $organization);
+            app()->instance('tenant.id', $organization->id);
+
+            view()->share('tenant', $organization);
+        } catch (\Throwable $e) {
+            // При любой ошибке (БД недоступна, конфиг не найден и т.д.)
+            // пропускаем определение tenant — пусть работает как главный домен
+            report($e);
         }
-
-        $organization = Organization::where('subdomain', $subdomain)
-            ->where('is_active', true)
-            ->first();
-
-        if (! $organization) {
-            abort(404, 'Организация не найдена. Проверьте адрес.');
-        }
-
-        // Bind organization to container for the entire request
-        app()->instance('tenant', $organization);
-        app()->instance('tenant.id', $organization->id);
-
-        // Share with views
-        view()->share('tenant', $organization);
 
         return $next($request);
     }
 
-    /**
-     * Check if current request is on a tenant subdomain.
-     */
     public static function hasTenant(): bool
     {
         return app()->bound('tenant');
@@ -51,11 +51,15 @@ class ResolveSubdomain
         $host = $request->getHost();
         $baseDomain = config('restopos.base_domain');
 
-        // Match: subdomain.restopos.uz, subdomain.resto.test, etc.
+        // Если конфиг не настроен — пропускаем
+        if (empty($baseDomain)) {
+            return null;
+        }
+
+        // Match: subdomain.restopos.uz, subdomain.restopos.test, etc.
         if (str_ends_with($host, '.' . $baseDomain)) {
             $subdomain = str_replace('.' . $baseDomain, '', $host);
 
-            // Skip admin subdomain — handled separately
             if ($subdomain === config('restopos.admin_subdomain')) {
                 return null;
             }
@@ -63,7 +67,7 @@ class ResolveSubdomain
             return $subdomain ?: null;
         }
 
-        // For local development: support ?tenant=subdomain query parameter
+        // Для локальной разработки: ?tenant=subdomain
         if (app()->environment('local') && $request->has('tenant')) {
             return $request->query('tenant');
         }
