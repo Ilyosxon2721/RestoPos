@@ -135,7 +135,7 @@ final class Display extends Component
             return (object) [
                 'id' => $order->id,
                 'order_number' => $order->order_number ?? $order->id,
-                'table_number' => $order->table?->number ?? '—',
+                'table_number' => $order->table?->name ?? '—',
                 'created_at' => $order->created_at,
                 'items' => $items,
             ];
