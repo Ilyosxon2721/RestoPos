@@ -11,7 +11,7 @@
 <body class="min-h-screen bg-gray-100" x-data="{
     sidebarOpen: true,
     mobileMenuOpen: false,
-    openMenu: '{{ request()->is('cabinet/warehouse*') ? 'warehouse' : (request()->is('cabinet/marketing*', 'cabinet/customers*') ? 'marketing' : (request()->is('cabinet/staff*', 'cabinet/branches*', 'cabinet/roles*') ? 'access' : (request()->is('cabinet/settings*', 'cabinet/subscription*') ? 'settings' : ''))) }}'
+    openMenu: '{{ request()->is('cabinet/menu*') ? 'menu' : (request()->is('cabinet/warehouse*') ? 'warehouse' : (request()->is('cabinet/marketing*', 'cabinet/customers*') ? 'marketing' : (request()->is('cabinet/staff*', 'cabinet/branches*', 'cabinet/roles*') ? 'access' : (request()->is('cabinet/settings*', 'cabinet/subscription*') ? 'settings' : '')))) }}'
 }">
     <div class="flex min-h-screen">
         {{-- Мобильное затемнение --}}
@@ -77,15 +77,30 @@
                     <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen" x-transition>Финансы</span>
                 </a>
 
-                {{-- Меню --}}
-                <a href="/cabinet/menu"
-                   class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
+                {{-- ===== Меню (раскрывающийся) ===== --}}
+                <div x-show="sidebarOpen">
+                    <button @click="openMenu = openMenu === 'menu' ? '' : 'menu'"
+                            class="w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
+                                   {{ request()->is('cabinet/menu*') ? 'text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            <span class="ml-3">Меню</span>
+                        </span>
+                        <svg class="w-4 h-4 transition-transform" :class="openMenu === 'menu' ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="openMenu === 'menu'" x-collapse class="ml-5 pl-3 border-l border-gray-700 space-y-0.5 mt-0.5">
+                        <a href="/cabinet/menu" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu') && !request()->is('cabinet/menu/*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Категории</a>
+                        <a href="/cabinet/menu/items" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/items*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Блюда</a>
+                        <a href="/cabinet/menu/ingredients" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/ingredients*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Ингредиенты</a>
+                        <a href="/cabinet/menu/tech-cards" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/tech-cards*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Тех. карты</a>
+                    </div>
+                </div>
+                {{-- Меню (свёрнутый sidebar) --}}
+                <a href="/cabinet/menu" x-show="!sidebarOpen"
+                   class="flex items-center justify-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                           {{ request()->is('cabinet/menu*') ? 'bg-indigo-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}"
                    title="Меню">
-                    <span class="flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                    </span>
-                    <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen" x-transition>Меню</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                 </a>
 
                 {{-- ===== Склад (раскрывающийся) ===== --}}

@@ -120,6 +120,8 @@ Route::middleware('auth')->group(function () {
         // Меню
         Route::get('/menu', \App\Livewire\Menu\Categories::class)->name('cabinet.menu');
         Route::get('/menu/items', \App\Livewire\Menu\Items::class)->name('cabinet.menu.items');
+        Route::get('/menu/ingredients', \App\Livewire\Menu\Ingredients::class)->name('cabinet.menu.ingredients');
+        Route::get('/menu/tech-cards', \App\Livewire\Menu\TechCards::class)->name('cabinet.menu.tech-cards');
 
         // Склад
         Route::get('/warehouse', \App\Livewire\Warehouse\Stock::class)->name('cabinet.warehouse');
