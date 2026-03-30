@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Kitchen;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Order\Models\Order;
 use App\Domain\Order\Models\OrderItem;
 use App\Support\Enums\OrderItemStatus;
@@ -15,11 +16,81 @@ use Livewire\Component;
 #[Layout('components.layouts.kitchen')]
 final class Display extends Component
 {
+    // PIN-авторизация оператора
+    public bool $pinLocked = true;
+    public string $pin = '';
+    public ?int $operatorId = null;
+    public ?string $operatorName = null;
+
     public string $filter = 'all';
 
     public function mount(): void
     {
-        // Начальная загрузка происходит через computed property
+        // Если оператор уже сохранён в сессии — восстановить
+        $sessionOperator = session('kitchen_operator');
+        if ($sessionOperator) {
+            $this->operatorId = $sessionOperator['id'];
+            $this->operatorName = $sessionOperator['name'];
+            $this->pinLocked = false;
+        }
+    }
+
+    // === PIN-авторизация оператора ===
+
+    public function appendPin(string $digit): void
+    {
+        if (mb_strlen($this->pin) < 4) {
+            $this->pin .= $digit;
+        }
+
+        if (mb_strlen($this->pin) === 4) {
+            $this->verifyPin();
+        }
+    }
+
+    public function clearPin(): void
+    {
+        $this->pin = '';
+        $this->resetErrorBag('pin');
+    }
+
+    public function backspacePin(): void
+    {
+        $this->pin = mb_substr($this->pin, 0, -1);
+    }
+
+    public function verifyPin(): void
+    {
+        $branchId = session('current_branch_id');
+
+        // Ищем пользователя по PIN в текущем филиале с ролью повара
+        $user = User::where('pin_code', $this->pin)
+            ->where('is_active', true)
+            ->whereHas('employee', fn($q) => $q->where('branch_id', $branchId))
+            ->whereHas('roles', fn($q) => $q->whereIn('slug', ['cook']))
+            ->first();
+
+        if (! $user) {
+            $this->addError('pin', 'Неверный PIN-код или нет доступа.');
+            $this->pin = '';
+            return;
+        }
+
+        $this->operatorId = $user->id;
+        $this->operatorName = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: $user->email;
+        $this->pinLocked = false;
+        $this->pin = '';
+
+        session(['kitchen_operator' => ['id' => $user->id, 'name' => $this->operatorName]]);
+    }
+
+    public function lockKitchen(): void
+    {
+        $this->pinLocked = true;
+        $this->pin = '';
+        $this->operatorId = null;
+        $this->operatorName = null;
+        session()->forget('kitchen_operator');
     }
 
     #[Computed]

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Livewire\Cashier;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Floor\Models\Hall;
 use App\Domain\Floor\Models\Table;
 use App\Domain\Menu\Models\Category;
 use App\Domain\Menu\Models\Product;
 use App\Domain\Order\Models\Order;
 use App\Domain\Order\Models\OrderItem;
+use App\Domain\Staff\Models\Employee;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Computed;
@@ -18,6 +20,12 @@ use Livewire\Attributes\On;
 #[Layout('components.layouts.cashier')]
 class Terminal extends Component
 {
+    // PIN-авторизация оператора
+    public bool $pinLocked = true;
+    public string $pin = '';
+    public ?int $operatorId = null;
+    public ?string $operatorName = null;
+
     // Состояние терминала
     public ?int $selectedTable = null;
     public ?string $selectedTableName = null;
@@ -58,6 +66,74 @@ class Terminal extends Component
             session(['current_branch_id' => $branchId]);
             $this->selectedHall = Hall::where('branch_id', $branchId)->first()?->id;
         }
+
+        // Если оператор уже сохранён в сессии — восстановить
+        $sessionOperator = session('pos_operator');
+        if ($sessionOperator) {
+            $this->operatorId = $sessionOperator['id'];
+            $this->operatorName = $sessionOperator['name'];
+            $this->pinLocked = false;
+        }
+    }
+
+    // === PIN-авторизация оператора ===
+
+    public function appendPin(string $digit): void
+    {
+        if (mb_strlen($this->pin) < 4) {
+            $this->pin .= $digit;
+        }
+
+        if (mb_strlen($this->pin) === 4) {
+            $this->verifyPin();
+        }
+    }
+
+    public function clearPin(): void
+    {
+        $this->pin = '';
+        $this->resetErrorBag('pin');
+    }
+
+    public function backspacePin(): void
+    {
+        $this->pin = mb_substr($this->pin, 0, -1);
+    }
+
+    public function verifyPin(): void
+    {
+        $branchId = session('current_branch_id');
+
+        // Ищем пользователя по PIN в текущем филиале с ролью кассира/бармена
+        $user = User::where('pin_code', $this->pin)
+            ->where('is_active', true)
+            ->whereHas('employee', fn($q) => $q->where('branch_id', $branchId))
+            ->whereHas('roles', fn($q) => $q->whereIn('slug', ['cashier', 'bartender']))
+            ->first();
+
+        if (! $user) {
+            $this->addError('pin', 'Неверный PIN-код или нет доступа.');
+            $this->pin = '';
+            return;
+        }
+
+        $this->operatorId = $user->id;
+        $this->operatorName = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: $user->email;
+        $this->pinLocked = false;
+        $this->pin = '';
+
+        session(['pos_operator' => ['id' => $user->id, 'name' => $this->operatorName]]);
+
+        $this->dispatch('notify', message: "Оператор: {$this->operatorName}", type: 'success');
+    }
+
+    public function lockTerminal(): void
+    {
+        $this->pinLocked = true;
+        $this->pin = '';
+        $this->operatorId = null;
+        $this->operatorName = null;
+        session()->forget('pos_operator');
     }
 
     // === Выбор стола ===
@@ -234,8 +310,15 @@ class Terminal extends Component
     {
         if (empty($this->cart)) return;
 
-        $user = auth()->user();
         $branchId = session('current_branch_id');
+
+        // Определяем employee_id оператора (кассира по PIN)
+        $operatorEmployeeId = null;
+        if ($this->operatorId) {
+            $operatorEmployeeId = Employee::where('user_id', $this->operatorId)
+                ->where('branch_id', $branchId)
+                ->value('id');
+        }
 
         // Создаём или обновляем заказ
         if ($this->currentOrderId) {
@@ -244,7 +327,7 @@ class Terminal extends Component
             $order = Order::create([
                 'branch_id' => $branchId,
                 'table_id' => $this->selectedTable,
-                'waiter_id' => $user->employee?->id,
+                'waiter_id' => $operatorEmployeeId,
                 'order_number' => Order::generateOrderNumber($branchId),
                 'type' => $this->orderType,
                 'source' => 'pos',
