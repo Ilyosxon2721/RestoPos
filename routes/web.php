@@ -91,7 +91,7 @@ Route::prefix('admin')->group(function () {
 | организации есть субдомен — перенаправляет на субдомен.
 |--------------------------------------------------------------------------
 */
-Route::get('/redirect', [\App\Application\Http\Middleware\RedirectByRole::class, 'handle'])
+Route::get('/redirect', \App\Application\Http\Middleware\RedirectByRole::class)
     ->middleware('auth')
     ->name('role.redirect');
 
