@@ -16,7 +16,7 @@
                 <input wire:model="email"
                        type="email"
                        id="email"
-                       placeholder="admin@restopos.uz"
+                       placeholder="admin@forris.uz"
                        autocomplete="email"
                        class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition @error('email') border-red-500 @enderror">
                 @error('email')
@@ -89,7 +89,7 @@
         {{-- Подсказка --}}
         <div class="mt-6 rounded-lg bg-gray-50 p-3">
             <p class="text-xs text-gray-500 text-center">
-                Демо: <span class="font-mono font-medium text-gray-700">admin@restopos.uz</span> /
+                Демо: <span class="font-mono font-medium text-gray-700">admin@forris.uz</span> /
                 <span class="font-mono font-medium text-gray-700">password</span>
             </p>
         </div>

@@ -2,7 +2,7 @@
     {{-- Заголовок --}}
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Дашборд</h1>
-        <p class="text-sm text-gray-500 mt-1">Обзор платформы RestoPOS</p>
+        <p class="text-sm text-gray-500 mt-1">Обзор платформы FORRIS POS</p>
     </div>
 
     {{-- Статистические карточки --}}

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'RestoPOS — Вход' }}</title>
+    <title>{{ $title ?? 'FORRIS POS — Вход' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
@@ -17,9 +17,9 @@
             </div>
             @if (isset($tenant))
                 <h1 class="text-3xl font-bold text-white tracking-wide">{{ $tenant->name }}</h1>
-                <p class="text-indigo-200 mt-1 text-sm">Powered by RestoPOS</p>
+                <p class="text-indigo-200 mt-1 text-sm">Powered by FORRIS</p>
             @else
-                <h1 class="text-3xl font-bold text-white tracking-wide">RestoPOS</h1>
+                <h1 class="text-3xl font-bold text-white tracking-wide">FORRIS POS</h1>
                 <p class="text-indigo-200 mt-1 text-sm">Система управления рестораном</p>
             @endif
         </div>
@@ -30,7 +30,7 @@
         </div>
 
         <p class="text-center text-indigo-300 text-xs mt-6">
-            &copy; {{ date('Y') }} RestoPOS. Все права защищены.
+            &copy; {{ date('Y') }} FORRIS POS. Все права защищены.
         </p>
     </div>
 

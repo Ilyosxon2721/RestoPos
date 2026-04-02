@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'RestoPOS' }}</title>
+    <title>{{ $title ?? 'FORRIS POS' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
@@ -13,7 +13,7 @@
         {{-- Верхняя панель --}}
         <header class="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-white px-4 shadow-sm">
             <div class="flex items-center space-x-2">
-                <span class="text-lg font-bold text-gray-800">RestoPOS</span>
+                <span class="text-lg font-bold text-gray-800">FORRIS POS</span>
                 <span class="h-5 w-px bg-gray-300"></span>
                 <span class="text-sm text-gray-500 truncate max-w-[150px]">
                     {{ auth()->user()?->branch?->name ?? 'Филиал' }}

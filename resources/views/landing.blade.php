@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="RestoPOS — облачная POS-система для автоматизации ресторанов и кафе">
-    <title>RestoPOS — Облачная POS-система для ресторанов</title>
+    <meta name="description" content="FORRIS POS — облачная POS-система для автоматизации ресторанов и кафе">
+    <title>FORRIS POS — Облачная POS-система для ресторанов</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-white text-gray-900 antialiased" x-data="{ mobileMenu: false }">
@@ -15,7 +15,7 @@
             <div class="flex items-center justify-between h-16">
                 <a href="/" class="flex items-center space-x-2">
                     <span class="text-2xl">🍽️</span>
-                    <span class="text-xl font-bold text-indigo-600">RestoPOS</span>
+                    <span class="text-xl font-bold text-indigo-600">FORRIS POS</span>
                 </a>
 
                 <nav class="hidden md:flex items-center space-x-8">
@@ -79,7 +79,7 @@
                     <div class="bg-white rounded-xl shadow-lg p-6 flex items-center justify-center min-h-[300px]">
                         <div class="text-center text-gray-400">
                             <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                            <p class="text-lg font-medium">Интерфейс RestoPOS</p>
+                            <p class="text-lg font-medium">Интерфейс FORRIS POS</p>
                             <p class="text-sm">POS-терминал, управление заказами, аналитика</p>
                         </div>
                     </div>
@@ -302,7 +302,7 @@
     <section class="py-20 bg-gradient-to-r from-indigo-600 to-purple-700">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-3xl sm:text-4xl font-bold text-white">Готовы начать?</h2>
-            <p class="mt-4 text-lg text-indigo-100">Попробуйте RestoPOS бесплатно 14 дней и убедитесь, что это именно то, что нужно вашему бизнесу.</p>
+            <p class="mt-4 text-lg text-indigo-100">Попробуйте FORRIS POS бесплатно 14 дней и убедитесь, что это именно то, что нужно вашему бизнесу.</p>
             <a href="/register" class="mt-8 inline-flex items-center px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl hover:bg-gray-50 transition shadow-lg text-lg">
                 Попробовать бесплатно
                 <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
@@ -317,7 +317,7 @@
                 <div class="md:col-span-2">
                     <div class="flex items-center space-x-2 mb-4">
                         <span class="text-2xl">🍽️</span>
-                        <span class="text-xl font-bold text-white">RestoPOS</span>
+                        <span class="text-xl font-bold text-white">FORRIS POS</span>
                     </div>
                     <p class="text-sm leading-relaxed max-w-md">
                         Облачная POS-система для автоматизации ресторанов, кафе и магазинов. Простое управление бизнесом из любой точки мира.
@@ -337,7 +337,7 @@
                 <div>
                     <h4 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">Контакты</h4>
                     <ul class="space-y-2 text-sm">
-                        <li>info@restopos.uz</li>
+                        <li>info@forris.uz</li>
                         <li>+998 71 123 45 67</li>
                         <li>Ташкент, Узбекистан</li>
                     </ul>
@@ -345,7 +345,7 @@
             </div>
 
             <div class="mt-12 pt-8 border-t border-gray-800 text-center text-sm">
-                <p>&copy; {{ date('Y') }} RestoPOS. Все права защищены.</p>
+                <p>&copy; {{ date('Y') }} FORRIS POS. Все права защищены.</p>
             </div>
         </div>
     </footer>
