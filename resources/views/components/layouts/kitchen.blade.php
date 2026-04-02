@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="refresh" content="60">
-    <title>{{ $title ?? 'RestoPOS — Кухня' }}</title>
+    <title>{{ $title ?? 'FORRIS POS — Кухня' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     <style>

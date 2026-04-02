@@ -49,18 +49,18 @@ class ResolveSubdomain
     private function extractSubdomain(Request $request): ?string
     {
         $host = $request->getHost();
-        $baseDomain = config('restopos.base_domain');
+        $baseDomain = config('forris.base_domain');
 
         // Если конфиг не настроен — пропускаем
         if (empty($baseDomain)) {
             return null;
         }
 
-        // Match: subdomain.restopos.uz, subdomain.restopos.test, etc.
+        // Match: subdomain.pos.forris.uz, subdomain.pos.forris.test, etc.
         if (str_ends_with($host, '.' . $baseDomain)) {
             $subdomain = str_replace('.' . $baseDomain, '', $host);
 
-            if ($subdomain === config('restopos.admin_subdomain')) {
+            if ($subdomain === config('forris.admin_subdomain')) {
                 return null;
             }
 

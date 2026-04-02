@@ -1,7 +1,7 @@
 <div>
     <form wire:submit="login" class="space-y-5">
         <div>
-            <h2 class="text-2xl font-bold text-gray-800 text-center">Админ-панель RestoPOS</h2>
+            <h2 class="text-2xl font-bold text-gray-800 text-center">Админ-панель FORRIS POS</h2>
             <p class="text-gray-500 text-sm text-center mt-1">Вход для администратора платформы</p>
         </div>
 
@@ -18,7 +18,7 @@
             <input wire:model="email"
                    type="email"
                    id="email"
-                   placeholder="admin@restopos.uz"
+                   placeholder="admin@forris.uz"
                    autocomplete="email"
                    class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none transition @error('email') border-red-500 @enderror">
             @error('email')

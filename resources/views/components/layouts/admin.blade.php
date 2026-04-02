@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'RestoPOS Admin' }}</title>
+    <title>{{ $title ?? 'FORRIS POS Admin' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
@@ -34,7 +34,7 @@
             <div class="flex h-16 items-center justify-between px-4 border-b border-gray-700">
                 <a href="/admin/dashboard" class="flex items-center space-x-2">
                     <span class="text-2xl">🛡️</span>
-                    <span class="text-xl font-bold tracking-wide text-red-400" x-show="sidebarOpen" x-transition>RestoPOS Admin</span>
+                    <span class="text-xl font-bold tracking-wide text-red-400" x-show="sidebarOpen" x-transition>FORRIS POS Admin</span>
                 </a>
                 <button @click="sidebarOpen = !sidebarOpen" class="hidden lg:block text-gray-400 hover:text-white">
                     <svg x-show="sidebarOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,7 +72,7 @@
 
             {{-- Нижняя часть --}}
             <div class="border-t border-gray-700 p-4" x-show="sidebarOpen" x-transition>
-                <p class="text-xs text-gray-500">&copy; {{ date('Y') }} RestoPOS Platform</p>
+                <p class="text-xs text-gray-500">&copy; {{ date('Y') }} FORRIS POS</p>
             </div>
         </aside>
 

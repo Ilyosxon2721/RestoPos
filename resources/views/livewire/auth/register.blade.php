@@ -28,7 +28,7 @@
                        placeholder="lolotea"
                        class="flex-1 rounded-l-lg border border-r-0 border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition @error('subdomain') border-red-500 @enderror">
                 <span class="inline-flex items-center rounded-r-lg border border-l-0 border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-500">
-                    .{{ config('restopos.base_domain') }}
+                    .{{ config('forris.base_domain') }}
                 </span>
             </div>
             @error('subdomain')
@@ -36,7 +36,7 @@
             @enderror
             @if ($subdomain && !$errors->has('subdomain'))
                 <p class="mt-1 text-sm text-green-600">
-                    {{ $subdomain }}.{{ config('restopos.base_domain') }}
+                    {{ $subdomain }}.{{ config('forris.base_domain') }}
                 </p>
             @endif
         </div>

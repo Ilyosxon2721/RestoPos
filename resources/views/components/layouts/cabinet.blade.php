@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'RestoPOS - Кабинет' }}</title>
+    <title>{{ $title ?? 'FORRIS POS - Кабинет' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
@@ -40,7 +40,7 @@
                     <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                     </svg>
-                    <span class="text-xl font-bold tracking-wide text-indigo-400" x-show="sidebarOpen" x-transition>RestoPOS</span>
+                    <span class="text-xl font-bold tracking-wide text-indigo-400" x-show="sidebarOpen" x-transition>FORRIS POS</span>
                 </a>
                 <button @click="sidebarOpen = !sidebarOpen" class="hidden lg:block text-gray-400 hover:text-white">
                     <svg x-show="sidebarOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -234,7 +234,7 @@
 
             {{-- Нижняя часть --}}
             <div class="border-t border-gray-700 p-4" x-show="sidebarOpen" x-transition>
-                <p class="text-xs text-gray-500">&copy; {{ date('Y') }} RestoPOS</p>
+                <p class="text-xs text-gray-500">&copy; {{ date('Y') }} FORRIS POS</p>
             </div>
         </aside>
 

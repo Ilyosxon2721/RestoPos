@@ -80,16 +80,16 @@ class RedirectByRole
         }
 
         // Проверяем что текущий хост заканчивается на base_domain
-        $baseDomain = config('restopos.base_domain');
+        $baseDomain = config('forris.base_domain');
         $host = $request->getHost();
 
-        // Только если мы на base_domain (restopos.uz), а не на forge/другом хостинге
+        // Только если мы на base_domain (pos.forris.uz), а не на forge/другом хостинге
         return $host === $baseDomain || str_ends_with($host, '.' . $baseDomain);
     }
 
     private function redirectToSubdomain(Request $request, string $subdomain, string $targetPath): \Illuminate\Http\RedirectResponse
     {
-        $baseDomain = config('restopos.base_domain');
+        $baseDomain = config('forris.base_domain');
         $scheme = $request->isSecure() ? 'https' : 'http';
         $port = $request->getPort();
         $portSuffix = in_array($port, [80, 443]) ? '' : ':' . $port;

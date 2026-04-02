@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'RestoPOS' }}</title>
+    <title>{{ $title ?? 'FORRIS POS' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
@@ -34,7 +34,7 @@
             <div class="flex h-16 items-center justify-between px-4 border-b border-gray-700">
                 <a href="/dashboard" class="flex items-center space-x-2">
                     <span class="text-2xl">🍽️</span>
-                    <span class="text-xl font-bold tracking-wide" x-show="sidebarOpen" x-transition>RestoPOS</span>
+                    <span class="text-xl font-bold tracking-wide" x-show="sidebarOpen" x-transition>FORRIS POS</span>
                 </a>
                 <button @click="sidebarOpen = !sidebarOpen" class="hidden lg:block text-gray-400 hover:text-white">
                     <svg x-show="sidebarOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,7 +76,7 @@
 
             {{-- Нижняя часть --}}
             <div class="border-t border-gray-700 p-4" x-show="sidebarOpen" x-transition>
-                <p class="text-xs text-gray-500">&copy; {{ date('Y') }} RestoPOS</p>
+                <p class="text-xs text-gray-500">&copy; {{ date('Y') }} FORRIS POS</p>
             </div>
         </aside>
 
@@ -97,7 +97,7 @@
                     </button>
                     <div class="hidden sm:block">
                         <span class="text-sm font-medium text-gray-700">
-                            {{ auth()->user()?->branch?->name ?? 'RestoPOS' }}
+                            {{ auth()->user()?->branch?->name ?? 'FORRIS POS' }}
                         </span>
                     </div>
                 </div>

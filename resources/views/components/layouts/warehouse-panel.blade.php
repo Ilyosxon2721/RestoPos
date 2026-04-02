@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'RestoPOS' }}</title>
+    <title>{{ $title ?? 'FORRIS POS' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
@@ -39,7 +39,7 @@
                         </svg>
                     </span>
                     <div x-show="sidebarOpen" x-transition class="min-w-0">
-                        <span class="text-lg font-bold tracking-wide text-amber-400 block truncate">RestoPOS</span>
+                        <span class="text-lg font-bold tracking-wide text-amber-400 block truncate">FORRIS POS</span>
                         <span class="text-xs text-gray-400 block truncate">Склад</span>
                     </div>
                 </a>
@@ -78,7 +78,7 @@
 
             {{-- Нижняя часть --}}
             <div class="border-t border-gray-700 p-4" x-show="sidebarOpen" x-transition>
-                <p class="text-xs text-gray-500">&copy; {{ date('Y') }} RestoPOS</p>
+                <p class="text-xs text-gray-500">&copy; {{ date('Y') }} FORRIS POS</p>
             </div>
         </aside>
 

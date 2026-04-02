@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "restopos/backend",
+    "name": "forris/pos-backend",
     "type": "project",
-    "description": "RestoPOS - Cloud POS System for Restaurants",
-    "keywords": ["laravel", "pos", "restaurant", "restopos"],
+    "description": "FORRIS POS - Cloud POS System for Restaurants",
+    "keywords": ["laravel", "pos", "restaurant", "forris"],
     "license": "proprietary",
     "require": {
         "php": "^8.3",

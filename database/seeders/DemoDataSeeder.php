@@ -19,9 +19,9 @@ class DemoDataSeeder extends Seeder
         // Создаём демо-организацию
         $orgId = DB::table('organizations')->insertGetId([
             'uuid' => Str::uuid(),
-            'name' => 'RestoPOS Demo',
+            'name' => 'FORRIS POS Demo',
             'subdomain' => 'demo',
-            'legal_name' => 'ООО "RestoPOS Demo"',
+            'legal_name' => 'ООО "FORRIS POS Demo"',
             'inn' => '123456789',
             'subscription_plan' => 'business',
             'subscription_expires_at' => now()->addYear(),
@@ -44,7 +44,7 @@ class DemoDataSeeder extends Seeder
             'address' => 'г. Ташкент, ул. Амира Темура, 1',
             'city' => 'Ташкент',
             'phone' => '+998 71 123 45 67',
-            'email' => 'main@restopos.uz',
+            'email' => 'main@forris.uz',
             'timezone' => 'Asia/Tashkent',
             'currency_code' => 'UZS',
             'working_hours' => json_encode([
@@ -65,12 +65,12 @@ class DemoDataSeeder extends Seeder
         $ownerUserId = DB::table('users')->insertGetId([
             'uuid' => Str::uuid(),
             'organization_id' => $orgId,
-            'email' => 'admin@restopos.uz',
+            'email' => 'admin@forris.uz',
             'phone' => '+998901234567',
             'password' => Hash::make('password'),
             'pin_code' => '1234',
             'first_name' => 'Админ',
-            'last_name' => 'RestoPOS',
+            'last_name' => 'FORRIS',
             'locale' => 'ru',
             'is_active' => true,
             'created_at' => $now,
@@ -89,7 +89,7 @@ class DemoDataSeeder extends Seeder
         $waiterUserId = DB::table('users')->insertGetId([
             'uuid' => Str::uuid(),
             'organization_id' => $orgId,
-            'email' => 'waiter@restopos.uz',
+            'email' => 'waiter@forris.uz',
             'phone' => '+998901234568',
             'password' => Hash::make('password'),
             'pin_code' => '1111',
@@ -125,7 +125,7 @@ class DemoDataSeeder extends Seeder
         $cashierUserId = DB::table('users')->insertGetId([
             'uuid' => Str::uuid(),
             'organization_id' => $orgId,
-            'email' => 'cashier@restopos.uz',
+            'email' => 'cashier@forris.uz',
             'phone' => '+998901234569',
             'password' => Hash::make('password'),
             'pin_code' => '2222',
@@ -162,7 +162,7 @@ class DemoDataSeeder extends Seeder
         $cookUserId = DB::table('users')->insertGetId([
             'uuid' => Str::uuid(),
             'organization_id' => $orgId,
-            'email' => 'cook@restopos.uz',
+            'email' => 'cook@forris.uz',
             'phone' => '+998901234570',
             'password' => Hash::make('password'),
             'pin_code' => '3333',
@@ -413,7 +413,7 @@ class DemoDataSeeder extends Seeder
         // Создаём Super Admin платформы
         DB::table('platform_admins')->insert([
             'uuid' => Str::uuid(),
-            'email' => 'superadmin@restopos.uz',
+            'email' => 'superadmin@forris.uz',
             'password' => Hash::make('superadmin'),
             'first_name' => 'Super',
             'last_name' => 'Admin',
@@ -498,12 +498,12 @@ class DemoDataSeeder extends Seeder
         $this->command->info('');
         $this->command->info('=== Super Admin ===');
         $this->command->info('URL:   /admin/login');
-        $this->command->info('Email: superadmin@restopos.uz');
+        $this->command->info('Email: superadmin@forris.uz');
         $this->command->info('Pass:  superadmin');
         $this->command->info('');
         $this->command->info('=== Client Admin (Владелец) ===');
         $this->command->info('URL:   /login');
-        $this->command->info('Email: admin@restopos.uz');
+        $this->command->info('Email: admin@forris.uz');
         $this->command->info('Pass:  password');
         $this->command->info('PIN:   1234');
     }
