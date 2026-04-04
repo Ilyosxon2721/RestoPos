@@ -105,6 +105,34 @@ Route::get('/qr-menu/{slug}', [\App\Application\Http\Controllers\QrMenuControlle
 
 /*
 |--------------------------------------------------------------------------
+| Магазин — Клиентский сторфронт для заказов (/shop/{slug})
+|--------------------------------------------------------------------------
+*/
+Route::prefix('shop/{slug}')->group(function () {
+    // Публичные страницы
+    Route::get('/', \App\Livewire\Store\Home::class)->name('shop.home');
+    Route::get('/cart', \App\Livewire\Store\Cart::class)->name('shop.cart');
+    Route::get('/favorites', \App\Livewire\Store\Favorites::class)->name('shop.favorites');
+    Route::get('/login', \App\Livewire\Store\Login::class)->name('shop.login');
+
+    // Авторизованные страницы (для клиентов)
+    Route::middleware('customer.auth')->group(function () {
+        Route::get('/profile', \App\Livewire\Store\Profile::class)->name('shop.profile');
+        Route::get('/orders', \App\Livewire\Store\Orders::class)->name('shop.orders');
+        Route::get('/checkout', \App\Livewire\Store\Checkout::class)->name('shop.checkout');
+    });
+
+    // Выход клиента
+    Route::post('/logout', function (string $slug) {
+        auth('customer')->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        return redirect()->route('shop.home', ['slug' => $slug]);
+    })->name('shop.logout');
+});
+
+/*
+|--------------------------------------------------------------------------
 | Client Panel Routes (Require Authentication)
 |--------------------------------------------------------------------------
 | Все панели: cabinet, manager, cashier, waiter, kitchen, warehouse.
@@ -131,6 +159,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/menu/ingredients', \App\Livewire\Menu\Ingredients::class)->name('cabinet.menu.ingredients');
         Route::get('/menu/tech-cards', \App\Livewire\Menu\TechCards::class)->name('cabinet.menu.tech-cards');
         Route::get('/menu/qr-menu', \App\Livewire\Menu\QrMenuSettings::class)->name('cabinet.menu.qr-menu');
+
+        // Интернет-магазин
+        Route::get('/store', \App\Livewire\Cabinet\StoreSettingsPage::class)->name('cabinet.store');
 
         // Склад
         Route::get('/warehouse', \App\Livewire\Warehouse\Stock::class)->name('cabinet.warehouse');

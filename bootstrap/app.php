@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'super_admin' => \App\Application\Http\Middleware\SuperAdmin::class,
             'client_role' => \App\Application\Http\Middleware\ClientRole::class,
             'tenant' => \App\Application\Http\Middleware\ResolveSubdomain::class,
+            'customer.auth' => \App\Application\Http\Middleware\CustomerAuth::class,
         ]);
 
         // Resolve tenant (organization) from subdomain on every web request
