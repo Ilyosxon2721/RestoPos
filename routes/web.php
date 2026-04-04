@@ -97,6 +97,14 @@ Route::get('/redirect', \App\Application\Http\Middleware\RedirectByRole::class)
 
 /*
 |--------------------------------------------------------------------------
+| QR-меню — публичный доступ без авторизации
+|--------------------------------------------------------------------------
+*/
+Route::get('/qr-menu/{slug}', [\App\Application\Http\Controllers\QrMenuController::class, 'show'])
+    ->name('qr-menu.show');
+
+/*
+|--------------------------------------------------------------------------
 | Client Panel Routes (Require Authentication)
 |--------------------------------------------------------------------------
 | Все панели: cabinet, manager, cashier, waiter, kitchen, warehouse.
@@ -122,6 +130,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/menu/items', \App\Livewire\Menu\Items::class)->name('cabinet.menu.items');
         Route::get('/menu/ingredients', \App\Livewire\Menu\Ingredients::class)->name('cabinet.menu.ingredients');
         Route::get('/menu/tech-cards', \App\Livewire\Menu\TechCards::class)->name('cabinet.menu.tech-cards');
+        Route::get('/menu/qr-menu', \App\Livewire\Menu\QrMenuSettings::class)->name('cabinet.menu.qr-menu');
 
         // Склад
         Route::get('/warehouse', \App\Livewire\Warehouse\Stock::class)->name('cabinet.warehouse');
