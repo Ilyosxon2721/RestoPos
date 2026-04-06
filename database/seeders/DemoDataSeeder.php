@@ -65,10 +65,10 @@ class DemoDataSeeder extends Seeder
         $ownerUserId = DB::table('users')->insertGetId([
             'uuid' => Str::uuid(),
             'organization_id' => $orgId,
-            'email' => 'admin@forris.uz',
+            'email' => 'owner@forris.uz',
             'phone' => '+998901234567',
-            'password' => Hash::make('password'),
-            'pin_code' => '1234',
+            'password' => Hash::make('Forr!s0wner2026'),
+            'pin_code' => '7491',
             'first_name' => 'Админ',
             'last_name' => 'FORRIS',
             'locale' => 'ru',
@@ -91,8 +91,8 @@ class DemoDataSeeder extends Seeder
             'organization_id' => $orgId,
             'email' => 'waiter@forris.uz',
             'phone' => '+998901234568',
-            'password' => Hash::make('password'),
-            'pin_code' => '1111',
+            'password' => Hash::make('Wa!terForr1s2026'),
+            'pin_code' => '5837',
             'first_name' => 'Азиз',
             'last_name' => 'Каримов',
             'locale' => 'ru',
@@ -127,8 +127,8 @@ class DemoDataSeeder extends Seeder
             'organization_id' => $orgId,
             'email' => 'cashier@forris.uz',
             'phone' => '+998901234569',
-            'password' => Hash::make('password'),
-            'pin_code' => '2222',
+            'password' => Hash::make('Cash!erForr1s2026'),
+            'pin_code' => '6204',
             'first_name' => 'Дилноза',
             'last_name' => 'Рахимова',
             'locale' => 'ru',
@@ -164,8 +164,8 @@ class DemoDataSeeder extends Seeder
             'organization_id' => $orgId,
             'email' => 'cook@forris.uz',
             'phone' => '+998901234570',
-            'password' => Hash::make('password'),
-            'pin_code' => '3333',
+            'password' => Hash::make('C0ok!Forr1s2026'),
+            'pin_code' => '3968',
             'first_name' => 'Бахтиёр',
             'last_name' => 'Усманов',
             'locale' => 'ru',
@@ -416,7 +416,7 @@ class DemoDataSeeder extends Seeder
         DB::table('platform_admins')->insert([
             'uuid' => Str::uuid(),
             'email' => 'superadmin@forris.uz',
-            'password' => Hash::make('superadmin'),
+            'password' => Hash::make('Super@dm1nForr1s!'),
             'first_name' => 'Super',
             'last_name' => 'Admin',
             'is_active' => true,
@@ -501,12 +501,12 @@ class DemoDataSeeder extends Seeder
         $this->command->info('=== Super Admin ===');
         $this->command->info('URL:   /admin/login');
         $this->command->info('Email: superadmin@forris.uz');
-        $this->command->info('Pass:  superadmin');
+        $this->command->info('Pass:  Super@dm1nForr1s!');
         $this->command->info('');
-        $this->command->info('=== Client Admin (Владелец) ===');
+        $this->command->info('=== Owner (Владелец) ===');
         $this->command->info('URL:   /login');
-        $this->command->info('Email: admin@forris.uz');
-        $this->command->info('Pass:  password');
-        $this->command->info('PIN:   1234');
+        $this->command->info('Email: owner@forris.uz');
+        $this->command->info('Pass:  Forr!s0wner2026');
+        $this->command->info('PIN:   7491');
     }
 }
