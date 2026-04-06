@@ -93,6 +93,7 @@
                         <a href="/cabinet/menu/items" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/items*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Блюда</a>
                         <a href="/cabinet/menu/ingredients" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/ingredients*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Ингредиенты</a>
                         <a href="/cabinet/menu/tech-cards" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/tech-cards*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Тех. карты</a>
+                        <a href="/cabinet/menu/qr-menu" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/qr-menu*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">QR-меню</a>
                     </div>
                 </div>
                 {{-- Меню (свёрнутый sidebar) --}}
@@ -132,6 +133,20 @@
                    class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors {{ request()->is('cabinet/warehouse*') ? 'bg-indigo-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}"
                    title="Склад">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                </a>
+
+                {{-- ===== Интернет-магазин ===== --}}
+                <a href="/cabinet/store" x-show="sidebarOpen"
+                   class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
+                          {{ request()->is('cabinet/store*') ? 'bg-indigo-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    <span class="ml-3">Интернет-магазин</span>
+                </a>
+                <a href="/cabinet/store" x-show="!sidebarOpen"
+                   class="flex items-center justify-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
+                          {{ request()->is('cabinet/store*') ? 'bg-indigo-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}"
+                   title="Интернет-магазин">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                 </a>
 
                 {{-- ===== Маркетинг (раскрывающийся) ===== --}}

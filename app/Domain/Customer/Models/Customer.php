@@ -6,13 +6,14 @@ namespace App\Domain\Customer\Models;
 
 use App\Support\Traits\HasUuid;
 use App\Support\Traits\BelongsToOrganization;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Customer extends Model
+class Customer extends Authenticatable
 {
     use HasFactory, HasUuid, BelongsToOrganization, SoftDeletes;
 
@@ -23,6 +24,11 @@ class Customer extends Model
         'last_name',
         'phone',
         'email',
+        'password',
+        'verification_code',
+        'verification_code_sent_at',
+        'is_registered',
+        'avatar',
         'birth_date',
         'gender',
         'loyalty_card_number',
@@ -35,8 +41,17 @@ class Customer extends Model
         'last_visit_at',
     ];
 
+    protected $hidden = [
+        'password',
+        'verification_code',
+        'remember_token',
+    ];
+
     protected $casts = [
         'birth_date' => 'date',
+        'password' => 'hashed',
+        'verification_code_sent_at' => 'datetime',
+        'is_registered' => 'boolean',
         'bonus_balance' => 'decimal:2',
         'total_spent' => 'decimal:2',
         'total_orders' => 'integer',
@@ -58,6 +73,63 @@ class Customer extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(\App\Domain\Order\Models\Order::class);
+    }
+
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(CustomerAddress::class);
+    }
+
+    public function favorites(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            \App\Domain\Menu\Models\Product::class,
+            'customer_favorites',
+            'customer_id',
+            'product_id'
+        )->withTimestamps();
+    }
+
+    public function defaultAddress(): ?CustomerAddress
+    {
+        return $this->addresses()->where('is_default', true)->first();
+    }
+
+    /**
+     * Генерация и отправка кода верификации.
+     */
+    public function generateVerificationCode(): string
+    {
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $this->update([
+            'verification_code' => $code,
+            'verification_code_sent_at' => now(),
+        ]);
+
+        return $code;
+    }
+
+    /**
+     * Проверка кода верификации.
+     */
+    public function verifyCode(string $code): bool
+    {
+        if ($this->verification_code !== $code) {
+            return false;
+        }
+
+        // Код действителен 5 минут
+        if ($this->verification_code_sent_at->diffInMinutes(now()) > 5) {
+            return false;
+        }
+
+        $this->update([
+            'verification_code' => null,
+            'verification_code_sent_at' => null,
+            'is_registered' => true,
+        ]);
+
+        return true;
     }
 
     public function getFullNameAttribute(): string
