@@ -1,6 +1,6 @@
 <div>
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Настройки платформы</h1>
+    <div class="mb-4 sm:mb-6">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Настройки платформы</h1>
         <p class="text-sm text-gray-500">Общие настройки системы</p>
     </div>
 
@@ -10,7 +10,7 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-xl shadow-sm border p-6 max-w-2xl">
+    <div class="bg-white rounded-xl shadow-sm border p-4 sm:p-6 max-w-2xl">
         <form wire:submit="save" class="space-y-6">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Название платформы</label>

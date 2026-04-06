@@ -8,7 +8,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="min-h-screen bg-gray-100" x-data="{ sidebarOpen: true, mobileMenuOpen: false }">
+<body class="min-h-screen bg-gray-100" x-data="{ sidebarOpen: window.innerWidth >= 1024, mobileMenuOpen: false }" @resize.window="if(window.innerWidth >= 1024) mobileMenuOpen = false">
     <div class="flex min-h-screen">
         {{-- Мобильное затемнение --}}
         <div x-show="mobileMenuOpen"
@@ -25,9 +25,9 @@
         {{-- Боковая панель --}}
         <aside class="fixed inset-y-0 left-0 z-50 flex flex-col bg-gray-900 text-white transition-all duration-300 lg:relative"
                :class="{
-                   'w-64': sidebarOpen,
-                   'w-20': !sidebarOpen,
-                   'translate-x-0': mobileMenuOpen || true,
+                   'w-64': sidebarOpen || mobileMenuOpen,
+                   'w-20': !sidebarOpen && !mobileMenuOpen,
+                   'translate-x-0': mobileMenuOpen,
                    '-translate-x-full lg:translate-x-0': !mobileMenuOpen
                }">
             {{-- Логотип --}}
@@ -64,11 +64,12 @@
 
                 @foreach ($links as $link)
                     <a href="{{ $link['url'] }}"
+                       @click="mobileMenuOpen = false"
                        class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                               {{ request()->is(ltrim($link['url'], '/') . '*') ? 'bg-red-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}"
                        title="{{ $link['label'] }}">
                         <span class="flex-shrink-0">{!! $link['icon'] !!}</span>
-                        <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen" x-transition>{{ $link['label'] }}</span>
+                        <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen || mobileMenuOpen" x-transition>{{ $link['label'] }}</span>
                     </a>
                 @endforeach
             </nav>
@@ -101,25 +102,25 @@
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-4">
-                    <span class="text-sm text-gray-600">
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <span class="hidden sm:inline text-sm text-gray-600">
                         {{ auth('platform')->user()?->name ?? 'Администратор' }}
                     </span>
                     <form method="POST" action="/admin/logout">
                         @csrf
                         <button type="submit"
-                                class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors">
-                            <svg class="mr-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-1.5 sm:px-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors">
+                            <svg class="h-4 w-4 text-gray-400 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                             </svg>
-                            Выйти
+                            <span class="hidden sm:inline">Выйти</span>
                         </button>
                     </form>
                 </div>
             </header>
 
             {{-- Контент --}}
-            <main class="flex-1 p-6">
+            <main class="flex-1 p-3 sm:p-4 lg:p-6">
                 {{ $slot }}
             </main>
         </div>
