@@ -19,12 +19,15 @@ class CustomerGroup extends Model
         'bonus_earn_percent',
         'min_spent_to_join',
         'color',
+        'description',
+        'is_active',
     ];
 
     protected $casts = [
         'discount_percent' => 'decimal:2',
         'bonus_earn_percent' => 'decimal:2',
         'min_spent_to_join' => 'decimal:2',
+        'is_active' => 'boolean',
     ];
 
     public function customers(): HasMany

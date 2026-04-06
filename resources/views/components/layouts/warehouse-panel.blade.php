@@ -33,15 +33,11 @@
             {{-- Логотип --}}
             <div class="flex h-16 items-center justify-between px-4 border-b border-gray-700">
                 <a href="/warehouse-panel/stock" class="flex items-center space-x-2 min-w-0">
-                    <span class="text-2xl flex-shrink-0">
-                        <svg class="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                        </svg>
+                    <x-logo variant="icon" color="light" size="md" x-show="!sidebarOpen" class="flex-shrink-0" />
+                    <span x-show="sidebarOpen" x-transition class="min-w-0">
+                        <x-logo variant="full" color="light" size="md" />
+                        <span class="text-xs text-gray-400 block truncate ml-1">Склад</span>
                     </span>
-                    <div x-show="sidebarOpen" x-transition class="min-w-0">
-                        <span class="text-lg font-bold tracking-wide text-amber-400 block truncate">FORRIS POS</span>
-                        <span class="text-xs text-gray-400 block truncate">Склад</span>
-                    </div>
                 </a>
                 <button @click="sidebarOpen = !sidebarOpen" class="hidden lg:block text-gray-400 hover:text-white flex-shrink-0">
                     <svg x-show="sidebarOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

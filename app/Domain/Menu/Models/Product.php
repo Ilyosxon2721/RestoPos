@@ -119,7 +119,7 @@ class Product extends Model
      */
     public function techCard(): HasOne
     {
-        return $this->hasOne(\App\Domain\Recipe\Models\TechCard::class);
+        return $this->hasOne(\App\Domain\Warehouse\Models\TechCard::class);
     }
 
     /**

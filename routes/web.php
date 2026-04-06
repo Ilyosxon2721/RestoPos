@@ -195,6 +195,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/settings/security', \App\Livewire\Cabinet\Settings\Security::class)->name('cabinet.settings.security');
         Route::get('/settings/receipt', \App\Livewire\Cabinet\Settings\Receipt::class)->name('cabinet.settings.receipt');
         Route::get('/settings/taxes', \App\Livewire\Cabinet\Settings\Taxes::class)->name('cabinet.settings.taxes');
+        Route::get('/brand-book', \App\Livewire\Cabinet\BrandBook::class)->name('cabinet.brand-book');
     });
 
     /*
