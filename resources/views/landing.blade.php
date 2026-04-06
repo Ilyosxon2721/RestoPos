@@ -13,9 +13,8 @@
     <header class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <a href="/" class="flex items-center space-x-2">
-                    <span class="text-2xl">🍽️</span>
-                    <span class="text-xl font-bold text-indigo-600">FORRIS POS</span>
+                <a href="/" class="flex items-center">
+                    <x-logo variant="full" color="default" size="md" />
                 </a>
 
                 <nav class="hidden md:flex items-center space-x-8">
@@ -315,9 +314,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="md:col-span-2">
-                    <div class="flex items-center space-x-2 mb-4">
-                        <span class="text-2xl">🍽️</span>
-                        <span class="text-xl font-bold text-white">FORRIS POS</span>
+                    <div class="mb-4">
+                        <x-logo variant="full" color="light" size="md" />
                     </div>
                     <p class="text-sm leading-relaxed max-w-md">
                         Облачная POS-система для автоматизации ресторанов, кафе и магазинов. Простое управление бизнесом из любой точки мира.

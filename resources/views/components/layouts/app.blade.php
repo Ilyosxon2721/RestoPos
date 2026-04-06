@@ -32,9 +32,9 @@
                }">
             {{-- Логотип --}}
             <div class="flex h-16 items-center justify-between px-4 border-b border-gray-700">
-                <a href="/dashboard" class="flex items-center space-x-2">
-                    <span class="text-2xl">🍽️</span>
-                    <span class="text-xl font-bold tracking-wide" x-show="sidebarOpen" x-transition>FORRIS POS</span>
+                <a href="/dashboard" class="flex items-center">
+                    <x-logo variant="icon" color="light" size="md" x-show="!sidebarOpen" />
+                    <x-logo variant="full" color="light" size="md" x-show="sidebarOpen" x-transition />
                 </a>
                 <button @click="sidebarOpen = !sidebarOpen" class="hidden lg:block text-gray-400 hover:text-white">
                     <svg x-show="sidebarOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

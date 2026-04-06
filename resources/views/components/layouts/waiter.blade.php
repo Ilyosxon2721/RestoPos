@@ -13,7 +13,7 @@
         {{-- Верхняя панель --}}
         <header class="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-white px-4 shadow-sm">
             <div class="flex items-center space-x-2">
-                <span class="text-lg font-bold text-gray-800">FORRIS POS</span>
+                <x-logo variant="full" color="default" size="sm" />
                 <span class="h-5 w-px bg-gray-300"></span>
                 <span class="text-sm text-gray-500 truncate max-w-[150px]">
                     {{ auth()->user()?->branch?->name ?? 'Филиал' }}

@@ -12,15 +12,15 @@
     <div class="w-full max-w-md">
         {{-- Логотип --}}
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm mb-4">
-                <span class="text-3xl">🍽️</span>
+            <div class="mb-4">
+                <x-logo variant="icon" color="white" size="xl" />
             </div>
             @if (isset($tenant))
                 <h1 class="text-3xl font-bold text-white tracking-wide">{{ $tenant->name }}</h1>
                 <p class="text-indigo-200 mt-1 text-sm">Powered by FORRIS</p>
             @else
-                <h1 class="text-3xl font-bold text-white tracking-wide">FORRIS POS</h1>
-                <p class="text-indigo-200 mt-1 text-sm">Система управления рестораном</p>
+                <x-logo variant="full" color="white" size="xl" />
+                <p class="text-indigo-200 mt-2 text-sm">Система управления рестораном</p>
             @endif
         </div>
 

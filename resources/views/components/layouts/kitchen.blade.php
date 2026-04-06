@@ -55,9 +55,7 @@
     {{-- Верхняя панель --}}
     <header class="sticky top-0 z-50 flex h-14 items-center justify-between bg-gray-800 border-b border-gray-700 px-6 shadow-lg">
         <div class="flex items-center space-x-3">
-            <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10s4-1 5-3c1.5 2.5 3 3.5 3 5a4 4 0 01-4 4z"/>
-            </svg>
+            <x-logo variant="icon" color="light" size="sm" />
             <h1 class="text-xl font-bold text-white tracking-wide">Кухня</h1>
         </div>
 

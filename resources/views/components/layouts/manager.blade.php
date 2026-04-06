@@ -32,12 +32,12 @@
                }">
             {{-- Логотип --}}
             <div class="flex h-16 items-center justify-between px-4 border-b border-gray-700">
-                <a href="/manager/dashboard" class="flex items-center space-x-2 min-w-0">
-                    <span class="text-2xl flex-shrink-0">🍽️</span>
-                    <div x-show="sidebarOpen" x-transition class="min-w-0">
-                        <span class="text-lg font-bold tracking-wide text-emerald-400 block truncate">FORRIS POS</span>
-                        <span class="text-xs text-gray-400 block truncate">{{ auth()->user()?->branch?->name ?? 'Филиал' }}</span>
-                    </div>
+                <a href="/manager/dashboard" class="flex items-center min-w-0">
+                    <x-logo variant="icon" color="light" size="md" x-show="!sidebarOpen" />
+                    <span x-show="sidebarOpen" x-transition class="min-w-0">
+                        <x-logo variant="full" color="light" size="md" />
+                        <span class="text-xs text-gray-400 block truncate ml-10">{{ auth()->user()?->branch?->name ?? 'Филиал' }}</span>
+                    </span>
                 </a>
                 <button @click="sidebarOpen = !sidebarOpen" class="hidden lg:block text-gray-400 hover:text-white flex-shrink-0">
                     <svg x-show="sidebarOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
