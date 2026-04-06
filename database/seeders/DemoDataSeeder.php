@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class DemoDataSeeder extends Seeder
@@ -61,139 +60,7 @@ class DemoDataSeeder extends Seeder
             'updated_at' => $now,
         ]);
 
-        // Создаём пользователя-владельца
-        $ownerUserId = DB::table('users')->insertGetId([
-            'uuid' => Str::uuid(),
-            'organization_id' => $orgId,
-            'email' => 'admin@forris.uz',
-            'phone' => '+998901234567',
-            'password' => Hash::make('password'),
-            'pin_code' => '1234',
-            'first_name' => 'Админ',
-            'last_name' => 'FORRIS',
-            'locale' => 'ru',
-            'is_active' => true,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
-
-        // Привязываем роль владельца
-        $ownerRoleId = DB::table('roles')->where('slug', 'owner')->value('id');
-        DB::table('user_roles')->insert([
-            'user_id' => $ownerUserId,
-            'role_id' => $ownerRoleId,
-            'branch_id' => null,
-        ]);
-
-        // Создаём демо-официанта
-        $waiterUserId = DB::table('users')->insertGetId([
-            'uuid' => Str::uuid(),
-            'organization_id' => $orgId,
-            'email' => 'waiter@forris.uz',
-            'phone' => '+998901234568',
-            'password' => Hash::make('password'),
-            'pin_code' => '1111',
-            'first_name' => 'Азиз',
-            'last_name' => 'Каримов',
-            'locale' => 'ru',
-            'is_active' => true,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
-
-        $waiterRoleId = DB::table('roles')->where('slug', 'waiter')->value('id');
-        DB::table('user_roles')->insert([
-            'user_id' => $waiterUserId,
-            'role_id' => $waiterRoleId,
-            'branch_id' => $branchId,
-        ]);
-
-        // Создаём сотрудника для официанта
-        DB::table('employees')->insert([
-            'user_id' => $waiterUserId,
-            'branch_id' => $branchId,
-            'position' => 'Официант',
-            'hire_date' => now()->subMonths(3),
-            'salary_type' => 'mixed',
-            'monthly_salary' => 3000000,
-            'sales_percent' => 2,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
-
-        // Создаём демо-кассира
-        $cashierUserId = DB::table('users')->insertGetId([
-            'uuid' => Str::uuid(),
-            'organization_id' => $orgId,
-            'email' => 'cashier@forris.uz',
-            'phone' => '+998901234569',
-            'password' => Hash::make('password'),
-            'pin_code' => '2222',
-            'first_name' => 'Дилноза',
-            'last_name' => 'Рахимова',
-            'locale' => 'ru',
-            'is_active' => true,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
-
-        $cashierRoleId = DB::table('roles')->where('slug', 'cashier')->value('id');
-        if ($cashierRoleId) {
-            DB::table('user_roles')->insert([
-                'user_id' => $cashierUserId,
-                'role_id' => $cashierRoleId,
-                'branch_id' => $branchId,
-            ]);
-        }
-
-        DB::table('employees')->insert([
-            'user_id' => $cashierUserId,
-            'branch_id' => $branchId,
-            'position' => 'Кассир',
-            'hire_date' => now()->subMonths(6),
-            'salary_type' => 'fixed',
-            'monthly_salary' => 4000000,
-            'sales_percent' => 0,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
-
-        // Создаём демо-повара
-        $cookUserId = DB::table('users')->insertGetId([
-            'uuid' => Str::uuid(),
-            'organization_id' => $orgId,
-            'email' => 'cook@forris.uz',
-            'phone' => '+998901234570',
-            'password' => Hash::make('password'),
-            'pin_code' => '3333',
-            'first_name' => 'Бахтиёр',
-            'last_name' => 'Усманов',
-            'locale' => 'ru',
-            'is_active' => true,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
-
-        $cookRoleId = DB::table('roles')->where('slug', 'cook')->value('id');
-        if ($cookRoleId) {
-            DB::table('user_roles')->insert([
-                'user_id' => $cookUserId,
-                'role_id' => $cookRoleId,
-                'branch_id' => $branchId,
-            ]);
-        }
-
-        DB::table('employees')->insert([
-            'user_id' => $cookUserId,
-            'branch_id' => $branchId,
-            'position' => 'Повар',
-            'hire_date' => now()->subYear(),
-            'salary_type' => 'fixed',
-            'monthly_salary' => 5000000,
-            'sales_percent' => 0,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
+        // Пользователи создаются через интерфейс регистрации
 
         // Создаём единицы измерения
         $units = [
@@ -412,17 +279,7 @@ class DemoDataSeeder extends Seeder
             ['organization_id' => $orgId, 'name' => 'Платина', 'description' => 'Элитные клиенты с суммой покупок от 15 000 000 сум', 'discount_percent' => 15, 'bonus_earn_percent' => 10, 'min_spent_to_join' => 15000000, 'color' => '#78909C', 'is_active' => true, 'created_at' => $now, 'updated_at' => $now],
         ]);
 
-        // Создаём Super Admin платформы
-        DB::table('platform_admins')->insert([
-            'uuid' => Str::uuid(),
-            'email' => 'superadmin@forris.uz',
-            'password' => Hash::make('superadmin'),
-            'first_name' => 'Super',
-            'last_name' => 'Admin',
-            'is_active' => true,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
+        // Platform admin создаётся через artisan-команду
 
         // Создаём тарифные планы
         $plans = [
@@ -497,16 +354,5 @@ class DemoDataSeeder extends Seeder
         ]);
 
         $this->command->info('Demo data seeded successfully!');
-        $this->command->info('');
-        $this->command->info('=== Super Admin ===');
-        $this->command->info('URL:   /admin/login');
-        $this->command->info('Email: superadmin@forris.uz');
-        $this->command->info('Pass:  superadmin');
-        $this->command->info('');
-        $this->command->info('=== Client Admin (Владелец) ===');
-        $this->command->info('URL:   /login');
-        $this->command->info('Email: admin@forris.uz');
-        $this->command->info('Pass:  password');
-        $this->command->info('PIN:   1234');
     }
 }

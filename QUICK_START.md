@@ -149,17 +149,6 @@ restopos/
 
 ---
 
-## 🎯 Тестовые данные
-
-После `php artisan migrate:fresh --seed`:
-
-**Логин:**
-- Email: `admin@restopos.local`
-- Пароль: `password`
-
-**PIN для официанта:**
-- PIN: `1234`
-
 ---
 
 ## 💡 Советы

@@ -18,7 +18,7 @@
             <input wire:model="email"
                    type="email"
                    id="email"
-                   placeholder="admin@forris.uz"
+                   placeholder="admin@example.com"
                    autocomplete="email"
                    class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none transition @error('email') border-red-500 @enderror">
             @error('email')
