@@ -393,6 +393,8 @@ class DemoDataSeeder extends Seeder
 
         // Создаём склад
         $warehouseId = DB::table('warehouses')->insertGetId([
+            'uuid' => Str::uuid(),
+            'organization_id' => $orgId,
             'branch_id' => $branchId,
             'name' => 'Основной склад',
             'type' => 'main',
@@ -404,10 +406,10 @@ class DemoDataSeeder extends Seeder
 
         // Группы клиентов
         DB::table('customer_groups')->insert([
-            ['organization_id' => $orgId, 'name' => 'Новый', 'discount_percent' => 0, 'bonus_earn_percent' => 3, 'min_spent_to_join' => 0, 'color' => '#9E9E9E', 'created_at' => $now],
-            ['organization_id' => $orgId, 'name' => 'Серебро', 'discount_percent' => 5, 'bonus_earn_percent' => 5, 'min_spent_to_join' => 1000000, 'color' => '#90A4AE', 'created_at' => $now],
-            ['organization_id' => $orgId, 'name' => 'Золото', 'discount_percent' => 10, 'bonus_earn_percent' => 7, 'min_spent_to_join' => 5000000, 'color' => '#FFD54F', 'created_at' => $now],
-            ['organization_id' => $orgId, 'name' => 'Платина', 'discount_percent' => 15, 'bonus_earn_percent' => 10, 'min_spent_to_join' => 15000000, 'color' => '#78909C', 'created_at' => $now],
+            ['organization_id' => $orgId, 'name' => 'Новый', 'description' => 'Новые клиенты без истории покупок', 'discount_percent' => 0, 'bonus_earn_percent' => 3, 'min_spent_to_join' => 0, 'color' => '#9E9E9E', 'is_active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['organization_id' => $orgId, 'name' => 'Серебро', 'description' => 'Постоянные клиенты с суммой покупок от 1 000 000 сум', 'discount_percent' => 5, 'bonus_earn_percent' => 5, 'min_spent_to_join' => 1000000, 'color' => '#90A4AE', 'is_active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['organization_id' => $orgId, 'name' => 'Золото', 'description' => 'VIP клиенты с суммой покупок от 5 000 000 сум', 'discount_percent' => 10, 'bonus_earn_percent' => 7, 'min_spent_to_join' => 5000000, 'color' => '#FFD54F', 'is_active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['organization_id' => $orgId, 'name' => 'Платина', 'description' => 'Элитные клиенты с суммой покупок от 15 000 000 сум', 'discount_percent' => 15, 'bonus_earn_percent' => 10, 'min_spent_to_join' => 15000000, 'color' => '#78909C', 'is_active' => true, 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // Создаём Super Admin платформы
