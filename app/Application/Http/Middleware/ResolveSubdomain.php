@@ -20,12 +20,16 @@ class ResolveSubdomain
                 return $next($request);
             }
 
-            $organization = Organization::where('subdomain', $subdomain)
-                ->where('is_active', true)
-                ->first();
+            $organization = Organization::where('subdomain', $subdomain)->first();
 
             if (! $organization) {
-                abort(404, 'Организация не найдена. Проверьте адрес.');
+                return response()->view('errors.organization-not-found', [], 404);
+            }
+
+            if (! $organization->is_active) {
+                return response()->view('errors.organization-inactive', [
+                    'organizationName' => $organization->name,
+                ], 403);
             }
 
             app()->instance('tenant', $organization);
