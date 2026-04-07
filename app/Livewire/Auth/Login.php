@@ -71,15 +71,15 @@ final class Login extends Component
         $this->redirect('/redirect', navigate: true);
     }
 
-    public function pinLogin(): void
+    public function pinLoginDirect(string $pinCode): void
     {
-        $this->validate([
-            'pin' => ['required', 'digits:4'],
-        ]);
+        if (mb_strlen($pinCode) !== 4) {
+            return;
+        }
 
         $tenant = app()->bound('tenant') ? app('tenant') : null;
 
-        $query = User::where('pin_code', $this->pin)->where('is_active', true);
+        $query = User::where('pin_code', $pinCode)->where('is_active', true);
 
         if ($tenant) {
             $query->where('organization_id', $tenant->id);
@@ -88,9 +88,7 @@ final class Login extends Component
         $user = $query->first();
 
         if (! $user) {
-            $this->addError('pin', 'Неверный PIN-код.');
-            $this->pin = '';
-            return;
+            throw new \Exception('invalid_pin');
         }
 
         Auth::login($user, remember: true);

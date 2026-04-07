@@ -26,6 +26,26 @@ final class Display extends Component
 
     public function mount(): void
     {
+        $user = auth()->user();
+
+        // Установить branch_id из query param или employee
+        $requestBranch = request()->query('branch');
+        if ($requestBranch) {
+            $validBranch = $user->organization?->branches()
+                ->where('id', $requestBranch)
+                ->where('is_active', true)
+                ->exists();
+            if ($validBranch) {
+                session(['current_branch_id' => (int) $requestBranch]);
+            }
+        } elseif (! session('current_branch_id')) {
+            $branchId = $user->employee?->branch_id
+                ?? $user->organization?->branches()->where('is_active', true)->first()?->id;
+            if ($branchId) {
+                session(['current_branch_id' => $branchId]);
+            }
+        }
+
         // Если оператор уже сохранён в сессии — восстановить
         $sessionOperator = session('kitchen_operator');
         if ($sessionOperator) {
@@ -37,43 +57,32 @@ final class Display extends Component
 
     // === PIN-авторизация оператора ===
 
-    public function appendPin(string $digit): void
+    public function verifyPin(string $pinCode): void
     {
-        if (mb_strlen($this->pin) < 4) {
-            $this->pin .= $digit;
+        if (mb_strlen($pinCode) !== 4) {
+            return;
         }
 
-        if (mb_strlen($this->pin) === 4) {
-            $this->verifyPin();
-        }
-    }
-
-    public function clearPin(): void
-    {
-        $this->pin = '';
-        $this->resetErrorBag('pin');
-    }
-
-    public function backspacePin(): void
-    {
-        $this->pin = mb_substr($this->pin, 0, -1);
-    }
-
-    public function verifyPin(): void
-    {
         $branchId = session('current_branch_id');
+        $orgId = auth()->user()?->organization_id;
 
-        // Ищем пользователя по PIN в текущем филиале с ролью повара
-        $user = User::where('pin_code', $this->pin)
+        $query = User::where('pin_code', $pinCode)
             ->where('is_active', true)
-            ->whereHas('employee', fn($q) => $q->where('branch_id', $branchId))
-            ->whereHas('roles', fn($q) => $q->whereIn('slug', ['cook']))
-            ->first();
+            ->whereHas('roles', fn($q) => $q->whereIn('slug', ['cook', 'owner', 'admin']));
+
+        if ($branchId) {
+            $query->where(function ($q) use ($branchId, $orgId) {
+                $q->whereHas('employee', fn($eq) => $eq->where('branch_id', $branchId))
+                  ->orWhere('organization_id', $orgId);
+            });
+        } elseif ($orgId) {
+            $query->where('organization_id', $orgId);
+        }
+
+        $user = $query->first();
 
         if (! $user) {
-            $this->addError('pin', 'Неверный PIN-код или нет доступа.');
-            $this->pin = '';
-            return;
+            throw new \Exception('invalid_pin');
         }
 
         $this->operatorId = $user->id;
@@ -107,12 +116,15 @@ final class Display extends Component
 
     public function getOrders(): Collection
     {
+        $branchId = session('current_branch_id');
+
         $query = OrderItem::query()
             ->whereIn('status', [
                 OrderItemStatus::SENT,
                 OrderItemStatus::PREPARING,
                 OrderItemStatus::READY,
             ])
+            ->when($branchId, fn($q) => $q->whereHas('order', fn($oq) => $oq->where('branch_id', $branchId)))
             ->with(['order.table', 'product']);
 
         if ($this->filter !== 'all') {
@@ -181,12 +193,15 @@ final class Display extends Component
 
     public function getStats(): array
     {
+        $branchId = session('current_branch_id');
+
         $items = OrderItem::query()
             ->whereIn('status', [
                 OrderItemStatus::SENT,
                 OrderItemStatus::PREPARING,
                 OrderItemStatus::READY,
             ])
+            ->when($branchId, fn($q) => $q->whereHas('order', fn($oq) => $oq->where('branch_id', $branchId)))
             ->get();
 
         $avgPrepTime = $items
