@@ -226,24 +226,76 @@
                 {{-- Быстрый доступ --}}
                 <div class="my-3 border-t border-gray-700"></div>
                 <p class="px-3 mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500" x-show="sidebarOpen || mobileMenuOpen" x-transition>Быстрый доступ</p>
-                <a href="/cashier/terminal" target="_blank"
-                   class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors text-indigo-300 hover:bg-gray-800 hover:text-indigo-200"
-                   title="POS Терминал">
-                    <span class="flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    </span>
-                    <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen || mobileMenuOpen" x-transition>POS Терминал</span>
-                    <svg class="w-3.5 h-3.5 ml-auto flex-shrink-0" x-show="sidebarOpen || mobileMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                </a>
-                <a href="/kitchen" target="_blank"
-                   class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors text-indigo-300 hover:bg-gray-800 hover:text-indigo-200"
-                   title="Кухня">
-                    <span class="flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/></svg>
-                    </span>
-                    <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen || mobileMenuOpen" x-transition>Кухня</span>
-                    <svg class="w-3.5 h-3.5 ml-auto flex-shrink-0" x-show="sidebarOpen || mobileMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                </a>
+
+                @php
+                    $userBranches = auth()->user()?->organization?->branches()->where('is_active', true)->get() ?? collect();
+                @endphp
+
+                {{-- POS Терминал --}}
+                @if($userBranches->count() > 1)
+                    <div x-data="{ showBranches: false }" class="relative">
+                        <button @click="showBranches = !showBranches"
+                                class="w-full flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors text-indigo-300 hover:bg-gray-800 hover:text-indigo-200"
+                                title="POS Терминал">
+                            <span class="flex-shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            </span>
+                            <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen || mobileMenuOpen" x-transition>POS Терминал</span>
+                            <svg class="w-4 h-4 ml-auto transition-transform" :class="showBranches ? 'rotate-180' : ''" x-show="sidebarOpen || mobileMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div x-show="showBranches" x-collapse class="ml-5 pl-3 border-l border-gray-700 space-y-0.5 mt-0.5">
+                            @foreach($userBranches as $branch)
+                                <a href="/cashier/terminal?branch={{ $branch->id }}" target="_blank"
+                                   class="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:text-white transition-colors">
+                                    {{ $branch->name }}
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <a href="/cashier/terminal" target="_blank"
+                       class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors text-indigo-300 hover:bg-gray-800 hover:text-indigo-200"
+                       title="POS Терминал">
+                        <span class="flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        </span>
+                        <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen || mobileMenuOpen" x-transition>POS Терминал</span>
+                        <svg class="w-3.5 h-3.5 ml-auto flex-shrink-0" x-show="sidebarOpen || mobileMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    </a>
+                @endif
+
+                {{-- Кухня --}}
+                @if($userBranches->count() > 1)
+                    <div x-data="{ showBranches: false }" class="relative">
+                        <button @click="showBranches = !showBranches"
+                                class="w-full flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors text-indigo-300 hover:bg-gray-800 hover:text-indigo-200"
+                                title="Кухня">
+                            <span class="flex-shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/></svg>
+                            </span>
+                            <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen || mobileMenuOpen" x-transition>Кухня</span>
+                            <svg class="w-4 h-4 ml-auto transition-transform" :class="showBranches ? 'rotate-180' : ''" x-show="sidebarOpen || mobileMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div x-show="showBranches" x-collapse class="ml-5 pl-3 border-l border-gray-700 space-y-0.5 mt-0.5">
+                            @foreach($userBranches as $branch)
+                                <a href="/kitchen?branch={{ $branch->id }}" target="_blank"
+                                   class="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:text-white transition-colors">
+                                    {{ $branch->name }}
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <a href="/kitchen" target="_blank"
+                       class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors text-indigo-300 hover:bg-gray-800 hover:text-indigo-200"
+                       title="Кухня">
+                        <span class="flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/></svg>
+                        </span>
+                        <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen || mobileMenuOpen" x-transition>Кухня</span>
+                        <svg class="w-3.5 h-3.5 ml-auto flex-shrink-0" x-show="sidebarOpen || mobileMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    </a>
+                @endif
             </nav>
 
             {{-- Нижняя часть --}}

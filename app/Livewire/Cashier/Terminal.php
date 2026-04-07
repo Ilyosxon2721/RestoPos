@@ -60,9 +60,21 @@ class Terminal extends Component
     public function mount(): void
     {
         $user = auth()->user();
-        $branchId = $user->employee?->branch_id
+
+        // Приоритет: query param > employee > session > первый филиал
+        $requestBranch = request()->query('branch');
+        if ($requestBranch) {
+            // Проверяем, что филиал принадлежит организации пользователя
+            $validBranch = $user->organization?->branches()
+                ->where('id', $requestBranch)
+                ->where('is_active', true)
+                ->exists();
+            $branchId = $validBranch ? (int) $requestBranch : null;
+        }
+
+        $branchId ??= $user->employee?->branch_id
             ?? session('current_branch_id')
-            ?? $user->organization?->branches()->first()?->id;
+            ?? $user->organization?->branches()->where('is_active', true)->first()?->id;
 
         if ($branchId) {
             session(['current_branch_id' => $branchId]);
