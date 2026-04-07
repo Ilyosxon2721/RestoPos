@@ -9,7 +9,7 @@
     @livewireStyles
 </head>
 <body class="min-h-screen bg-gray-100" x-data="{
-    sidebarOpen: true,
+    sidebarOpen: window.innerWidth >= 1024,
     mobileMenuOpen: false,
     openMenu: '{{ request()->is('cabinet/menu*') ? 'menu' : (request()->is('cabinet/warehouse*') ? 'warehouse' : (request()->is('cabinet/marketing*', 'cabinet/customers*') ? 'marketing' : (request()->is('cabinet/staff*', 'cabinet/branches*', 'cabinet/roles*') ? 'access' : (request()->is('cabinet/settings*', 'cabinet/subscription*') ? 'settings' : '')))) }}'
 }">
@@ -29,11 +29,12 @@
         {{-- Боковая панель --}}
         <aside class="fixed inset-y-0 left-0 z-50 flex flex-col bg-gray-900 text-white transition-all duration-300 lg:relative"
                :class="{
-                   'w-64': sidebarOpen,
-                   'w-20': !sidebarOpen,
-                   'translate-x-0': mobileMenuOpen || true,
+                   'w-64': sidebarOpen || mobileMenuOpen,
+                   'w-20': !sidebarOpen && !mobileMenuOpen,
+                   'translate-x-0': mobileMenuOpen,
                    '-translate-x-full lg:translate-x-0': !mobileMenuOpen
-               }">
+               }"
+               @resize.window="if(window.innerWidth >= 1024) mobileMenuOpen = false">
             {{-- Логотип --}}
             <div class="flex h-16 items-center justify-between px-4 border-b border-gray-700">
                 <a href="/cabinet/dashboard" class="flex items-center">
@@ -61,7 +62,7 @@
                     <span class="flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                     </span>
-                    <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen" x-transition>Статистика</span>
+                    <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen || mobileMenuOpen" x-transition>Статистика</span>
                 </a>
 
                 {{-- Финансы --}}
@@ -72,11 +73,11 @@
                     <span class="flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </span>
-                    <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen" x-transition>Финансы</span>
+                    <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen || mobileMenuOpen" x-transition>Финансы</span>
                 </a>
 
                 {{-- ===== Меню (раскрывающийся) ===== --}}
-                <div x-show="sidebarOpen">
+                <div x-show="sidebarOpen || mobileMenuOpen">
                     <button @click="openMenu = openMenu === 'menu' ? '' : 'menu'"
                             class="w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                                    {{ request()->is('cabinet/menu*') ? 'text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
@@ -103,7 +104,7 @@
                 </a>
 
                 {{-- ===== Склад (раскрывающийся) ===== --}}
-                <div x-show="sidebarOpen">
+                <div x-show="sidebarOpen || mobileMenuOpen">
                     <button @click="openMenu = openMenu === 'warehouse' ? '' : 'warehouse'"
                             class="w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                                    {{ request()->is('cabinet/warehouse*') ? 'text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
@@ -134,7 +135,7 @@
                 </a>
 
                 {{-- ===== Интернет-магазин ===== --}}
-                <a href="/cabinet/store" x-show="sidebarOpen"
+                <a href="/cabinet/store" x-show="sidebarOpen || mobileMenuOpen"
                    class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                           {{ request()->is('cabinet/store*') ? 'bg-indigo-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
@@ -148,7 +149,7 @@
                 </a>
 
                 {{-- ===== Маркетинг (раскрывающийся) ===== --}}
-                <div x-show="sidebarOpen">
+                <div x-show="sidebarOpen || mobileMenuOpen">
                     <button @click="openMenu = openMenu === 'marketing' ? '' : 'marketing'"
                             class="w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                                    {{ request()->is('cabinet/marketing*', 'cabinet/customers*') ? 'text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
@@ -172,7 +173,7 @@
                 </a>
 
                 {{-- ===== Доступ (раскрывающийся) ===== --}}
-                <div x-show="sidebarOpen">
+                <div x-show="sidebarOpen || mobileMenuOpen">
                     <button @click="openMenu = openMenu === 'access' ? '' : 'access'"
                             class="w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                                    {{ request()->is('cabinet/staff*', 'cabinet/branches*', 'cabinet/roles*') ? 'text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
@@ -195,7 +196,7 @@
                 </a>
 
                 {{-- ===== Настройки (раскрывающийся) ===== --}}
-                <div x-show="sidebarOpen">
+                <div x-show="sidebarOpen || mobileMenuOpen">
                     <button @click="openMenu = openMenu === 'settings' ? '' : 'settings'"
                             class="w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                                    {{ request()->is('cabinet/settings*', 'cabinet/subscription*') ? 'text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
@@ -224,15 +225,15 @@
 
                 {{-- Быстрый доступ --}}
                 <div class="my-3 border-t border-gray-700"></div>
-                <p class="px-3 mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500" x-show="sidebarOpen" x-transition>Быстрый доступ</p>
+                <p class="px-3 mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500" x-show="sidebarOpen || mobileMenuOpen" x-transition>Быстрый доступ</p>
                 <a href="/cashier/terminal" target="_blank"
                    class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors text-indigo-300 hover:bg-gray-800 hover:text-indigo-200"
                    title="POS Терминал">
                     <span class="flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     </span>
-                    <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen" x-transition>POS Терминал</span>
-                    <svg class="w-3.5 h-3.5 ml-auto flex-shrink-0" x-show="sidebarOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen || mobileMenuOpen" x-transition>POS Терминал</span>
+                    <svg class="w-3.5 h-3.5 ml-auto flex-shrink-0" x-show="sidebarOpen || mobileMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                 </a>
                 <a href="/kitchen" target="_blank"
                    class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors text-indigo-300 hover:bg-gray-800 hover:text-indigo-200"
@@ -240,13 +241,13 @@
                     <span class="flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/></svg>
                     </span>
-                    <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen" x-transition>Кухня</span>
-                    <svg class="w-3.5 h-3.5 ml-auto flex-shrink-0" x-show="sidebarOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    <span class="ml-3 whitespace-nowrap" x-show="sidebarOpen || mobileMenuOpen" x-transition>Кухня</span>
+                    <svg class="w-3.5 h-3.5 ml-auto flex-shrink-0" x-show="sidebarOpen || mobileMenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                 </a>
             </nav>
 
             {{-- Нижняя часть --}}
-            <div class="border-t border-gray-700 p-4" x-show="sidebarOpen" x-transition>
+            <div class="border-t border-gray-700 p-4" x-show="sidebarOpen || mobileMenuOpen" x-transition>
                 <p class="text-xs text-gray-500">&copy; {{ date('Y') }} FORRIS POS</p>
             </div>
         </aside>
@@ -273,25 +274,25 @@
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-4">
-                    <span class="text-sm text-gray-600">
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <span class="hidden sm:inline text-sm text-gray-600">
                         {{ auth()->user()?->first_name ?? '' }} {{ auth()->user()?->last_name ?? '' }}
                     </span>
                     <form method="POST" action="/logout">
                         @csrf
                         <button type="submit"
-                                class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors">
-                            <svg class="mr-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-1.5 sm:px-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors">
+                            <svg class="h-4 w-4 text-gray-400 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                             </svg>
-                            Выйти
+                            <span class="hidden sm:inline">Выйти</span>
                         </button>
                     </form>
                 </div>
             </header>
 
             {{-- Контент --}}
-            <main class="flex-1 p-6">
+            <main class="flex-1 p-3 sm:p-4 lg:p-6">
                 {{ $slot }}
             </main>
         </div>
