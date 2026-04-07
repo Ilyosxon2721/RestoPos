@@ -62,21 +62,24 @@
             </button>
         </form>
 
-        {{-- Разделитель --}}
-        <div class="relative my-6">
-            <div class="absolute inset-0 flex items-center">
-                <div class="w-full border-t border-gray-200"></div>
+        {{-- PIN-вход и разделитель — только на субдомене (для операционного персонала) --}}
+        @if ($tenantName)
+            {{-- Разделитель --}}
+            <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="bg-white px-3 text-gray-500">или</span>
+                </div>
             </div>
-            <div class="relative flex justify-center text-sm">
-                <span class="bg-white px-3 text-gray-500">или</span>
-            </div>
-        </div>
 
-        {{-- Переключение на PIN --}}
-        <button wire:click="togglePinLogin"
-                class="w-full rounded-lg border-2 border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors">
-            Войти по PIN-коду
-        </button>
+            {{-- Переключение на PIN --}}
+            <button wire:click="togglePinLogin"
+                    class="w-full rounded-lg border-2 border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors">
+                Войти по PIN-коду
+            </button>
+        @endif
 
         @if (! $tenantName)
             {{-- Ссылка на регистрацию --}}
