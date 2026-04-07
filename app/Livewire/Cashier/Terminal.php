@@ -408,9 +408,30 @@ class Terminal extends Component
             $order->discount_amount = $this->discountAmount;
         }
 
+        // Находим способ оплаты по типу
+        $orgId = auth()->user()?->organization_id;
+        $paymentMethodId = \Illuminate\Support\Facades\DB::table('payment_methods')
+            ->where('organization_id', $orgId)
+            ->where('type', $this->paymentMethod)
+            ->where('is_active', true)
+            ->value('id');
+
+        if (! $paymentMethodId) {
+            // Fallback: берём первый активный способ оплаты
+            $paymentMethodId = \Illuminate\Support\Facades\DB::table('payment_methods')
+                ->where('organization_id', $orgId)
+                ->where('is_active', true)
+                ->value('id');
+        }
+
+        if (! $paymentMethodId) {
+            $this->dispatch('notify', message: 'Не найден способ оплаты. Настройте в кабинете.', type: 'error');
+            return;
+        }
+
         // Создаём платёж
         $order->payments()->create([
-            'payment_method_id' => null,
+            'payment_method_id' => $paymentMethodId,
             'cash_shift_id' => null,
             'user_id' => auth()->id(),
             'amount' => $total,
