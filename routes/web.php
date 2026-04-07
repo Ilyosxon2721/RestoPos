@@ -56,7 +56,10 @@ Route::post('/logout', function () {
     auth()->logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-    return redirect('/login');
+
+    $cookie = cookie()->forget(auth()->guard()->getRecallerName());
+
+    return redirect('/login')->withCookie($cookie);
 })->name('logout');
 
 /*
@@ -70,7 +73,10 @@ Route::prefix('admin')->group(function () {
         auth('platform')->logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
-        return redirect()->route('admin.login');
+
+        $cookie = cookie()->forget(auth('platform')->getRecallerName());
+
+        return redirect()->route('admin.login')->withCookie($cookie);
     })->name('admin.logout');
 
     Route::middleware('super_admin')->group(function () {
@@ -127,7 +133,10 @@ Route::prefix('shop/{slug}')->group(function () {
         auth('customer')->logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
-        return redirect()->route('shop.home', ['slug' => $slug]);
+
+        $cookie = cookie()->forget(auth('customer')->getRecallerName());
+
+        return redirect()->route('shop.home', ['slug' => $slug])->withCookie($cookie);
     })->name('shop.logout');
 });
 
