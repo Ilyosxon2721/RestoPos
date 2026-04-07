@@ -60,7 +60,9 @@ class Terminal extends Component
     public function mount(): void
     {
         $user = auth()->user();
-        $branchId = $user->employee?->branch_id ?? session('current_branch_id');
+        $branchId = $user->employee?->branch_id
+            ?? session('current_branch_id')
+            ?? $user->organization?->branches()->first()?->id;
 
         if ($branchId) {
             session(['current_branch_id' => $branchId]);
@@ -103,13 +105,22 @@ class Terminal extends Component
     public function verifyPin(): void
     {
         $branchId = session('current_branch_id');
+        $orgId = auth()->user()?->organization_id;
 
-        // Ищем пользователя по PIN в текущем филиале с ролью кассира/бармена
-        $user = User::where('pin_code', $this->pin)
+        // Ищем пользователя по PIN с ролью кассира/бармена
+        $query = User::where('pin_code', $this->pin)
             ->where('is_active', true)
-            ->whereHas('employee', fn($q) => $q->where('branch_id', $branchId))
-            ->whereHas('roles', fn($q) => $q->whereIn('slug', ['cashier', 'bartender']))
-            ->first();
+            ->whereHas('roles', fn($q) => $q->whereIn('slug', ['cashier', 'bartender', 'owner', 'admin']));
+
+        if ($branchId) {
+            // Если филиал известен — ищем в нём
+            $query->whereHas('employee', fn($q) => $q->where('branch_id', $branchId));
+        } elseif ($orgId) {
+            // Иначе ищем в организации
+            $query->where('organization_id', $orgId);
+        }
+
+        $user = $query->first();
 
         if (! $user) {
             $this->addError('pin', 'Неверный PIN-код или нет доступа.');
