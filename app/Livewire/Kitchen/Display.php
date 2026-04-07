@@ -57,35 +57,16 @@ final class Display extends Component
 
     // === PIN-авторизация оператора ===
 
-    public function appendPin(string $digit): void
+    public function verifyPin(string $pinCode): void
     {
-        if (mb_strlen($this->pin) < 4) {
-            $this->pin .= $digit;
+        if (mb_strlen($pinCode) !== 4) {
+            return;
         }
 
-        if (mb_strlen($this->pin) === 4) {
-            $this->verifyPin();
-        }
-    }
-
-    public function clearPin(): void
-    {
-        $this->pin = '';
-        $this->resetErrorBag('pin');
-    }
-
-    public function backspacePin(): void
-    {
-        $this->pin = mb_substr($this->pin, 0, -1);
-    }
-
-    public function verifyPin(): void
-    {
         $branchId = session('current_branch_id');
         $orgId = auth()->user()?->organization_id;
 
-        // Ищем пользователя по PIN с ролью повара/владельца/админа
-        $query = User::where('pin_code', $this->pin)
+        $query = User::where('pin_code', $pinCode)
             ->where('is_active', true)
             ->whereHas('roles', fn($q) => $q->whereIn('slug', ['cook', 'owner', 'admin']));
 
@@ -101,9 +82,7 @@ final class Display extends Component
         $user = $query->first();
 
         if (! $user) {
-            $this->addError('pin', 'Неверный PIN-код или нет доступа.');
-            $this->pin = '';
-            return;
+            throw new \Exception('invalid_pin');
         }
 
         $this->operatorId = $user->id;

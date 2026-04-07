@@ -2,7 +2,38 @@
 
     {{-- ========== PIN-ЭКРАН АВТОРИЗАЦИИ ========== --}}
     @if ($pinLocked)
-        <div class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900">
+        <div class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900"
+             x-data="{
+                 localPin: '',
+                 error: '',
+                 loading: false,
+                 append(d) {
+                     if (this.localPin.length >= 4 || this.loading) return;
+                     this.error = '';
+                     this.localPin += d;
+                     if (this.localPin.length === 4) {
+                         this.loading = true;
+                         $wire.verifyPin(this.localPin).then(() => {
+                             this.loading = false;
+                             if (this.localPin.length === 4) {
+                                 this.error = 'Неверный PIN-код или нет доступа.';
+                                 this.localPin = '';
+                             }
+                         }).catch(() => {
+                             this.loading = false;
+                             this.error = 'Ошибка проверки';
+                             this.localPin = '';
+                         });
+                     }
+                 },
+                 clear() { this.localPin = ''; this.error = ''; },
+                 backspace() { this.localPin = this.localPin.slice(0, -1); this.error = ''; }
+             }"
+             @keydown.window="
+                 if ($event.key >= '0' && $event.key <= '9') append($event.key);
+                 else if ($event.key === 'Backspace') backspace();
+                 else if ($event.key === 'Escape') clear();
+             ">
             <div class="w-full max-w-sm mx-auto text-center">
                 {{-- Логотип --}}
                 <div class="mb-8">
@@ -17,32 +48,33 @@
 
                 {{-- Индикатор PIN --}}
                 <div class="flex justify-center gap-4 mb-6">
-                    @for ($i = 0; $i < 4; $i++)
-                        <div class="h-4 w-4 rounded-full border-2 transition-all duration-200 {{ strlen($pin) > $i ? 'bg-orange-500 border-orange-500 scale-110' : 'border-gray-600' }}"></div>
-                    @endfor
+                    <template x-for="i in 4">
+                        <div class="h-4 w-4 rounded-full border-2 transition-all duration-200"
+                             :class="localPin.length >= i ? 'bg-orange-500 border-orange-500 scale-110' : 'border-gray-600'"></div>
+                    </template>
                 </div>
 
-                @error('pin')
-                    <p class="text-red-400 text-sm mb-4">{{ $message }}</p>
-                @enderror
+                <p x-show="error" x-text="error" class="text-red-400 text-sm mb-4" x-cloak></p>
+                <p x-show="loading" class="text-orange-400 text-sm mb-4" x-cloak>Проверка...</p>
 
                 {{-- Цифровая клавиатура --}}
                 <div class="grid grid-cols-3 gap-3 max-w-xs mx-auto">
-                    @foreach (range(1, 9) as $digit)
-                        <button wire:click="appendPin('{{ $digit }}')"
-                                class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 active:bg-orange-600 text-2xl font-bold text-white transition-all duration-150 active:scale-95">
-                            {{ $digit }}
-                        </button>
-                    @endforeach
-                    <button wire:click="clearPin"
+                    <template x-for="digit in ['1','2','3','4','5','6','7','8','9']">
+                        <button @click="append(digit)"
+                                :disabled="loading"
+                                class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 active:bg-orange-600 text-2xl font-bold text-white transition-all duration-150 active:scale-95 disabled:opacity-50"
+                                x-text="digit"></button>
+                    </template>
+                    <button @click="clear()"
                             class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 text-sm font-bold text-red-400 transition-all duration-150">
                         Сброс
                     </button>
-                    <button wire:click="appendPin('0')"
-                            class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 active:bg-orange-600 text-2xl font-bold text-white transition-all duration-150 active:scale-95">
+                    <button @click="append('0')"
+                            :disabled="loading"
+                            class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 active:bg-orange-600 text-2xl font-bold text-white transition-all duration-150 active:scale-95 disabled:opacity-50">
                         0
                     </button>
-                    <button wire:click="backspacePin"
+                    <button @click="backspace()"
                             class="h-16 rounded-2xl bg-gray-800 hover:bg-gray-700 text-xl font-bold text-gray-400 transition-all duration-150 flex items-center justify-center">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l7-7 12 0v14H10l-7-7z"/>

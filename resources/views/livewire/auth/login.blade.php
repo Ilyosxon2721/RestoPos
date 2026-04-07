@@ -91,7 +91,38 @@
 
     @else
         {{-- PIN-код --}}
-        <div class="space-y-5">
+        <div class="space-y-5"
+             x-data="{
+                 localPin: '',
+                 error: '',
+                 loading: false,
+                 append(d) {
+                     if (this.localPin.length >= 4 || this.loading) return;
+                     this.error = '';
+                     this.localPin += d;
+                     if (this.localPin.length === 4) {
+                         this.loading = true;
+                         $wire.pinLoginDirect(this.localPin).then(() => {
+                             this.loading = false;
+                             if (this.localPin.length === 4) {
+                                 this.error = 'Неверный PIN-код.';
+                                 this.localPin = '';
+                             }
+                         }).catch(() => {
+                             this.loading = false;
+                             this.error = 'Ошибка проверки';
+                             this.localPin = '';
+                         });
+                     }
+                 },
+                 clear() { this.localPin = ''; this.error = ''; },
+                 backspace() { this.localPin = this.localPin.slice(0, -1); this.error = ''; }
+             }"
+             @keydown.window="
+                 if ($event.key >= '0' && $event.key <= '9') append($event.key);
+                 else if ($event.key === 'Backspace') backspace();
+                 else if ($event.key === 'Escape') clear();
+             ">
             <div class="text-center">
                 <h2 class="text-2xl font-bold text-gray-800">Вход по PIN</h2>
                 <p class="text-gray-500 text-sm mt-1">Введите 4-значный PIN-код</p>
@@ -99,32 +130,33 @@
 
             {{-- Индикатор PIN --}}
             <div class="flex justify-center space-x-3 py-4">
-                @for ($i = 0; $i < 4; $i++)
-                    <div class="h-4 w-4 rounded-full border-2 transition-colors {{ strlen($pin) > $i ? 'bg-indigo-600 border-indigo-600' : 'border-gray-300' }}"></div>
-                @endfor
+                <template x-for="i in 4">
+                    <div class="h-4 w-4 rounded-full border-2 transition-colors"
+                         :class="localPin.length >= i ? 'bg-indigo-600 border-indigo-600' : 'border-gray-300'"></div>
+                </template>
             </div>
 
-            @error('pin')
-                <p class="text-sm text-red-600 text-center">{{ $message }}</p>
-            @enderror
+            <p x-show="error" x-text="error" class="text-sm text-red-600 text-center" x-cloak></p>
+            <p x-show="loading" class="text-sm text-indigo-600 text-center" x-cloak>Проверка...</p>
 
             {{-- Цифровая клавиатура --}}
             <div class="grid grid-cols-3 gap-3 max-w-xs mx-auto">
-                @foreach (range(1, 9) as $digit)
-                    <button wire:click="appendPin('{{ $digit }}')"
-                            class="flex h-14 items-center justify-center rounded-xl bg-gray-100 text-xl font-semibold text-gray-800 hover:bg-indigo-100 hover:text-indigo-700 active:bg-indigo-200 transition-colors">
-                        {{ $digit }}
-                    </button>
-                @endforeach
-                <button wire:click="clearPin"
+                <template x-for="digit in ['1','2','3','4','5','6','7','8','9']">
+                    <button @click="append(digit)"
+                            :disabled="loading"
+                            class="flex h-14 items-center justify-center rounded-xl bg-gray-100 text-xl font-semibold text-gray-800 hover:bg-indigo-100 hover:text-indigo-700 active:bg-indigo-200 transition-colors disabled:opacity-50"
+                            x-text="digit"></button>
+                </template>
+                <button @click="clear()"
                         class="flex h-14 items-center justify-center rounded-xl bg-red-50 text-sm font-medium text-red-600 hover:bg-red-100 transition-colors">
                     Сброс
                 </button>
-                <button wire:click="appendPin('0')"
-                        class="flex h-14 items-center justify-center rounded-xl bg-gray-100 text-xl font-semibold text-gray-800 hover:bg-indigo-100 hover:text-indigo-700 active:bg-indigo-200 transition-colors">
+                <button @click="append('0')"
+                        :disabled="loading"
+                        class="flex h-14 items-center justify-center rounded-xl bg-gray-100 text-xl font-semibold text-gray-800 hover:bg-indigo-100 hover:text-indigo-700 active:bg-indigo-200 transition-colors disabled:opacity-50">
                     0
                 </button>
-                <button wire:click="backspacePin"
+                <button @click="backspace()"
                         class="flex h-14 items-center justify-center rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l7-7 11 0a1 1 0 011 1v12a1 1 0 01-1 1H10l-7-7z"/>
