@@ -10,12 +10,22 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RedirectByRole
 {
-    private const ROLE_ROUTES = [
+    /**
+     * Роли управления — остаются на главном домене pos.forris.uz
+     * Менеджер может управлять несколькими ресторанами.
+     */
+    private const MANAGEMENT_ROUTES = [
         'owner' => '/cabinet/dashboard',
         'director' => '/manager/dashboard',
         'admin' => '/manager/dashboard',
         'accountant' => '/manager/reports',
         'head_waiter' => '/manager/dashboard',
+    ];
+
+    /**
+     * Операционные роли — работают на субдомене конкретного ресторана.
+     */
+    private const OPERATIONAL_ROUTES = [
         'cashier' => '/cashier/terminal',
         'waiter' => '/waiter/tables',
         'bartender' => '/cashier/terminal',
@@ -49,42 +59,75 @@ class RedirectByRole
         }
 
         $userRoles = $user->roles()->pluck('slug')->toArray();
+        $onSubdomain = app()->bound('tenant');
 
-        // Определяем путь по роли
-        $targetPath = '/cabinet/dashboard';
-        foreach (self::ROLE_ROUTES as $role => $path) {
+        // Если уже на субдомене — определяем путь по роли (все роли работают)
+        if ($onSubdomain) {
+            $targetPath = $this->resolveTargetPath($userRoles);
+            return redirect($targetPath);
+        }
+
+        // На главном домене: проверяем, управленческая ли роль
+        $managementPath = $this->resolveManagementPath($userRoles);
+
+        if ($managementPath) {
+            // Управленческая роль — остаётся на главном домене
+            return redirect($managementPath);
+        }
+
+        // Операционная роль на главном домене — перенаправляем на субдомен
+        $operationalPath = $this->resolveOperationalPath($userRoles);
+
+        if ($operationalPath && $this->canRedirectToSubdomain($user)) {
+            return $this->redirectToSubdomain($request, $user->organization->subdomain, $operationalPath);
+        }
+
+        // Fallback — кабинет на главном домене
+        return redirect('/cabinet/dashboard');
+    }
+
+    private function resolveManagementPath(array $userRoles): ?string
+    {
+        foreach (self::MANAGEMENT_ROUTES as $role => $path) {
             if (in_array($role, $userRoles)) {
-                $targetPath = $path;
-                break;
+                return $path;
+            }
+        }
+        return null;
+    }
+
+    private function resolveOperationalPath(array $userRoles): ?string
+    {
+        foreach (self::OPERATIONAL_ROUTES as $role => $path) {
+            if (in_array($role, $userRoles)) {
+                return $path;
+            }
+        }
+        return null;
+    }
+
+    private function resolveTargetPath(array $userRoles): string
+    {
+        $allRoutes = array_merge(self::MANAGEMENT_ROUTES, self::OPERATIONAL_ROUTES);
+
+        foreach ($allRoutes as $role => $path) {
+            if (in_array($role, $userRoles)) {
+                return $path;
             }
         }
 
-        // Если на главном домене и субдомены активны — редирект на субдомен
-        if ($this->shouldRedirectToSubdomain($request, $user)) {
-            return $this->redirectToSubdomain($request, $user->organization->subdomain, $targetPath);
-        }
-
-        return redirect($targetPath);
+        return '/cabinet/dashboard';
     }
 
-    private function shouldRedirectToSubdomain(Request $request, $user): bool
+    private function canRedirectToSubdomain($user): bool
     {
-        // Уже на субдомене — не нужно
-        if (app()->bound('tenant')) {
-            return false;
-        }
-
-        // У организации нет субдомена
         if (! $user->organization?->subdomain) {
             return false;
         }
 
-        // Проверяем что текущий хост заканчивается на base_domain
         $baseDomain = config('forris.base_domain');
-        $host = $request->getHost();
 
-        // Только если мы на base_domain (pos.forris.uz), а не на forge/другом хостинге
-        return $host === $baseDomain || str_ends_with($host, '.' . $baseDomain);
+        return ! empty($baseDomain);
     }
 
     private function redirectToSubdomain(Request $request, string $subdomain, string $targetPath): \Illuminate\Http\RedirectResponse
