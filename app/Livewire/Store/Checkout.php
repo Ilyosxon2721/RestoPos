@@ -88,6 +88,21 @@ final class Checkout extends Component
         $this->calculateDeliveryFee();
     }
 
+    public function updatedNewLat(): void
+    {
+        $this->calculateDeliveryFee();
+    }
+
+    public function updatedNewLng(): void
+    {
+        $this->calculateDeliveryFee();
+    }
+
+    public function updatedShowNewAddress(): void
+    {
+        $this->calculateDeliveryFee();
+    }
+
     public function getAddressesProperty()
     {
         return auth('customer')->user()->addresses()->orderBy('is_default', 'desc')->get();
@@ -105,16 +120,31 @@ final class Checkout extends Component
      */
     public function calculateDeliveryFee(): void
     {
-        if ($this->orderType !== 'delivery' || !$this->selectedAddressId) {
+        if ($this->orderType !== 'delivery') {
             $this->deliveryFee = 0;
             $this->deliveryInfo = '';
+            $this->deliveryZoneId = null;
             return;
         }
 
-        $address = CustomerAddress::find($this->selectedAddressId);
-        if (!$address || !$address->latitude || !$address->longitude) {
+        $lat = null;
+        $lng = null;
+
+        if ($this->showNewAddress && $this->newLat !== null && $this->newLng !== null) {
+            $lat = (float) $this->newLat;
+            $lng = (float) $this->newLng;
+        } elseif ($this->selectedAddressId) {
+            $address = CustomerAddress::find($this->selectedAddressId);
+            if ($address && $address->latitude && $address->longitude) {
+                $lat = (float) $address->latitude;
+                $lng = (float) $address->longitude;
+            }
+        }
+
+        if ($lat === null || $lng === null) {
             $this->deliveryFee = 0;
             $this->deliveryInfo = 'Укажите адрес на карте для расчёта доставки';
+            $this->deliveryZoneId = null;
             return;
         }
 
@@ -126,7 +156,7 @@ final class Checkout extends Component
             ->get();
 
         foreach ($zones as $zone) {
-            if ($zone->containsPoint((float) $address->latitude, (float) $address->longitude)) {
+            if ($zone->containsPoint($lat, $lng)) {
                 $this->deliveryZoneId = $zone->id;
                 $this->deliveryFee = $zone->delivery_fee;
 

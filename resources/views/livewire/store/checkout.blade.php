@@ -244,7 +244,7 @@
             initMap() {
                 if (typeof ymaps === 'undefined') {
                     const script = document.createElement('script');
-                    script.src = 'https://api-maps.yandex.ru/2.1/?apikey=&lang=ru_RU';
+                    script.src = 'https://api-maps.yandex.ru/2.1/?apikey={{ config('services.yandex.maps_key') }}&lang=ru_RU';
                     script.onload = () => ymaps.ready(() => this.createMap());
                     document.head.appendChild(script);
                 } else {

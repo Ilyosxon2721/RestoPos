@@ -46,27 +46,45 @@ class DeliveryZone extends Model
 
     public function containsPoint(float $lat, float $lng): bool
     {
-        if (empty($this->polygon)) {
+        if (empty($this->polygon) || !is_array($this->polygon)) {
             return false;
         }
 
-        $polygon = $this->polygon;
-        $n = count($polygon);
-        $inside = false;
+        $points = $this->normalizePolygon($this->polygon);
+        $n = count($points);
+        if ($n < 3) {
+            return false;
+        }
 
+        $inside = false;
         for ($i = 0, $j = $n - 1; $i < $n; $j = $i++) {
-            $xi = $polygon[$i]['lng'];
-            $yi = $polygon[$i]['lat'];
-            $xj = $polygon[$j]['lng'];
-            $yj = $polygon[$j]['lat'];
+            [$yi, $xi] = $points[$i];
+            [$yj, $xj] = $points[$j];
 
             if ((($yi > $lat) !== ($yj > $lat)) &&
-                ($lng < ($xj - $xi) * ($lat - $yi) / ($yj - $yi) + $xi)) {
+                ($lng < ($xj - $xi) * ($lat - $yi) / (($yj - $yi) ?: 1e-12) + $xi)) {
                 $inside = !$inside;
             }
         }
 
         return $inside;
+    }
+
+    /**
+     * Normalize polygon to list of [lat, lng] tuples.
+     * Accepts both [[lat,lng], ...] and [{lat:..,lng:..}, ...].
+     */
+    private function normalizePolygon(array $polygon): array
+    {
+        $out = [];
+        foreach ($polygon as $p) {
+            if (is_array($p) && array_key_exists('lat', $p) && array_key_exists('lng', $p)) {
+                $out[] = [(float) $p['lat'], (float) $p['lng']];
+            } elseif (is_array($p) && isset($p[0], $p[1])) {
+                $out[] = [(float) $p[0], (float) $p[1]];
+            }
+        }
+        return $out;
     }
 
     public function getDeliveryFee(float $orderAmount): float
