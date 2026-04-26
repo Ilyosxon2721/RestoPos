@@ -5,7 +5,10 @@ namespace App\Providers;
 use App\Domain\Infrastructure\Sms\LogSmsSender;
 use App\Domain\Infrastructure\Sms\PlayMobileSmsSender;
 use App\Domain\Infrastructure\Sms\SmsSender;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -38,5 +41,20 @@ class AppServiceProvider extends ServiceProvider
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Database\\Factories\\'.class_basename($modelName).'Factory'
         );
+
+        $this->configureRateLimiting();
+    }
+
+    private function configureRateLimiting(): void
+    {
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by(
+                $request->user()?->id ?: $request->ip()
+            );
+        });
+
+        RateLimiter::for('auth', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
     }
 }

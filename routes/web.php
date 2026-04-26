@@ -2,7 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Application\Http\Controllers\HealthController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/health', HealthController::class)
+    ->withoutMiddleware([\App\Application\Http\Middleware\ResolveSubdomain::class])
+    ->name('health');
 
 /*
 |--------------------------------------------------------------------------

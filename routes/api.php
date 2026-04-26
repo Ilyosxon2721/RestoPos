@@ -34,14 +34,14 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
 
     // Public routes (no authentication required)
-    Route::prefix('auth')->group(function () {
+    Route::middleware('throttle:auth')->prefix('auth')->group(function () {
         Route::post('login', [AuthController::class, 'login']);
         Route::post('pin-login', [AuthController::class, 'pinLogin']);
         Route::post('register', [AuthController::class, 'register']);
     });
 
     // Protected routes (require authentication)
-    Route::middleware(['auth:sanctum', 'organization'])->group(function () {
+    Route::middleware(['auth:sanctum', 'organization', 'throttle:api'])->group(function () {
 
         // Auth routes
         Route::prefix('auth')->group(function () {
