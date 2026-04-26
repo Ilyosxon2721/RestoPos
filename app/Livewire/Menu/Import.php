@@ -11,6 +11,7 @@ use App\Domain\Menu\Imports\Poster\ImportTechCardsAction;
 use App\Domain\Organization\Models\Branch;
 use App\Support\Traits\ResolvesLayout;
 use Illuminate\Database\Eloquent\Collection;
+use Livewire\Attributes\Url;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -20,6 +21,7 @@ final class Import extends Component
 {
     use WithFileUploads, ResolvesLayout;
 
+    #[Url(as: 'tab', keep: false)]
     public string $tab = 'ingredients';
 
     #[Validate(['file' => 'required|file|mimes:csv,txt|max:20480'])]
@@ -37,6 +39,10 @@ final class Import extends Component
 
     public function mount(): void
     {
+        if (!in_array($this->tab, ['ingredients', 'products', 'tech-cards'], true)) {
+            $this->tab = 'ingredients';
+        }
+
         $this->branches = Branch::query()
             ->where('organization_id', $this->organizationId())
             ->orderBy('name')
