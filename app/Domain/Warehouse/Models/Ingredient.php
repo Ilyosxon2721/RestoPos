@@ -18,6 +18,8 @@ class Ingredient extends Model
 
     protected $fillable = [
         'organization_id',
+        'external_source',
+        'external_id',
         'category_id',
         'unit_id',
         'name',

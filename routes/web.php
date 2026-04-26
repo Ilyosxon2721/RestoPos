@@ -168,6 +168,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/menu/ingredients', \App\Livewire\Menu\Ingredients::class)->name('cabinet.menu.ingredients');
         Route::get('/menu/tech-cards', \App\Livewire\Menu\TechCards::class)->name('cabinet.menu.tech-cards');
         Route::get('/menu/qr-menu', \App\Livewire\Menu\QrMenuSettings::class)->name('cabinet.menu.qr-menu');
+        Route::get('/menu/import', \App\Livewire\Menu\Import::class)->name('cabinet.menu.import');
 
         // Интернет-магазин
         Route::get('/store', \App\Livewire\Cabinet\StoreSettingsPage::class)->name('cabinet.store');
@@ -218,6 +219,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/orders', \App\Livewire\Manager\Orders::class)->name('manager.orders');
         Route::get('/menu', \App\Livewire\Menu\Categories::class)->name('manager.menu');
         Route::get('/menu/items', \App\Livewire\Menu\Items::class)->name('manager.menu.items');
+        Route::get('/menu/import', \App\Livewire\Menu\Import::class)->name('manager.menu.import');
         Route::get('/floor', \App\Livewire\Manager\Floor::class)->name('manager.floor');
         Route::get('/staff', \App\Livewire\Staff\EmployeeList::class)->name('manager.staff');
         Route::get('/customers', \App\Livewire\Customers\CustomerList::class)->name('manager.customers');
