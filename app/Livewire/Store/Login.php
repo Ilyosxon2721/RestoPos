@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Store;
 
 use App\Domain\Customer\Models\Customer;
+use App\Domain\Infrastructure\Sms\SmsSender;
 use App\Domain\Store\Models\StoreSettings;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -66,10 +67,12 @@ final class Login extends Component
         }
 
         $this->customerId = $customer->id;
-        $customer->generateVerificationCode();
+        $code = $customer->generateVerificationCode();
 
-        // TODO: Отправить SMS с кодом ($code)
-        // Для разработки код логируется или отображается
+        app(SmsSender::class)->send(
+            $phone,
+            __('Код для входа: :code', ['code' => $code])
+        );
 
         $this->step = 'code';
     }
@@ -142,9 +145,14 @@ final class Login extends Component
             return;
         }
 
-        $customer->generateVerificationCode();
+        $code = $customer->generateVerificationCode();
+
+        app(SmsSender::class)->send(
+            $customer->phone,
+            __('Код для входа: :code', ['code' => $code])
+        );
+
         $this->error = '';
-        // TODO: Отправить SMS
     }
 
     public function render()

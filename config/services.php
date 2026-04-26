@@ -39,4 +39,15 @@ return [
         'maps_key' => env('YANDEX_MAPS_API_KEY'),
     ],
 
+    'sms' => [
+        'driver' => env('SMS_DRIVER', 'log'),
+        'sender' => env('SMS_SENDER_ID', 'FORRIS'),
+
+        'playmobile' => [
+            'endpoint' => env('PLAYMOBILE_ENDPOINT', 'https://send.smsxabar.uz'),
+            'username' => env('PLAYMOBILE_USERNAME'),
+            'password' => env('PLAYMOBILE_PASSWORD'),
+        ],
+    ],
+
 ];
