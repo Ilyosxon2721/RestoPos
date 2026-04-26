@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Domain;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Floor\Models\Table;
 use App\Domain\Order\Actions\CreateOrderAction;
 use App\Domain\Order\Models\Order;
@@ -35,7 +36,7 @@ class CreateOrderActionTest extends TestCase
         $branch = Branch::factory()->create();
         $cashShift = CashShift::create([
             'branch_id' => $branch->id,
-            'opened_by' => 1,
+            'opened_by' => User::factory()->create()->id,
             'opened_at' => now(),
             'opening_cash' => 0,
             'status' => 'open',
@@ -82,7 +83,7 @@ class CreateOrderActionTest extends TestCase
         $branch = Branch::factory()->create();
         CashShift::create([
             'branch_id' => $branch->id,
-            'opened_by' => 1,
+            'opened_by' => User::factory()->create()->id,
             'opened_at' => now(),
             'opening_cash' => 0,
             'status' => 'open',
@@ -108,7 +109,7 @@ class CreateOrderActionTest extends TestCase
         $branch = Branch::factory()->create();
         CashShift::create([
             'branch_id' => $branch->id,
-            'opened_by' => 1,
+            'opened_by' => User::factory()->create()->id,
             'opened_at' => now(),
             'opening_cash' => 0,
             'status' => 'open',
