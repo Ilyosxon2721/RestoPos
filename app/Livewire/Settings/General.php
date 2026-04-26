@@ -56,7 +56,7 @@ class General extends Component
             $this->branchName = $branch->name ?? '';
             $this->address = $branch->address ?? '';
 
-            if (! $this->phone && $branch->phone) {
+            if (!$this->phone && $branch->phone) {
                 $this->phone = $branch->phone;
             }
         }

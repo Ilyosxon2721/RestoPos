@@ -12,7 +12,7 @@ use Livewire\WithPagination;
 
 class Stock extends Component
 {
-    use WithPagination, ResolvesLayout;
+    use ResolvesLayout, WithPagination;
 
     #[Url]
     public string $searchQuery = '';
@@ -57,7 +57,7 @@ class Stock extends Component
             ]);
 
         if ($this->searchQuery !== '') {
-            $query->where('ingredients.name', 'like', '%' . $this->searchQuery . '%');
+            $query->where('ingredients.name', 'like', '%'.$this->searchQuery.'%');
         }
 
         if ($this->showLowStock) {

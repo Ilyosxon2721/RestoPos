@@ -6,16 +6,16 @@ namespace App\Livewire\Menu;
 
 use App\Domain\Menu\Models\Category;
 use App\Domain\Menu\Models\Product;
+use App\Support\Traits\ResolvesLayout;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
-use App\Support\Traits\ResolvesLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 final class Items extends Component
 {
-    use WithPagination, ResolvesLayout;
+    use ResolvesLayout, WithPagination;
 
     public Collection $categories;
 
@@ -74,7 +74,7 @@ final class Items extends Component
             ->with('category');
 
         if ($this->searchQuery !== '') {
-            $query->where('name', 'like', '%' . $this->searchQuery . '%');
+            $query->where('name', 'like', '%'.$this->searchQuery.'%');
         }
 
         if ($this->filterCategory !== null) {
@@ -182,5 +182,4 @@ final class Items extends Component
         return view('livewire.menu.items')
             ->layout($this->resolveLayout());
     }
-
 }

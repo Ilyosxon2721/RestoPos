@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin;
 
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
+use Livewire\Component;
 
 #[Layout('components.layouts.guest')]
 class Login extends Component
@@ -19,6 +19,7 @@ class Login extends Component
     public string $password = '';
 
     public bool $remember = false;
+
     public string $error = '';
 
     public function login(): void
@@ -31,6 +32,7 @@ class Login extends Component
         ], $this->remember)) {
             session()->regenerate();
             $this->redirect(route('admin.dashboard'));
+
             return;
         }
 

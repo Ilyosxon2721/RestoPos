@@ -13,12 +13,17 @@ use Livewire\Component;
 final class Locations extends Component
 {
     public bool $showModal = false;
+
     public ?int $editingId = null;
 
     public string $name = '';
+
     public ?int $branchId = null;
+
     public string $type = 'main';
+
     public bool $isDefault = false;
+
     public bool $isActive = true;
 
     public function create(): void
@@ -81,7 +86,7 @@ final class Locations extends Component
     {
         $orgId = auth()->user()->organization_id;
 
-        $warehouses = Warehouse::whereHas('branch', fn($q) => $q->where('organization_id', $orgId))
+        $warehouses = Warehouse::whereHas('branch', fn ($q) => $q->where('organization_id', $orgId))
             ->with('branch')
             ->orderBy('name')
             ->get();

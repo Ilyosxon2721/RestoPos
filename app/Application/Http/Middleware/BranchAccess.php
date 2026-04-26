@@ -36,7 +36,7 @@ class BranchAccess
 
         // Set current branch context
         if ($branchId) {
-            app()->singleton('current.branch_id', fn() => (int) $branchId);
+            app()->singleton('current.branch_id', fn () => (int) $branchId);
         }
 
         return $next($request);

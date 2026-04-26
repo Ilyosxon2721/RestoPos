@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Domain\Floor\Models;
 
 use App\Support\Traits\BelongsToBranch;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Hall extends Model
 {
-    use HasFactory, BelongsToBranch;
+    use BelongsToBranch, HasFactory;
 
     protected $fillable = [
         'branch_id',
@@ -85,5 +85,4 @@ class Hall extends Model
     {
         return \Database\Factories\HallFactory::new();
     }
-
 }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire\Cabinet\Settings;
 
 use App\Domain\Organization\Models\Organization;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 /**
  * Настройки чека — заголовок, подвал, логотип, автопечать чека и кухонного тикета.
@@ -15,9 +15,13 @@ use Livewire\Attributes\Layout;
 final class Receipt extends Component
 {
     public string $headerText = '';
+
     public string $footerText = '';
+
     public bool $showLogo = true;
+
     public bool $autoPrintReceipt = false;
+
     public bool $autoPrintKitchenTicket = true;
 
     public function mount(): void

@@ -7,9 +7,9 @@ namespace App\Livewire\Cabinet;
 use App\Domain\Menu\Models\Product;
 use App\Domain\Store\Models\StoreBanner;
 use App\Domain\Store\Models\StoreSettings;
+use App\Support\Traits\ResolvesLayout;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
-use App\Support\Traits\ResolvesLayout;
 use Livewire\Component;
 
 final class StoreSettingsPage extends Component
@@ -39,21 +39,34 @@ final class StoreSettingsPage extends Component
     public ?int $drinkOfDayProductId = null;
 
     public bool $deliveryEnabled = true;
+
     public bool $pickupEnabled = true;
+
     public string $minOrderAmount = '0';
+
     public string $phone = '';
+
     public string $instagram = '';
+
     public string $telegram = '';
+
     public string $workingHoursText = '';
+
     public bool $isActive = true;
 
     // Баннеры
     public bool $showBannerModal = false;
+
     public ?int $editingBannerId = null;
+
     public string $bannerTitle = '';
+
     public string $bannerDescription = '';
+
     public string $bannerImage = '';
+
     public string $bannerLink = '';
+
     public bool $bannerIsActive = true;
 
     public bool $saved = false;
@@ -114,7 +127,7 @@ final class StoreSettingsPage extends Component
             $this->storeSettings->update($data);
         } else {
             $data['slug'] = Str::slug($this->storeName) ?: 'store';
-            $data['slug'] .= '-' . Str::random(6);
+            $data['slug'] .= '-'.Str::random(6);
             $this->storeSettings = StoreSettings::create($data);
         }
 

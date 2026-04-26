@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Payment\Models;
 
-use App\Support\Traits\BelongsToOrganization;
 use App\Support\Enums\PaymentMethodType;
+use App\Support\Traits\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Model;
 
 class PaymentMethod extends Model

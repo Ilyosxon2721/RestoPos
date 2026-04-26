@@ -20,7 +20,7 @@ trait BelongsToBranch
      */
     public function scopeForBranch(Builder $query, int $branchId): Builder
     {
-        return $query->where($this->getTable() . '.branch_id', $branchId);
+        return $query->where($this->getTable().'.branch_id', $branchId);
     }
 
     /**
@@ -49,6 +49,6 @@ trait BelongsToBranch
             ->pluck('user_roles.branch_id')
             ->unique();
 
-        return $query->whereIn($this->getTable() . '.branch_id', $branchIds);
+        return $query->whereIn($this->getTable().'.branch_id', $branchIds);
     }
 }

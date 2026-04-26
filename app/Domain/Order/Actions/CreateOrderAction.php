@@ -2,12 +2,12 @@
 
 namespace App\Domain\Order\Actions;
 
-use App\Domain\Order\Models\Order;
 use App\Domain\Floor\Models\Table;
+use App\Domain\Order\Models\Order;
 use App\Domain\Payment\Models\CashShift;
+use App\Support\Enums\OrderSource;
 use App\Support\Enums\OrderStatus;
 use App\Support\Enums\OrderType;
-use App\Support\Enums\OrderSource;
 use App\Support\Enums\PaymentStatus;
 use Illuminate\Support\Facades\DB;
 

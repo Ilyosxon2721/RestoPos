@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Livewire\Manager;
 
-use App\Domain\Order\Models\Order;
 use App\Domain\Floor\Models\Table;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
+use App\Domain\Order\Models\Order;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.manager')]
 class Dashboard extends Component
@@ -17,6 +17,7 @@ class Dashboard extends Component
     public function todayOrders(): int
     {
         $branchId = session('current_branch_id');
+
         return Order::where('branch_id', $branchId)->whereDate('created_at', today())->count();
     }
 
@@ -24,6 +25,7 @@ class Dashboard extends Component
     public function todayRevenue(): float
     {
         $branchId = session('current_branch_id');
+
         return (float) Order::where('branch_id', $branchId)
             ->whereDate('created_at', today())
             ->where('status', 'completed')
@@ -34,6 +36,7 @@ class Dashboard extends Component
     public function openOrders(): int
     {
         $branchId = session('current_branch_id');
+
         return Order::where('branch_id', $branchId)->whereNotIn('status', ['completed', 'cancelled'])->count();
     }
 
@@ -41,13 +44,15 @@ class Dashboard extends Component
     public function occupiedTables(): int
     {
         $branchId = session('current_branch_id');
-        return Table::whereHas('hall', fn($q) => $q->where('branch_id', $branchId))->where('status', 'occupied')->count();
+
+        return Table::whereHas('hall', fn ($q) => $q->where('branch_id', $branchId))->where('status', 'occupied')->count();
     }
 
     #[Computed]
     public function recentOrders()
     {
         $branchId = session('current_branch_id');
+
         return Order::where('branch_id', $branchId)->latest()->take(15)->get();
     }
 

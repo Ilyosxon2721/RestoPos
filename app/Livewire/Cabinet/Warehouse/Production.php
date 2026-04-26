@@ -25,12 +25,16 @@ final class Production extends Component
     public bool $showModal = false;
 
     public ?int $warehouseId = null;
+
     public ?int $productId = null;
+
     public string $quantity = '';
+
     public string $notes = '';
 
     /** @var array<int, array{ingredient_id: int, name: string, unit: string, required: float, available: float}> */
     public array $calculatedIngredients = [];
+
     public bool $canProduce = false;
 
     public function create(): void
@@ -121,6 +125,7 @@ final class Production extends Component
 
         if (!$techCard) {
             $this->addError('productId', 'Техкарта не найдена для выбранного продукта.');
+
             return;
         }
 

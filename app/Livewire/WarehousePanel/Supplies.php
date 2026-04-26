@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire\WarehousePanel;
 
 use App\Domain\Warehouse\Models\Supply;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Layout('components.layouts.warehouse-panel')]

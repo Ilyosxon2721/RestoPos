@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Domain\Reservation\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToBranch;
-use App\Support\Enums\ReservationStatus;
-use App\Domain\Floor\Models\Table;
 use App\Domain\Customer\Models\Customer;
-use Illuminate\Database\Eloquent\Model;
+use App\Domain\Floor\Models\Table;
+use App\Support\Enums\ReservationStatus;
+use App\Support\Traits\BelongsToBranch;
+use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Reservation extends Model
 {
-    use HasFactory, HasUuid, BelongsToBranch;
+    use BelongsToBranch, HasFactory, HasUuid;
 
     protected $fillable = [
         'branch_id',
@@ -111,6 +111,7 @@ class Reservation extends Model
     public function isUpcoming(): bool
     {
         $reservedAt = $this->reserved_at;
+
         return $reservedAt !== null && $reservedAt > now();
     }
 
@@ -221,5 +222,4 @@ class Reservation extends Model
     {
         return \Database\Factories\ReservationFactory::new();
     }
-
 }

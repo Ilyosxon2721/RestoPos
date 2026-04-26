@@ -84,6 +84,7 @@ class DeliveryZone extends Model
                 $out[] = [(float) $p[0], (float) $p[1]];
             }
         }
+
         return $out;
     }
 

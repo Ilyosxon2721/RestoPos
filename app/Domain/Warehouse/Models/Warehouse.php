@@ -2,15 +2,15 @@
 
 namespace App\Domain\Warehouse\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Support\Traits\BelongsToBranch;
+use App\Support\Traits\BelongsToOrganization;
+use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Warehouse extends Model
 {
-    use HasUuid, BelongsToOrganization, BelongsToBranch;
+    use BelongsToBranch, BelongsToOrganization, HasUuid;
 
     protected $fillable = [
         'organization_id',

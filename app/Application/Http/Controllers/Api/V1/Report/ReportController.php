@@ -3,10 +3,10 @@
 namespace App\Application\Http\Controllers\Api\V1\Report;
 
 use App\Application\Http\Controllers\Controller;
+use App\Domain\Customer\Models\Customer;
 use App\Domain\Order\Models\Order;
 use App\Domain\Order\Models\OrderItem;
 use App\Domain\Payment\Models\Payment;
-use App\Domain\Customer\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +33,7 @@ class ReportController extends Controller
                 'revenue' => Order::where('branch_id', $branchId)->whereMonth('created_at', now()->month)->completed()->sum('total_amount'),
                 'orders' => Order::where('branch_id', $branchId)->whereMonth('created_at', now()->month)->completed()->count(),
             ],
-            'top_products' => OrderItem::whereHas('order', fn($q) => $q->where('branch_id', $branchId)->whereDate('created_at', $today)->completed())
+            'top_products' => OrderItem::whereHas('order', fn ($q) => $q->where('branch_id', $branchId)->whereDate('created_at', $today)->completed())
                 ->select('product_id', 'name', DB::raw('SUM(quantity) as qty'), DB::raw('SUM(total_price) as revenue'))
                 ->groupBy('product_id', 'name')
                 ->orderByDesc('qty')
@@ -66,7 +66,7 @@ class ReportController extends Controller
             ->orderBy('date')
             ->get();
 
-        $byPaymentMethod = Payment::whereHas('order', fn($q) => $q->where('branch_id', $branchId)
+        $byPaymentMethod = Payment::whereHas('order', fn ($q) => $q->where('branch_id', $branchId)
             ->whereBetween('created_at', [$request->input('start_date'), $request->input('end_date')])
             ->completed())
             ->completed()
@@ -97,7 +97,7 @@ class ReportController extends Controller
 
         $branchId = $request->input('branch_id') ?? app('current.branch_id');
 
-        $products = OrderItem::whereHas('order', fn($q) => $q->where('branch_id', $branchId)
+        $products = OrderItem::whereHas('order', fn ($q) => $q->where('branch_id', $branchId)
             ->whereBetween('created_at', [$request->input('start_date'), $request->input('end_date')])
             ->completed())
             ->select(

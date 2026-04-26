@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin;
 
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.admin')]
 class Settings extends Component
 {
     public string $siteName = 'FORRIS POS';
+
     public string $supportEmail = '';
+
     public bool $registrationEnabled = true;
+
     public int $trialDays = 14;
 
     public function save(): void

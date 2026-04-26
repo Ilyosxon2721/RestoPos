@@ -27,15 +27,25 @@ final class Profile extends Component
     public ?string $birthDate = null;
 
     public bool $showAddressModal = false;
+
     public ?int $editingAddressId = null;
+
     public string $addressLabel = 'Дом';
+
     public string $addressText = '';
+
     public string $apartment = '';
+
     public string $entrance = '';
+
     public string $floor = '';
+
     public string $intercom = '';
+
     public string $addressComment = '';
+
     public ?float $latitude = null;
+
     public ?float $longitude = null;
 
     public bool $saved = false;

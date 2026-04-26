@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Livewire\Menu;
 
 use App\Domain\Menu\Models\Category;
+use App\Support\Traits\ResolvesLayout;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Validate;
-use App\Support\Traits\ResolvesLayout;
 use Livewire\Component;
 
 final class Categories extends Component
@@ -130,5 +130,4 @@ final class Categories extends Component
         return view('livewire.menu.categories')
             ->layout($this->resolveLayout());
     }
-
 }

@@ -41,7 +41,7 @@ final class Register extends Component
 
     public function updatedOrganizationName(): void
     {
-        if (! $this->subdomainManuallyEdited) {
+        if (!$this->subdomainManuallyEdited) {
             $this->subdomain = Str::slug($this->organizationName);
         }
     }
@@ -56,7 +56,7 @@ final class Register extends Component
     {
         $this->validate();
 
-        $action = new RegisterOrganizationAction();
+        $action = new RegisterOrganizationAction;
 
         $result = $action->execute([
             'organization_name' => $this->organizationName,

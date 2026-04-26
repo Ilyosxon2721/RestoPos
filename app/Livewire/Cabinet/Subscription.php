@@ -6,9 +6,9 @@ namespace App\Livewire\Cabinet;
 
 use App\Domain\Platform\Models\Plan;
 use App\Domain\Platform\Models\Subscription as SubscriptionModel;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.cabinet')]
 class Subscription extends Component

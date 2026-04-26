@@ -16,17 +16,17 @@ class ResolveSubdomain
         try {
             $subdomain = $this->extractSubdomain($request);
 
-            if (! $subdomain) {
+            if (!$subdomain) {
                 return $next($request);
             }
 
             $organization = Organization::where('subdomain', $subdomain)->first();
 
-            if (! $organization) {
+            if (!$organization) {
                 return response()->view('errors.organization-not-found', [], 404);
             }
 
-            if (! $organization->is_active) {
+            if (!$organization->is_active) {
                 return response()->view('errors.organization-inactive', [
                     'organizationName' => $organization->name,
                 ], 403);
@@ -61,8 +61,8 @@ class ResolveSubdomain
         }
 
         // Match: subdomain.pos.forris.uz, subdomain.pos.forris.test, etc.
-        if (str_ends_with($host, '.' . $baseDomain)) {
-            $subdomain = str_replace('.' . $baseDomain, '', $host);
+        if (str_ends_with($host, '.'.$baseDomain)) {
+            $subdomain = str_replace('.'.$baseDomain, '', $host);
 
             if ($subdomain === config('forris.admin_subdomain')) {
                 return null;

@@ -7,17 +7,21 @@ namespace App\Livewire\Cabinet\Marketing;
 use App\Domain\Customer\Models\BonusTransaction;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Organization\Models\Organization;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.cabinet')]
 final class Loyalty extends Component
 {
     // Настройки программы лояльности
     public bool $loyaltyEnabled = false;
+
     public string $earnRate = '5';
+
     public string $maxPayPercent = '50';
+
     public string $welcomeBonus = '0';
+
     public string $bonusExpireDays = '0';
 
     public bool $saved = false;
@@ -58,11 +62,11 @@ final class Loyalty extends Component
         $orgId = auth()->user()->organization_id;
 
         // Статистика по бонусам
-        $totalIssued = BonusTransaction::whereHas('customer', fn($q) => $q->where('organization_id', $orgId))
+        $totalIssued = BonusTransaction::whereHas('customer', fn ($q) => $q->where('organization_id', $orgId))
             ->where('amount', '>', 0)
             ->sum('amount');
 
-        $totalSpent = abs((float) BonusTransaction::whereHas('customer', fn($q) => $q->where('organization_id', $orgId))
+        $totalSpent = abs((float) BonusTransaction::whereHas('customer', fn ($q) => $q->where('organization_id', $orgId))
             ->where('amount', '<', 0)
             ->sum('amount'));
 

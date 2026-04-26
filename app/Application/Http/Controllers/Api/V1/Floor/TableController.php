@@ -4,7 +4,6 @@ namespace App\Application\Http\Controllers\Api\V1\Floor;
 
 use App\Application\Http\Controllers\Controller;
 use App\Domain\Floor\Models\Table;
-use App\Domain\Floor\Models\Hall;
 use App\Support\Enums\TableStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,9 +19,9 @@ class TableController extends Controller
 
         $tables = Table::query()
             ->where('branch_id', $branchId)
-            ->when($request->has('hall_id'), fn($q) => $q->inHall($request->input('hall_id')))
-            ->when($request->boolean('active_only'), fn($q) => $q->active())
-            ->when($request->has('status'), fn($q) => $q->where('status', $request->input('status')))
+            ->when($request->has('hall_id'), fn ($q) => $q->inHall($request->input('hall_id')))
+            ->when($request->boolean('active_only'), fn ($q) => $q->active())
+            ->when($request->has('status'), fn ($q) => $q->where('status', $request->input('status')))
             ->with(['hall', 'currentOrder'])
             ->ordered()
             ->get();
@@ -37,7 +36,7 @@ class TableController extends Controller
      */
     public function show(Table $table): JsonResponse
     {
-        $table->load(['hall', 'currentOrder.items.product', 'reservations' => fn($q) => $q->today()->upcoming()]);
+        $table->load(['hall', 'currentOrder.items.product', 'reservations' => fn ($q) => $q->today()->upcoming()]);
 
         return response()->json([
             'data' => $table,
@@ -110,7 +109,7 @@ class TableController extends Controller
 
         $table->update($request->only([
             'hall_id', 'name', 'number', 'capacity', 'min_capacity',
-            'pos_x', 'pos_y', 'width', 'height', 'shape', 'sort_order', 'is_active'
+            'pos_x', 'pos_y', 'width', 'height', 'shape', 'sort_order', 'is_active',
         ]));
 
         return response()->json([

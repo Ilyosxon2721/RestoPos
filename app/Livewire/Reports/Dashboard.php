@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Livewire\Reports;
 
-use App\Support\Enums\OrderStatus;
 use App\Domain\Order\Models\Order;
 use App\Domain\Order\Models\OrderItem;
-use App\Support\Enums\PaymentStatus;
 use App\Domain\Payment\Models\Payment;
+use App\Support\Enums\OrderStatus;
+use App\Support\Traits\ResolvesLayout;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use App\Support\Traits\ResolvesLayout;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -63,7 +62,7 @@ class Dashboard extends Component
     {
         $query = Order::query()
             ->where('status', OrderStatus::COMPLETED)
-            ->whereBetween('created_at', [$this->dateFrom . ' 00:00:00', $this->dateTo . ' 23:59:59']);
+            ->whereBetween('created_at', [$this->dateFrom.' 00:00:00', $this->dateTo.' 23:59:59']);
 
         $totalSales = (float) $query->sum('total_amount');
         $orderCount = (int) $query->count();
@@ -83,7 +82,7 @@ class Dashboard extends Component
             ->selectRaw('name, SUM(quantity) as total_quantity, SUM(quantity * unit_price) as total_revenue')
             ->whereHas('order', function ($query) {
                 $query->where('status', OrderStatus::COMPLETED)
-                    ->whereBetween('created_at', [$this->dateFrom . ' 00:00:00', $this->dateTo . ' 23:59:59']);
+                    ->whereBetween('created_at', [$this->dateFrom.' 00:00:00', $this->dateTo.' 23:59:59']);
             })
             ->groupBy('name')
             ->orderByDesc('total_quantity')
@@ -110,7 +109,7 @@ class Dashboard extends Component
         return Order::query()
             ->selectRaw('HOUR(created_at) as hour, COUNT(*) as order_count')
             ->where('status', OrderStatus::COMPLETED)
-            ->whereBetween('created_at', [$this->dateFrom . ' 00:00:00', $this->dateTo . ' 23:59:59'])
+            ->whereBetween('created_at', [$this->dateFrom.' 00:00:00', $this->dateTo.' 23:59:59'])
             ->groupByRaw('HOUR(created_at)')
             ->orderBy('hour')
             ->get();

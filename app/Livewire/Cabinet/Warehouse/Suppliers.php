@@ -15,18 +15,29 @@ final class Suppliers extends Component
     use WithPagination;
 
     public string $search = '';
+
     public bool $showModal = false;
+
     public ?int $editingId = null;
 
     public string $name = '';
+
     public string $legalName = '';
+
     public string $inn = '';
+
     public string $contactPerson = '';
+
     public string $phone = '';
+
     public string $email = '';
+
     public string $address = '';
+
     public int $paymentTerms = 0;
+
     public string $notes = '';
+
     public bool $isActive = true;
 
     public function updatedSearch(): void
@@ -115,7 +126,7 @@ final class Suppliers extends Component
         $orgId = auth()->user()->organization_id;
 
         $suppliers = Supplier::where('organization_id', $orgId)
-            ->when($this->search, fn($q) => $q->where(fn($q2) => $q2
+            ->when($this->search, fn ($q) => $q->where(fn ($q2) => $q2
                 ->where('name', 'like', "%{$this->search}%")
                 ->orWhere('contact_person', 'like', "%{$this->search}%")
                 ->orWhere('phone', 'like', "%{$this->search}%")

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Domain\Platform\Models\Subscription;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Layout('components.layouts.admin')]
@@ -42,7 +42,7 @@ class Subscriptions extends Component
     public function render()
     {
         $subscriptions = Subscription::with(['organization', 'plan'])
-            ->when($this->statusFilter, fn($q, $s) => $q->where('status', $s))
+            ->when($this->statusFilter, fn ($q, $s) => $q->where('status', $s))
             ->latest()
             ->paginate(20);
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Customer\Models;
 
-use App\Support\Traits\HasUuid;
 use App\Support\Traits\BelongsToOrganization;
+use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,7 +15,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Customer extends Authenticatable
 {
-    use HasFactory, HasUuid, BelongsToOrganization, SoftDeletes;
+    use BelongsToOrganization, HasFactory, HasUuid, SoftDeletes;
 
     protected $fillable = [
         'organization_id',
@@ -179,5 +179,4 @@ class Customer extends Authenticatable
     {
         return \Database\Factories\CustomerFactory::new();
     }
-
 }

@@ -2,11 +2,11 @@
 
 namespace App\Domain\Menu\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use App\Support\Enums\ProductType;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Traits\BelongsToOrganization;
+use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,7 +16,7 @@ use Spatie\Translatable\HasTranslations;
 
 class Product extends Model
 {
-    use HasFactory, HasUuid, BelongsToOrganization, HasTranslations, SoftDeletes;
+    use BelongsToOrganization, HasFactory, HasTranslations, HasUuid, SoftDeletes;
 
     public array $translatable = ['name', 'description'];
 
@@ -141,6 +141,7 @@ class Product extends Model
     public function getSellingPrice(int $branchId): float
     {
         $price = $this->getPriceForBranch($branchId);
+
         return $price?->price ?? 0;
     }
 
@@ -223,5 +224,4 @@ class Product extends Model
     {
         return \Database\Factories\ProductFactory::new();
     }
-
 }

@@ -3,7 +3,6 @@
 namespace App\Domain\Organization\Models;
 
 use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -125,5 +124,4 @@ class Branch extends Model
     {
         return \Database\Factories\BranchFactory::new();
     }
-
 }

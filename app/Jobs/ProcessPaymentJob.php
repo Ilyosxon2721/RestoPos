@@ -55,7 +55,7 @@ class ProcessPaymentJob implements ShouldQueue
                 'order_id' => $order->id,
                 'payment_id' => $this->payment->id,
                 'type' => 'sale',
-                'number' => 'R-' . now()->format('YmdHis') . '-' . $this->payment->id,
+                'number' => 'R-'.now()->format('YmdHis').'-'.$this->payment->id,
                 'amount' => $this->payment->amount,
                 'status' => 'created',
             ]);

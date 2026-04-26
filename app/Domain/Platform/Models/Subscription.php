@@ -57,7 +57,7 @@ class Subscription extends Model
     {
         return $query->where(function ($q) {
             $q->where('status', 'active')
-              ->orWhere(fn($q2) => $q2->where('status', 'trial')->where('trial_ends_at', '>', now()));
+                ->orWhere(fn ($q2) => $q2->where('status', 'trial')->where('trial_ends_at', '>', now()));
         });
     }
 }

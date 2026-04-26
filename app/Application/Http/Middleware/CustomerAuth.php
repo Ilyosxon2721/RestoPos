@@ -14,6 +14,7 @@ class CustomerAuth
     {
         if (!auth('customer')->check()) {
             $slug = $request->route('slug');
+
             return redirect()->route('shop.login', ['slug' => $slug]);
         }
 

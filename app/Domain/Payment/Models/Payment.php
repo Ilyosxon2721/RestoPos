@@ -2,11 +2,11 @@
 
 namespace App\Domain\Payment\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Domain\Order\Models\Order;
 use App\Domain\Auth\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use App\Domain\Order\Models\Order;
+use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -75,5 +75,4 @@ class Payment extends Model
     {
         return \Database\Factories\PaymentFactory::new();
     }
-
 }

@@ -45,6 +45,7 @@ class EmployeeShift extends Model
     {
         if ($this->clock_in && $this->clock_out) {
             $totalMinutes = $this->clock_in->diffInMinutes($this->clock_out);
+
             return (int) ($totalMinutes - ($this->break_minutes ?? 0));
         }
 

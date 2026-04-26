@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire\Cabinet\Settings;
 
 use App\Domain\Organization\Models\Organization;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 /**
  * Настройки доставки — включение, мин. сумма, время, стоимость, порог бесплатной доставки.
@@ -15,9 +15,13 @@ use Livewire\Attributes\Layout;
 final class Delivery extends Component
 {
     public bool $enabled = false;
+
     public float $minimumOrderAmount = 0;
+
     public int $defaultDeliveryTime = 60;
+
     public float $deliveryFee = 0;
+
     public float $freeDeliveryThreshold = 0;
 
     public function mount(): void

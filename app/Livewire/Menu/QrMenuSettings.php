@@ -6,10 +6,10 @@ namespace App\Livewire\Menu;
 
 use App\Domain\Menu\Models\QrMenu;
 use App\Domain\Organization\Models\Branch;
+use App\Support\Traits\ResolvesLayout;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
-use App\Support\Traits\ResolvesLayout;
 use Livewire\Component;
 
 final class QrMenuSettings extends Component
@@ -17,9 +17,11 @@ final class QrMenuSettings extends Component
     use ResolvesLayout;
 
     public Collection $branches;
+
     public ?QrMenu $qrMenu = null;
 
     public bool $showModal = false;
+
     public ?int $editingId = null;
 
     #[Validate('required|string|max:255')]
@@ -44,8 +46,11 @@ final class QrMenuSettings extends Component
     public string $currency = 'сум';
 
     public bool $showImages = true;
+
     public bool $showDescriptions = true;
+
     public bool $showCalories = false;
+
     public bool $isActive = true;
 
     public function mount(): void
@@ -153,10 +158,10 @@ final class QrMenuSettings extends Component
     private function generateUniqueSlug(string $name): string
     {
         $base = Str::slug($name) ?: 'menu';
-        $slug = $base . '-' . Str::random(6);
+        $slug = $base.'-'.Str::random(6);
 
         while (QrMenu::withoutGlobalScope('organization')->where('slug', $slug)->exists()) {
-            $slug = $base . '-' . Str::random(6);
+            $slug = $base.'-'.Str::random(6);
         }
 
         return $slug;

@@ -6,8 +6,8 @@ namespace App\Livewire\Waiter;
 
 use App\Domain\Floor\Models\Hall;
 use App\Domain\Floor\Models\Table;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.waiter')]
 class Tables extends Component

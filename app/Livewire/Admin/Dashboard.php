@@ -7,9 +7,9 @@ namespace App\Livewire\Admin;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Platform\Models\Plan;
 use App\Domain\Platform\Models\Subscription;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.admin')]
 class Dashboard extends Component

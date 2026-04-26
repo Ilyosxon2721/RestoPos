@@ -3,8 +3,8 @@
 namespace App\Application\Http\Controllers\Api\V1\Reservation;
 
 use App\Application\Http\Controllers\Controller;
-use App\Domain\Reservation\Models\Reservation;
 use App\Domain\Floor\Models\Table;
+use App\Domain\Reservation\Models\Reservation;
 use App\Support\Enums\ReservationStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,10 +20,10 @@ class ReservationController extends Controller
 
         $query = Reservation::query()
             ->where('branch_id', $branchId)
-            ->when($request->has('date'), fn($q) => $q->whereDate('reserved_at', $request->input('date')))
-            ->when($request->boolean('today'), fn($q) => $q->today())
-            ->when($request->has('status'), fn($q) => $q->status(ReservationStatus::from($request->input('status'))))
-            ->when($request->has('table_id'), fn($q) => $q->where('table_id', $request->input('table_id')))
+            ->when($request->has('date'), fn ($q) => $q->whereDate('reserved_at', $request->input('date')))
+            ->when($request->boolean('today'), fn ($q) => $q->today())
+            ->when($request->has('status'), fn ($q) => $q->status(ReservationStatus::from($request->input('status'))))
+            ->when($request->has('table_id'), fn ($q) => $q->where('table_id', $request->input('table_id')))
             ->with(['table.hall', 'customer'])
             ->orderBy('reserved_at');
 
@@ -84,7 +84,7 @@ class ReservationController extends Controller
             ->whereNotIn('status', ['cancelled', 'no_show', 'completed'])
             ->where(function ($q) use ($reservedAt, $endTime) {
                 $q->whereBetween('reserved_at', [$reservedAt, $endTime])
-                    ->orWhere(function ($sq) use ($reservedAt, $endTime) {
+                    ->orWhere(function ($sq) use ($reservedAt) {
                         $sq->where('reserved_at', '<=', $reservedAt)
                             ->whereRaw('DATE_ADD(reserved_at, INTERVAL duration MINUTE) >= ?', [$reservedAt]);
                     });
@@ -138,7 +138,7 @@ class ReservationController extends Controller
 
         $reservation->update($request->only([
             'table_id', 'customer_id', 'guest_name', 'guest_phone',
-            'guest_count', 'reserved_at', 'duration', 'notes'
+            'guest_count', 'reserved_at', 'duration', 'notes',
         ]));
 
         return response()->json([
@@ -214,7 +214,7 @@ class ReservationController extends Controller
                 ->whereNotIn('status', ['cancelled', 'no_show', 'completed'])
                 ->where(function ($q) use ($reservedAt, $endTime) {
                     $q->whereBetween('reserved_at', [$reservedAt, $endTime])
-                        ->orWhere(function ($sq) use ($reservedAt, $endTime) {
+                        ->orWhere(function ($sq) use ($reservedAt) {
                             $sq->where('reserved_at', '<=', $reservedAt)
                                 ->whereRaw('DATE_ADD(reserved_at, INTERVAL duration MINUTE) >= ?', [$reservedAt]);
                         });

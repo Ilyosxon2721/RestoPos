@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Store;
 
 use App\Domain\Customer\Models\Customer;
+use App\Domain\Infrastructure\Sms\SmsSender;
 use App\Domain\Store\Models\StoreSettings;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -22,9 +23,11 @@ final class Login extends Component
     public string $code = '';
 
     public string $firstName = '';
+
     public string $lastName = '';
 
     public ?int $customerId = null;
+
     public string $error = '';
 
     public function mount(string $slug): void
@@ -64,10 +67,12 @@ final class Login extends Component
         }
 
         $this->customerId = $customer->id;
-        $customer->generateVerificationCode();
+        $code = $customer->generateVerificationCode();
 
-        // TODO: Отправить SMS с кодом ($code)
-        // Для разработки код логируется или отображается
+        app(SmsSender::class)->send(
+            $phone,
+            __('Код для входа: :code', ['code' => $code])
+        );
 
         $this->step = 'code';
     }
@@ -85,12 +90,14 @@ final class Login extends Component
 
         if (!$customer->verifyCode($this->code)) {
             $this->error = 'Неверный или просроченный код';
+
             return;
         }
 
         // Если клиент новый — запрашиваем имя
         if (empty($customer->first_name)) {
             $this->step = 'name';
+
             return;
         }
 
@@ -134,12 +141,18 @@ final class Login extends Component
         // Ограничение: не чаще 1 раза в минуту
         if ($customer->verification_code_sent_at && $customer->verification_code_sent_at->diffInSeconds(now()) < 60) {
             $this->error = 'Подождите минуту перед повторной отправкой';
+
             return;
         }
 
-        $customer->generateVerificationCode();
+        $code = $customer->generateVerificationCode();
+
+        app(SmsSender::class)->send(
+            $customer->phone,
+            __('Код для входа: :code', ['code' => $code])
+        );
+
         $this->error = '';
-        // TODO: Отправить SMS
     }
 
     public function render()

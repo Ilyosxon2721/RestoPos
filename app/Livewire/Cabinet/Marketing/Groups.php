@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire\Cabinet\Marketing;
 
 use App\Domain\Customer\Models\CustomerGroup;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Layout('components.layouts.cabinet')]
@@ -18,20 +18,29 @@ final class Groups extends Component
 
     // Модалка создания/редактирования
     public bool $showModal = false;
+
     public ?int $editingId = null;
 
     // Поля формы
     public string $name = '';
+
     public string $discountPercent = '0';
+
     public string $bonusEarnPercent = '0';
+
     public string $minSpentToJoin = '0';
+
     public string $color = '#6366f1';
+
     public string $description = '';
+
     public bool $isActive = true;
 
     // Модалка подтверждения удаления
     public bool $showDeleteModal = false;
+
     public ?int $deletingId = null;
+
     public string $deletingName = '';
 
     public function updatedSearch(): void
@@ -130,7 +139,7 @@ final class Groups extends Component
         $orgId = auth()->user()->organization_id;
 
         $groups = CustomerGroup::where('organization_id', $orgId)
-            ->when($this->search, fn($q) => $q->where('name', 'like', "%{$this->search}%"))
+            ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
             ->withCount('customers')
             ->latest()
             ->paginate(20);

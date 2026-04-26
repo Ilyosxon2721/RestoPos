@@ -12,7 +12,6 @@ use App\Domain\Order\Actions\AddOrderItemAction;
 use App\Domain\Order\Actions\CreateOrderAction;
 use App\Domain\Order\Actions\SendToKitchenAction;
 use App\Domain\Order\Models\Order;
-use App\Support\Enums\OrderItemStatus;
 use App\Support\Enums\OrderStatus;
 use App\Support\Enums\TableStatus;
 use Illuminate\Support\Collection;
@@ -60,7 +59,7 @@ class Terminal extends Component
     #[Computed]
     public function tables(): Collection
     {
-        if (! $this->selectedHall) {
+        if (!$this->selectedHall) {
             return collect();
         }
 
@@ -88,7 +87,7 @@ class Terminal extends Component
         }
 
         if ($this->searchQuery !== '') {
-            $query->where('name', 'like', '%' . $this->searchQuery . '%');
+            $query->where('name', 'like', '%'.$this->searchQuery.'%');
         }
 
         return $query->orderBy('name')->get();
@@ -97,7 +96,7 @@ class Terminal extends Component
     #[Computed]
     public function currentOrder(): ?Order
     {
-        if (! $this->currentOrderId) {
+        if (!$this->currentOrderId) {
             return null;
         }
 
@@ -175,13 +174,13 @@ class Terminal extends Component
     {
         $product = Product::find($productId);
 
-        if (! $product) {
+        if (!$product) {
             return;
         }
 
         // Проверяем, есть ли уже в корзине
         foreach ($this->cart as $index => $item) {
-            if ($item['product_id'] === $productId && ! isset($item['order_item_id'])) {
+            if ($item['product_id'] === $productId && !isset($item['order_item_id'])) {
                 $this->cart[$index]['quantity']++;
 
                 return;
@@ -198,7 +197,7 @@ class Terminal extends Component
 
     public function updateQuantity(int $index, int $quantity): void
     {
-        if (! isset($this->cart[$index])) {
+        if (!isset($this->cart[$index])) {
             return;
         }
 
@@ -213,7 +212,7 @@ class Terminal extends Component
 
     public function removeFromCart(int $index): void
     {
-        if (! isset($this->cart[$index])) {
+        if (!isset($this->cart[$index])) {
             return;
         }
 
@@ -223,7 +222,7 @@ class Terminal extends Component
 
     public function createOrder(): void
     {
-        if (! $this->selectedTable || empty($this->cart)) {
+        if (!$this->selectedTable || empty($this->cart)) {
             return;
         }
 
@@ -233,7 +232,7 @@ class Terminal extends Component
             $order = Order::find($this->currentOrderId);
 
             foreach ($this->cart as $item) {
-                if (! isset($item['order_item_id'])) {
+                if (!isset($item['order_item_id'])) {
                     $addItemAction->execute($order, [
                         'product_id' => $item['product_id'],
                         'quantity' => $item['quantity'],
@@ -268,11 +267,11 @@ class Terminal extends Component
 
     public function sendToKitchen(): void
     {
-        if (! $this->currentOrderId) {
+        if (!$this->currentOrderId) {
             $this->createOrder();
         }
 
-        if (! $this->currentOrderId) {
+        if (!$this->currentOrderId) {
             return;
         }
 
@@ -293,7 +292,7 @@ class Terminal extends Component
             return;
         }
 
-        if (! $this->currentOrderId) {
+        if (!$this->currentOrderId) {
             $this->createOrder();
         }
 
@@ -304,13 +303,13 @@ class Terminal extends Component
 
     public function processPayment(): void
     {
-        if (! $this->currentOrderId) {
+        if (!$this->currentOrderId) {
             return;
         }
 
         $order = Order::find($this->currentOrderId);
 
-        if (! $order) {
+        if (!$order) {
             return;
         }
 
@@ -338,7 +337,7 @@ class Terminal extends Component
     {
         $this->cart = [];
 
-        if (! $this->currentOrderId) {
+        if (!$this->currentOrderId) {
             return;
         }
 

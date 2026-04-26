@@ -7,14 +7,12 @@ namespace App\Livewire\Cabinet;
 use App\Domain\Order\Models\Order;
 use App\Domain\Order\Models\OrderItem;
 use App\Domain\Payment\Models\Payment;
-use App\Domain\Staff\Models\Employee;
 use App\Support\Enums\OrderStatus;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.cabinet')]
 class Reports extends Component
@@ -30,7 +28,7 @@ class Reports extends Component
      */
     private function ordersQuery()
     {
-        $query = Order::whereHas('branch', fn($q) => $q->where('organization_id', auth()->user()->organization_id))
+        $query = Order::whereHas('branch', fn ($q) => $q->where('organization_id', auth()->user()->organization_id))
             ->where('status', OrderStatus::COMPLETED);
 
         return match ($this->period) {
@@ -46,9 +44,8 @@ class Reports extends Component
      */
     private function paymentsQuery()
     {
-        $query = Payment::whereHas('order', fn($q) =>
-            $q->whereHas('branch', fn($bq) => $bq->where('organization_id', auth()->user()->organization_id))
-                ->where('status', OrderStatus::COMPLETED)
+        $query = Payment::whereHas('order', fn ($q) => $q->whereHas('branch', fn ($bq) => $bq->where('organization_id', auth()->user()->organization_id))
+            ->where('status', OrderStatus::COMPLETED)
         )->where('status', 'completed');
 
         return match ($this->period) {
@@ -77,6 +74,7 @@ class Reports extends Component
     public function averageCheck(): float
     {
         $count = $this->ordersCount;
+
         return $count > 0 ? $this->revenue / $count : 0;
     }
 

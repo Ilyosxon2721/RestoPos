@@ -6,8 +6,8 @@ namespace App\Livewire\Cabinet\Settings;
 
 use App\Domain\Infrastructure\Models\ActivityLog;
 use App\Domain\Organization\Models\Organization;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 /**
  * Настройки безопасности — PIN-код, таймаут сессии, журнал активности, требования к паролю.
@@ -16,6 +16,7 @@ use Livewire\Attributes\Layout;
 final class Security extends Component
 {
     public bool $requirePin = false;
+
     public int $sessionTimeout = 30;
 
     public function mount(): void

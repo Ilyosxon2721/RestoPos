@@ -2,8 +2,8 @@
 
 namespace App\Domain\Auth\Models;
 
-use App\Support\Traits\HasUuid;
 use App\Domain\Organization\Models\Organization;
+use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,7 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens, HasUuid, SoftDeletes;
+    use HasApiTokens, HasFactory, HasUuid, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'organization_id',
@@ -95,7 +95,7 @@ class User extends Authenticatable
         $first = mb_substr($this->first_name, 0, 1);
         $last = $this->last_name ? mb_substr($this->last_name, 0, 1) : '';
 
-        return mb_strtoupper($first . $last);
+        return mb_strtoupper($first.$last);
     }
 
     /**

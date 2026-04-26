@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace App\Livewire\Cabinet;
 
-use App\Domain\Organization\Models\Organization;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.cabinet')]
 class Settings extends Component
 {
     public string $name = '';
+
     public string $phone = '';
+
     public string $email = '';
+
     public string $address = '';
 
     public function mount(): void

@@ -1,0 +1,709 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Auth/AuthController.php
+
+		-
+			message: '#^Access to an undefined property App\\Domain\\Auth\\Models\\User\|App\\Domain\\Customer\\Models\\Customer\|App\\Domain\\Platform\\Models\\PlatformAdmin\:\:\$current_branch_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Delivery/CourierController.php
+
+		-
+			message: '#^Relation ''customer'' is not found in App\\Domain\\Delivery\\Models\\DeliveryOrder model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Delivery/DeliveryOrderController.php
+
+		-
+			message: '#^Result of && is always true\.$#'
+			identifier: booleanAnd.alwaysTrue
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Delivery/DeliveryOrderController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''assigned''\|''delivered''\|''failed''\|''in_transit''\|''pending''\|''picked_up'' and App\\Support\\Enums\\DeliveryStatus\:\:DELIVERED will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Delivery/DeliveryOrderController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''assigned''\|''delivered''\|''failed''\|''in_transit''\|''pending''\|''picked_up'' and App\\Support\\Enums\\DeliveryStatus\:\:IN_TRANSIT will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Delivery/DeliveryOrderController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''assigned''\|''delivered''\|''failed''\|''in_transit''\|''pending''\|''picked_up'' and App\\Support\\Enums\\DeliveryStatus\:\:PICKED_UP will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Delivery/DeliveryOrderController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''assigned''\|''delivered''\|''failed''\|''in_transit''\|''pending''\|''picked_up'' and App\\Support\\Enums\\DeliveryStatus\:\:DELIVERED will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Delivery/DeliveryOrderController.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 2
+			path: app/Application/Http/Controllers/Api/V1/Delivery/DeliveryOrderController.php
+
+		-
+			message: '#^Access to an undefined property App\\Domain\\Auth\\Models\\User\|App\\Domain\\Customer\\Models\\Customer\|App\\Domain\\Platform\\Models\\PlatformAdmin\:\:\$current_branch_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Delivery/DeliveryZoneController.php
+
+		-
+			message: '#^Access to an undefined property App\\Domain\\Auth\\Models\\User\|App\\Domain\\Customer\\Models\\Customer\|App\\Domain\\Platform\\Models\\PlatformAdmin\:\:\$current_branch_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Infrastructure/PrinterController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<TRelatedModel of Illuminate\\Database\\Eloquent\\Model\>\:\:open\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Application/Http/Controllers/Api/V1/Kds/KdsController.php
+
+		-
+			message: '#^Call to function in_array\(\) with ''cancelled''\|''pending''\|''preparing''\|''ready''\|''sent''\|''served'' and array\{App\\Support\\Enums\\OrderItemStatus\:\:SENT, App\\Support\\Enums\\OrderItemStatus\:\:PREPARING\} will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Kds/KdsController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''cancelled''\|''pending''\|''preparing''\|''ready''\|''sent''\|''served'' and App\\Support\\Enums\\OrderItemStatus\:\:READY will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Kds/KdsController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''cancelled''\|''pending''\|''preparing''\|''ready''\|''sent''\|''served'' and App\\Support\\Enums\\OrderItemStatus\:\:SENT will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Kds/KdsController.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 3
+			path: app/Application/Http/Controllers/Api/V1/Kds/KdsController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<App\\Domain\\Menu\\Models\\Product\>\:\:popular\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Menu/ProductController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:canCancel\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Application/Http/Controllers/Api/V1/Order/OrderController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:modifiers\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Order/OrderController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:release\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Order/OrderController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:open\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Payment/CashShiftController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Payment/CashShiftController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:updatePaymentStatus\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Payment/PaymentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<TRelatedModel of Illuminate\\Database\\Eloquent\\Model\>\:\:completed\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Application/Http/Controllers/Api/V1/Report/ReportController.php
+
+		-
+			message: '#^Relation ''user'' is not found in App\\Domain\\Order\\Models\\Order model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Report/ReportController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''cancelled''\|''completed''\|''confirmed''\|''no_show''\|''pending''\|''seated'' and App\\Support\\Enums\\ReservationStatus\:\:SEATED will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Reservation/ReservationController.php
+
+		-
+			message: '#^Undefined variable\: \$request$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Application/Http/Controllers/Api/V1/Warehouse/SupplyController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Application/Http/Middleware/BranchAccess.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:branches\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Auth/Models/User.php
+
+		-
+			message: '#^Method App\\Domain\\Customer\\Models\\Customer\:\:addBonus\(\) should return App\\Domain\\Customer\\Models\\BonusTransaction but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Domain/Customer/Models/Customer.php
+
+		-
+			message: '#^Method App\\Domain\\Customer\\Models\\Customer\:\:defaultAddress\(\) should return App\\Domain\\Customer\\Models\\CustomerAddress\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Domain/Customer/Models/Customer.php
+
+		-
+			message: '#^Method App\\Domain\\Customer\\Models\\Customer\:\:useBonus\(\) should return App\\Domain\\Customer\\Models\\BonusTransaction but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Domain/Customer/Models/Customer.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:setAvailable\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Domain/Delivery/Models/DeliveryOrder.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Domain/Delivery/Models/DeliveryZone.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''free''\|''occupied''\|''reserved''\|''unavailable'' and App\\Support\\Enums\\TableStatus\:\:FREE will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Domain/Floor/Models/Table.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''free''\|''occupied''\|''reserved''\|''unavailable'' and App\\Support\\Enums\\TableStatus\:\:OCCUPIED will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Domain/Floor/Models/Table.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''free''\|''occupied''\|''reserved''\|''unavailable'' and App\\Support\\Enums\\TableStatus\:\:RESERVED will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Domain/Floor/Models/Table.php
+
+		-
+			message: '#^Method App\\Domain\\Menu\\Models\\Product\:\:getPriceForBranch\(\) should return App\\Domain\\Menu\\Models\\ProductPrice\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Domain/Menu/Models/Product.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>price" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Domain/Menu/Models/Product.php
+
+		-
+			message: '#^Class App\\Domain\\Organization\\Models\\Printer not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Domain/Menu/Models/Workshop.php
+
+		-
+			message: '#^Parameter \#1 \$related of method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\) expects class\-string\<Illuminate\\Database\\Eloquent\\Model\>, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Domain/Menu/Models/Workshop.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:calculateTotal\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Order/Actions/AddOrderItemAction.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:modifiers\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Order/Actions/AddOrderItemAction.php
+
+		-
+			message: '#^Method App\\Domain\\Order\\Actions\\AddOrderItemAction\:\:execute\(\) should return App\\Domain\\Order\\Models\\OrderItem but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Domain/Order/Actions/AddOrderItemAction.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:release\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Order/Actions/CloseOrderAction.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:occupy\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Order/Actions/CreateOrderAction.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Domain/Order/Actions/CreateOrderAction.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''delivery''\|''dine_in''\|''preorder''\|''takeaway'' and App\\Support\\Enums\\OrderType\:\:DINE_IN will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Domain/Order/Actions/CreateOrderAction.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:sendToKitchen\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Order/Actions/SendToKitchenAction.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''accepted''\|''cancelled''\|''completed''\|''new''\|''preparing''\|''ready''\|''served'' and App\\Support\\Enums\\OrderStatus\:\:NEW will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Domain/Order/Actions/SendToKitchenAction.php
+
+		-
+			message: '#^Call to function in_array\(\) with ''accepted''\|''cancelled''\|''completed''\|''new''\|''preparing''\|''ready''\|''served'' and array\{App\\Support\\Enums\\OrderStatus\:\:COMPLETED, App\\Support\\Enums\\OrderStatus\:\:CANCELLED\} will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Domain/Order/Models/Order.php
+
+		-
+			message: '#^Cannot call method canTransitionTo\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Domain/Order/Models/Order.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int\<1, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Domain/Order/Models/Order.php
+
+		-
+			message: '#^Property App\\Domain\\Order\\Models\\Order\:\:\$payment_status \(''paid''\|''partial''\|''refunded''\|''unpaid''\) does not accept App\\Support\\Enums\\PaymentStatus\:\:PAID\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Domain/Order/Models/Order.php
+
+		-
+			message: '#^Property App\\Domain\\Order\\Models\\Order\:\:\$payment_status \(''paid''\|''partial''\|''refunded''\|''unpaid''\) does not accept App\\Support\\Enums\\PaymentStatus\:\:PARTIAL\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Domain/Order/Models/Order.php
+
+		-
+			message: '#^Property App\\Domain\\Order\\Models\\Order\:\:\$payment_status \(''paid''\|''partial''\|''refunded''\|''unpaid''\) does not accept App\\Support\\Enums\\PaymentStatus\:\:UNPAID\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Domain/Order/Models/Order.php
+
+		-
+			message: '#^Property App\\Domain\\Order\\Models\\Order\:\:\$status \(''accepted''\|''cancelled''\|''completed''\|''new''\|''preparing''\|''ready''\|''served''\) does not accept App\\Support\\Enums\\OrderStatus\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Domain/Order/Models/Order.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''paid''\|''partial''\|''refunded''\|''unpaid'' and App\\Support\\Enums\\PaymentStatus\:\:PAID will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Domain/Order/Models/Order.php
+
+		-
+			message: '#^Call to function in_array\(\) with ''cancelled''\|''pending''\|''preparing''\|''ready''\|''sent''\|''served'' and array\{App\\Support\\Enums\\OrderItemStatus\:\:PENDING, App\\Support\\Enums\\OrderItemStatus\:\:SENT\} will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Domain/Order/Models/OrderItem.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:occupy\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Order/Services/OrderCalculationService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:release\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Order/Services/OrderCalculationService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getSetting\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Organization/Models/Branch.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:completed\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Payment/Models/CashShift.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''closed''\|''open'' and App\\Support\\Enums\\CashShiftStatus\:\:OPEN will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Domain/Payment/Models/CashShift.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:open\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Payment/Models/Terminal.php
+
+		-
+			message: '#^Cannot call method isFuture\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Domain/Platform/Models/Subscription.php
+
+		-
+			message: '#^Cannot call method copy\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Domain/Reservation/Models/Reservation.php
+
+		-
+			message: '#^Cannot call method isReserved\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Domain/Reservation/Models/Reservation.php
+
+		-
+			message: '#^Cannot call method isToday\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Domain/Reservation/Models/Reservation.php
+
+		-
+			message: '#^Cannot call method occupy\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Domain/Reservation/Models/Reservation.php
+
+		-
+			message: '#^Cannot call method release\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: app/Domain/Reservation/Models/Reservation.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type string\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Domain/Reservation/Models/Reservation.php
+
+		-
+			message: '#^Call to an undefined method App\\Domain\\Staff\\Models\\EmployeeShift\:\:calculateWorkedMinutes\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Staff/Models/Employee.php
+
+		-
+			message: '#^Method App\\Domain\\Staff\\Models\\Employee\:\:clockIn\(\) should return App\\Domain\\Staff\\Models\\EmployeeShift but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Domain/Staff/Models/Employee.php
+
+		-
+			message: '#^Method App\\Domain\\Staff\\Models\\Employee\:\:getCurrentShift\(\) should return App\\Domain\\Staff\\Models\\EmployeeShift\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Domain/Staff/Models/Employee.php
+
+		-
+			message: '#^Cannot call method diffInMinutes\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Domain/Staff/Models/EmployeeShift.php
+
+		-
+			message: '#^Cannot call method isPast\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Domain/Warehouse/Models/StockBatch.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:updatePaymentStatus\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Jobs/ProcessPaymentJob.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Listeners/LogOrderCreated.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type string\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Listeners/LogOrderCreated.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:updatePaymentStatus\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Listeners/UpdateOrderPaymentStatus.php
+
+		-
+			message: '#^Call to an undefined method App\\Livewire\\Auth\\Login\:\:pinLogin\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Livewire/Auth/Login.php
+
+		-
+			message: '#^Method App\\Livewire\\Cabinet\\Settings\\Delivery\:\:getOrganization\(\) should return App\\Domain\\Organization\\Models\\Organization but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/Cabinet/Settings/Delivery.php
+
+		-
+			message: '#^Method App\\Livewire\\Cabinet\\Settings\\Orders\:\:getOrganization\(\) should return App\\Domain\\Organization\\Models\\Organization but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/Cabinet/Settings/Orders.php
+
+		-
+			message: '#^Method App\\Livewire\\Cabinet\\Settings\\Receipt\:\:getOrganization\(\) should return App\\Domain\\Organization\\Models\\Organization but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/Cabinet/Settings/Receipt.php
+
+		-
+			message: '#^Method App\\Livewire\\Cabinet\\Settings\\Security\:\:getOrganization\(\) should return App\\Domain\\Organization\\Models\\Organization but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/Cabinet/Settings/Security.php
+
+		-
+			message: '#^Method App\\Livewire\\Cabinet\\Settings\\Tables\:\:getOrganization\(\) should return App\\Domain\\Organization\\Models\\Organization but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/Cabinet/Settings/Tables.php
+
+		-
+			message: '#^Method App\\Livewire\\Cabinet\\Settings\\Taxes\:\:getOrganization\(\) should return App\\Domain\\Organization\\Models\\Organization but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/Cabinet/Settings/Taxes.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Database\\Eloquent\\Relations\\HasOne\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Cabinet/Staff.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Cabinet/Staff.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>position" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Cabinet/Staff.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>short_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Cabinet/Warehouse/Inventory.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>short_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Cabinet/Warehouse/Production.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:branches\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Livewire/Cashier/Terminal.php
+
+		-
+			message: '#^Property App\\Domain\\Order\\Models\\Order\:\:\$closed_at \(string\|null\) does not accept Illuminate\\Support\\Carbon\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Livewire/Cashier/Terminal.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>branch_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Cashier/Terminal.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:branches\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Livewire/Kitchen/Display.php
+
+		-
+			message: '#^Cannot access property \$name on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Livewire/Kitchen/Display.php
+
+		-
+			message: '#^Cannot call method diffInMinutes\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Livewire/Kitchen/Display.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Collection\<int, App\\Domain\\Order\\Models\\OrderItem\>\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Livewire/Kitchen/Display.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>branch_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Kitchen/Display.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Kitchen/Display.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{ingredient_id\: int\<0, max\>\|null, quantity\: numeric\-string&uppercase\-string, loss_percent\: numeric\-string&uppercase\-string\}, Closure\(App\\Domain\\Warehouse\\Models\\TechCardItem\)\: array\{ingredient_id\: int\<0, max\>\|null, quantity\: numeric\-string&uppercase\-string, loss_percent\: numeric\-string&uppercase\-string\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/Menu/TechCards.php
+
+		-
+			message: '#^Result of \|\| is always false\.$#'
+			identifier: booleanOr.alwaysFalse
+			count: 1
+			path: app/Livewire/Orders/OrderList.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''accepted''\|''cancelled''\|''completed''\|''new''\|''preparing''\|''ready''\|''served'' and App\\Support\\Enums\\OrderStatus\:\:CANCELLED will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Livewire/Orders/OrderList.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''accepted''\|''cancelled''\|''completed''\|''new''\|''preparing''\|''ready''\|''served'' and App\\Support\\Enums\\OrderStatus\:\:COMPLETED will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Livewire/Orders/OrderList.php
+
+		-
+			message: '#^Offset ''order_item_id'' on array\{product_id\: int, name\: string, price\: float, quantity\: int\} in isset\(\) does not exist\.$#'
+			identifier: isset.offset
+			count: 2
+			path: app/Livewire/Pos/Terminal.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Livewire/Pos/Terminal.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Livewire/Pos/Terminal.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''accepted''\|''cancelled''\|''completed''\|''new''\|''preparing''\|''ready''\|''served'' and App\\Support\\Enums\\OrderStatus\:\:NEW will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Livewire/Pos/Terminal.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: string$#'
+			identifier: match.unhandled
+			count: 1
+			path: app/Livewire/Reports/Dashboard.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Livewire/Staff/EmployeeList.php
+
+		-
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Livewire/Staff/EmployeeList.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Staff/EmployeeList.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:branches\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Livewire/Store/Checkout.php
+
+		-
+			message: '#^Comparison operation "\=\=" between \*NEVER\* and 0 results in an error\.$#'
+			identifier: equal.invalid
+			count: 1
+			path: app/Livewire/Store/Checkout.php
+
+		-
+			message: '#^Property App\\Livewire\\Store\\Checkout\:\:\$deliveryFee \(float\) does not accept string\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Livewire/Store/Checkout.php
+
+		-
+			message: '#^Relation ''product'' is not found in App\\Domain\\Warehouse\\Models\\Stock model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Livewire/WarehousePanel/Stock.php

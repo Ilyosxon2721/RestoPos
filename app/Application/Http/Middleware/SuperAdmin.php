@@ -18,6 +18,7 @@ class SuperAdmin
 
         if (!auth('platform')->user()->is_active) {
             auth('platform')->logout();
+
             return redirect()->route('admin.login')->with('error', 'Аккаунт деактивирован');
         }
 

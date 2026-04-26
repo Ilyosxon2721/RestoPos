@@ -2,17 +2,17 @@
 
 namespace App\Domain\Payment\Models;
 
-use App\Support\Traits\BelongsToBranch;
-use App\Support\Enums\CashShiftStatus;
 use App\Domain\Auth\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Enums\CashShiftStatus;
+use App\Support\Traits\BelongsToBranch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CashShift extends Model
 {
-    use HasFactory, BelongsToBranch;
+    use BelongsToBranch, HasFactory;
 
     public $timestamps = false;
 
@@ -182,5 +182,4 @@ class CashShift extends Model
     {
         return \Database\Factories\CashShiftFactory::new();
     }
-
 }

@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Domain;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Floor\Models\Table;
 use App\Domain\Order\Actions\CreateOrderAction;
 use App\Domain\Order\Models\Order;
 use App\Domain\Organization\Models\Branch;
 use App\Domain\Payment\Models\CashShift;
+use App\Support\Enums\OrderSource;
 use App\Support\Enums\OrderStatus;
 use App\Support\Enums\OrderType;
-use App\Support\Enums\OrderSource;
 use App\Support\Enums\PaymentStatus;
 use App\Support\Enums\TableStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,7 +27,7 @@ class CreateOrderActionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->action = new CreateOrderAction();
+        $this->action = new CreateOrderAction;
     }
 
     /** @test */
@@ -35,7 +36,7 @@ class CreateOrderActionTest extends TestCase
         $branch = Branch::factory()->create();
         $cashShift = CashShift::create([
             'branch_id' => $branch->id,
-            'opened_by' => 1,
+            'opened_by' => User::factory()->create()->id,
             'opened_at' => now(),
             'opening_cash' => 0,
             'status' => 'open',
@@ -82,7 +83,7 @@ class CreateOrderActionTest extends TestCase
         $branch = Branch::factory()->create();
         CashShift::create([
             'branch_id' => $branch->id,
-            'opened_by' => 1,
+            'opened_by' => User::factory()->create()->id,
             'opened_at' => now(),
             'opening_cash' => 0,
             'status' => 'open',
@@ -108,7 +109,7 @@ class CreateOrderActionTest extends TestCase
         $branch = Branch::factory()->create();
         CashShift::create([
             'branch_id' => $branch->id,
-            'opened_by' => 1,
+            'opened_by' => User::factory()->create()->id,
             'opened_at' => now(),
             'opening_cash' => 0,
             'status' => 'open',

@@ -21,7 +21,7 @@ trait BelongsToOrganization
         // Применяем глобальный scope только если пользователь авторизован
         static::addGlobalScope('organization', function (Builder $builder) {
             if (auth()->check() && !app()->runningInConsole()) {
-                $builder->where($builder->getModel()->getTable() . '.organization_id', auth()->user()->organization_id);
+                $builder->where($builder->getModel()->getTable().'.organization_id', auth()->user()->organization_id);
             }
         });
     }
@@ -40,7 +40,7 @@ trait BelongsToOrganization
     public function scopeForOrganization(Builder $query, int $organizationId): Builder
     {
         return $query->withoutGlobalScope('organization')
-            ->where($this->getTable() . '.organization_id', $organizationId);
+            ->where($this->getTable().'.organization_id', $organizationId);
     }
 
     /**

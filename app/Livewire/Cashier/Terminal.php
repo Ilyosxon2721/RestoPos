@@ -12,43 +12,58 @@ use App\Domain\Menu\Models\Product;
 use App\Domain\Order\Models\Order;
 use App\Domain\Order\Models\OrderItem;
 use App\Domain\Staff\Models\Employee;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\On;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.cashier')]
 class Terminal extends Component
 {
     // PIN-авторизация оператора
     public bool $pinLocked = true;
+
     public string $pin = '';
+
     public ?int $operatorId = null;
+
     public ?string $operatorName = null;
 
     // Состояние терминала
     public ?int $selectedTable = null;
+
     public ?string $selectedTableName = null;
+
     public ?int $selectedHall = null;
+
     public ?int $selectedCategory = null;
+
     public string $searchProduct = '';
+
     public array $cart = [];
+
     public string $orderType = 'dine_in'; // dine_in, takeaway, delivery
+
     public ?int $guestsCount = null;
 
     // Модальные окна
     public bool $showTableModal = false;
+
     public bool $showPaymentModal = false;
+
     public bool $showDiscountModal = false;
+
     public bool $showOrdersModal = false;
 
     // Скидка
     public float $discountPercent = 0;
+
     public float $discountAmount = 0;
+
     public string $discountType = 'percent'; // percent, fixed
 
     // Оплата
     public string $paymentMethod = 'cash'; // cash, card, mixed
+
     public string $cashReceived = '';
 
     // Комментарий к заказу
@@ -103,12 +118,12 @@ class Terminal extends Component
 
         $query = User::where('pin_code', $pinCode)
             ->where('is_active', true)
-            ->whereHas('roles', fn($q) => $q->whereIn('slug', ['cashier', 'bartender', 'owner', 'admin']));
+            ->whereHas('roles', fn ($q) => $q->whereIn('slug', ['cashier', 'bartender', 'owner', 'admin']));
 
         if ($branchId) {
             $query->where(function ($q) use ($branchId, $orgId) {
-                $q->whereHas('employee', fn($eq) => $eq->where('branch_id', $branchId))
-                  ->orWhere('organization_id', $orgId);
+                $q->whereHas('employee', fn ($eq) => $eq->where('branch_id', $branchId))
+                    ->orWhere('organization_id', $orgId);
             });
         } elseif ($orgId) {
             $query->where('organization_id', $orgId);
@@ -116,12 +131,12 @@ class Terminal extends Component
 
         $user = $query->first();
 
-        if (! $user) {
+        if (!$user) {
             throw new \Exception('invalid_pin');
         }
 
         $this->operatorId = $user->id;
-        $this->operatorName = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: $user->email;
+        $this->operatorName = trim(($user->first_name ?? '').' '.($user->last_name ?? '')) ?: $user->email;
         $this->pinLocked = false;
         $this->pin = '';
 
@@ -154,7 +169,9 @@ class Terminal extends Component
     public function selectTable(int $tableId): void
     {
         $table = Table::find($tableId);
-        if (! $table) return;
+        if (!$table) {
+            return;
+        }
 
         $this->selectedTable = $tableId;
         $this->selectedTableName = "Стол {$table->name}";
@@ -190,7 +207,9 @@ class Terminal extends Component
             $this->currentOrderId = $order->id;
             $this->cart = [];
             foreach ($order->items as $item) {
-                if ($item->status === 'cancelled') continue;
+                if ($item->status === 'cancelled') {
+                    continue;
+                }
                 $this->cart[] = [
                     'product_id' => $item->product_id,
                     'order_item_id' => $item->id,
@@ -219,13 +238,16 @@ class Terminal extends Component
     public function addToCart(int $productId): void
     {
         $product = Product::find($productId);
-        if (! $product) return;
+        if (!$product) {
+            return;
+        }
 
         // Ищем в корзине неотправленный элемент
         foreach ($this->cart as $index => &$item) {
-            if ($item['product_id'] === $productId && ! ($item['sent'] ?? false)) {
+            if ($item['product_id'] === $productId && !($item['sent'] ?? false)) {
                 $item['quantity']++;
                 $item['subtotal'] = $item['quantity'] * $item['price'];
+
                 return;
             }
         }
@@ -276,7 +298,7 @@ class Terminal extends Component
     public function clearCart(): void
     {
         // Убираем только неотправленные позиции
-        $this->cart = array_values(array_filter($this->cart, fn($item) => $item['sent'] ?? false));
+        $this->cart = array_values(array_filter($this->cart, fn ($item) => $item['sent'] ?? false));
         if (empty($this->cart)) {
             $this->currentOrderId = null;
         }
@@ -311,7 +333,9 @@ class Terminal extends Component
 
     public function sendToKitchen(): void
     {
-        if (empty($this->cart)) return;
+        if (empty($this->cart)) {
+            return;
+        }
 
         $branchId = session('current_branch_id');
 
@@ -344,7 +368,9 @@ class Terminal extends Component
 
         // Добавляем новые позиции
         foreach ($this->cart as $index => &$item) {
-            if ($item['sent']) continue;
+            if ($item['sent']) {
+                continue;
+            }
 
             $orderItem = OrderItem::create([
                 'order_id' => $order->id,
@@ -373,7 +399,9 @@ class Terminal extends Component
 
     public function openPaymentModal(): void
     {
-        if (empty($this->cart)) return;
+        if (empty($this->cart)) {
+            return;
+        }
         $this->cashReceived = '';
         $this->paymentMethod = 'cash';
         $this->showPaymentModal = true;
@@ -384,7 +412,7 @@ class Terminal extends Component
         // Сначала отправляем неотправленные на кухню
         $hasNewItems = false;
         foreach ($this->cart as $item) {
-            if (! $item['sent']) {
+            if (!$item['sent']) {
                 $hasNewItems = true;
                 break;
             }
@@ -393,10 +421,14 @@ class Terminal extends Component
             $this->sendToKitchen();
         }
 
-        if (! $this->currentOrderId) return;
+        if (!$this->currentOrderId) {
+            return;
+        }
 
         $order = Order::find($this->currentOrderId);
-        if (! $order) return;
+        if (!$order) {
+            return;
+        }
 
         $total = $this->totalWithDiscount;
 
@@ -416,7 +448,7 @@ class Terminal extends Component
             ->where('is_active', true)
             ->value('id');
 
-        if (! $paymentMethodId) {
+        if (!$paymentMethodId) {
             // Fallback: берём первый активный способ оплаты
             $paymentMethodId = \Illuminate\Support\Facades\DB::table('payment_methods')
                 ->where('organization_id', $orgId)
@@ -424,8 +456,9 @@ class Terminal extends Component
                 ->value('id');
         }
 
-        if (! $paymentMethodId) {
+        if (!$paymentMethodId) {
             $this->dispatch('notify', message: 'Не найден способ оплаты. Настройте в кабинете.', type: 'error');
+
             return;
         }
 
@@ -474,6 +507,7 @@ class Terminal extends Component
         if ($this->discountPercent > 0) {
             return round($this->cartTotal * $this->discountPercent / 100);
         }
+
         return $this->discountAmount;
     }
 
@@ -492,7 +526,10 @@ class Terminal extends Component
     #[Computed]
     public function changeAmount(): float
     {
-        if ($this->paymentMethod !== 'cash' || ! $this->cashReceived) return 0;
+        if ($this->paymentMethod !== 'cash' || !$this->cashReceived) {
+            return 0;
+        }
+
         return max(0, ((float) $this->cashReceived) - $this->totalWithDiscount);
     }
 
@@ -500,13 +537,16 @@ class Terminal extends Component
     public function halls()
     {
         $branchId = session('current_branch_id');
+
         return $branchId ? Hall::where('branch_id', $branchId)->get() : collect();
     }
 
     #[Computed]
     public function tables()
     {
-        if (! $this->selectedHall) return collect();
+        if (!$this->selectedHall) {
+            return collect();
+        }
 
         return Table::where('hall_id', $this->selectedHall)
             ->orderBy('sort_order')
@@ -515,6 +555,7 @@ class Terminal extends Component
                 $table->has_order = Order::where('table_id', $table->id)
                     ->whereIn('status', ['new', 'accepted', 'preparing', 'ready'])
                     ->exists();
+
                 return $table;
             });
     }
@@ -523,7 +564,9 @@ class Terminal extends Component
     public function categories()
     {
         $orgId = auth()->user()?->organization_id;
-        if (! $orgId) return collect();
+        if (!$orgId) {
+            return collect();
+        }
 
         return Category::withoutGlobalScopes()
             ->where('organization_id', $orgId)
@@ -536,14 +579,16 @@ class Terminal extends Component
     public function products()
     {
         $orgId = auth()->user()?->organization_id;
-        if (! $orgId) return collect();
+        if (!$orgId) {
+            return collect();
+        }
 
         return Product::withoutGlobalScopes()
             ->where('organization_id', $orgId)
             ->where('is_available', true)
             ->where('in_stop_list', false)
-            ->when($this->selectedCategory, fn($q, $id) => $q->where('category_id', $id))
-            ->when($this->searchProduct, fn($q, $s) => $q->where('name', 'like', "%{$s}%"))
+            ->when($this->selectedCategory, fn ($q, $id) => $q->where('category_id', $id))
+            ->when($this->searchProduct, fn ($q, $s) => $q->where('name', 'like', "%{$s}%"))
             ->orderBy('sort_order')
             ->get();
     }
@@ -552,7 +597,9 @@ class Terminal extends Component
     public function openOrders()
     {
         $branchId = session('current_branch_id');
-        if (! $branchId) return collect();
+        if (!$branchId) {
+            return collect();
+        }
 
         return Order::where('branch_id', $branchId)
             ->whereIn('status', ['new', 'accepted', 'preparing', 'ready'])
@@ -565,7 +612,9 @@ class Terminal extends Component
     public function loadOrder(int $orderId): void
     {
         $order = Order::with('items.product', 'table')->find($orderId);
-        if (! $order) return;
+        if (!$order) {
+            return;
+        }
 
         $this->currentOrderId = $order->id;
         $this->selectedTable = $order->table_id;
@@ -574,7 +623,9 @@ class Terminal extends Component
 
         $this->cart = [];
         foreach ($order->items as $item) {
-            if ($item->status === 'cancelled') continue;
+            if ($item->status === 'cancelled') {
+                continue;
+            }
             $this->cart[] = [
                 'product_id' => $item->product_id,
                 'order_item_id' => $item->id,

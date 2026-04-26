@@ -25,7 +25,7 @@ class KdsController extends Controller
                     OrderItemStatus::READY,
                 ]);
                 if ($workshopId) {
-                    $q->whereHas('product', fn($pq) => $pq->where('workshop_id', $workshopId));
+                    $q->whereHas('product', fn ($pq) => $pq->where('workshop_id', $workshopId));
                 }
             })
             ->with(['table', 'items' => function ($q) use ($workshopId) {
@@ -35,7 +35,7 @@ class KdsController extends Controller
                     OrderItemStatus::READY,
                 ]);
                 if ($workshopId) {
-                    $q->whereHas('product', fn($pq) => $pq->where('workshop_id', $workshopId));
+                    $q->whereHas('product', fn ($pq) => $pq->where('workshop_id', $workshopId));
                 }
                 $q->with(['product.workshop', 'modifiers']);
             }])
@@ -83,13 +83,13 @@ class KdsController extends Controller
         $branchId = $request->input('branch_id') ?? app('current.branch_id');
 
         $stats = [
-            'pending' => OrderItem::whereHas('order', fn($q) => $q->where('branch_id', $branchId)->open())
+            'pending' => OrderItem::whereHas('order', fn ($q) => $q->where('branch_id', $branchId)->open())
                 ->where('status', OrderItemStatus::SENT)->count(),
-            'preparing' => OrderItem::whereHas('order', fn($q) => $q->where('branch_id', $branchId)->open())
+            'preparing' => OrderItem::whereHas('order', fn ($q) => $q->where('branch_id', $branchId)->open())
                 ->where('status', OrderItemStatus::PREPARING)->count(),
-            'ready' => OrderItem::whereHas('order', fn($q) => $q->where('branch_id', $branchId)->open())
+            'ready' => OrderItem::whereHas('order', fn ($q) => $q->where('branch_id', $branchId)->open())
                 ->where('status', OrderItemStatus::READY)->count(),
-            'avg_prep_time' => OrderItem::whereHas('order', fn($q) => $q->where('branch_id', $branchId))
+            'avg_prep_time' => OrderItem::whereHas('order', fn ($q) => $q->where('branch_id', $branchId))
                 ->whereNotNull('ready_at')
                 ->whereDate('created_at', today())
                 ->selectRaw('AVG(TIMESTAMPDIFF(MINUTE, sent_to_kitchen_at, ready_at)) as avg_time')

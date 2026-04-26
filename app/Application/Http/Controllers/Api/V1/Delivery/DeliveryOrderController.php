@@ -19,9 +19,9 @@ class DeliveryOrderController extends Controller
             ->when($request->input('status'), function ($q, $status) {
                 $q->where('status', $status);
             })
-            ->when($request->boolean('active_only'), fn($q) => $q->active())
-            ->when($request->boolean('pending_only'), fn($q) => $q->pending())
-            ->when($request->input('courier_id'), fn($q, $id) => $q->forCourier($id))
+            ->when($request->boolean('active_only'), fn ($q) => $q->active())
+            ->when($request->boolean('pending_only'), fn ($q) => $q->pending())
+            ->when($request->input('courier_id'), fn ($q, $id) => $q->forCourier($id))
             ->orderByDesc('created_at')
             ->paginate($request->input('per_page', 20));
 
@@ -101,7 +101,7 @@ class DeliveryOrderController extends Controller
     {
         if (!$deliveryOrder->courier_id) {
             return response()->json([
-                'message' => 'Сначала назначьте курьера'
+                'message' => 'Сначала назначьте курьера',
             ], 422);
         }
 
@@ -115,7 +115,7 @@ class DeliveryOrderController extends Controller
         if ($deliveryOrder->status !== DeliveryStatus::PICKED_UP &&
             $deliveryOrder->status !== DeliveryStatus::IN_TRANSIT) {
             return response()->json([
-                'message' => 'Заказ должен быть забран перед доставкой'
+                'message' => 'Заказ должен быть забран перед доставкой',
             ], 422);
         }
 
@@ -128,7 +128,7 @@ class DeliveryOrderController extends Controller
     {
         if ($deliveryOrder->status === DeliveryStatus::DELIVERED) {
             return response()->json([
-                'message' => 'Нельзя отменить доставленный заказ'
+                'message' => 'Нельзя отменить доставленный заказ',
             ], 422);
         }
 
@@ -142,7 +142,7 @@ class DeliveryOrderController extends Controller
     {
         if ($deliveryOrder->status !== DeliveryStatus::DELIVERED) {
             return response()->json([
-                'message' => 'Можно оценить только доставленный заказ'
+                'message' => 'Можно оценить только доставленный заказ',
             ], 422);
         }
 

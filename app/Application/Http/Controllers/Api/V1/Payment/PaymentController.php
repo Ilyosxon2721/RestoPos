@@ -3,9 +3,9 @@
 namespace App\Application\Http\Controllers\Api\V1\Payment;
 
 use App\Application\Http\Controllers\Controller;
+use App\Domain\Order\Models\Order;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\Payment\Models\PaymentMethod;
-use App\Domain\Order\Models\Order;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

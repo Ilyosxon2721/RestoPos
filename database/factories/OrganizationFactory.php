@@ -18,7 +18,7 @@ class OrganizationFactory extends Factory
     {
         return [
             'name' => fake()->company(),
-            'legal_name' => fake()->company() . ' LLC',
+            'legal_name' => fake()->company().' LLC',
             'inn' => fake()->numerify('#########'),
             'subscription_plan' => 'business',
             'subscription_expires_at' => now()->addYear(),

@@ -4,7 +4,6 @@ namespace App\Domain\Auth\Actions;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Organization\Models\Branch;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class PinLoginAction

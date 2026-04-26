@@ -19,7 +19,7 @@ class OrderFactory extends Factory
     {
         return [
             'branch_id' => Branch::factory(),
-            'order_number' => now()->format('Ymd') . '-' . str_pad((string) fake()->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT),
+            'order_number' => now()->format('Ymd').'-'.str_pad((string) fake()->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT),
             'type' => 'dine_in',
             'source' => 'pos',
             'status' => 'new',

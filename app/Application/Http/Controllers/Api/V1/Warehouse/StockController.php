@@ -14,7 +14,7 @@ class StockController extends Controller
         $branchId = $request->input('branch_id') ?? app('current.branch_id');
 
         $stock = Stock::where('branch_id', $branchId)
-            ->when($request->has('warehouse_id'), fn($q) => $q->where('warehouse_id', $request->input('warehouse_id')))
+            ->when($request->has('warehouse_id'), fn ($q) => $q->where('warehouse_id', $request->input('warehouse_id')))
             ->with(['ingredient', 'warehouse'])
             ->orderBy('created_at', 'desc')
             ->paginate($request->input('per_page', 50));

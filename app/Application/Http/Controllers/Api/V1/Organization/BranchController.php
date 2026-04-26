@@ -15,12 +15,12 @@ class BranchController extends Controller
     public function index(Request $request): JsonResponse
     {
         $branches = Branch::where('organization_id', $request->user()->organization_id)
-            ->when($request->boolean('active_only'), fn($q) => $q->where('is_active', true))
+            ->when($request->boolean('active_only'), fn ($q) => $q->where('is_active', true))
             ->orderBy('name')
             ->get();
 
         return response()->json([
-            'data' => $branches->map(fn($branch) => $this->formatBranch($branch)),
+            'data' => $branches->map(fn ($branch) => $this->formatBranch($branch)),
         ]);
     }
 
@@ -79,7 +79,7 @@ class BranchController extends Controller
 
         $branch->update($request->only([
             'name', 'code', 'address', 'phone', 'email',
-            'working_hours', 'settings', 'is_active'
+            'working_hours', 'settings', 'is_active',
         ]));
 
         return response()->json([

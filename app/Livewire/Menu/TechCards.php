@@ -16,18 +16,23 @@ use Livewire\WithPagination;
 
 final class TechCards extends Component
 {
-    use WithPagination, ResolvesLayout;
+    use ResolvesLayout, WithPagination;
 
     public string $search = '';
 
     // Модалка создания/редактирования
     public bool $showModal = false;
+
     public ?int $editingId = null;
 
     public ?int $productId = null;
+
     public string $outputQuantity = '1';
+
     public string $description = '';
+
     public string $cookingInstructions = '';
+
     public bool $isActive = true;
 
     // Позиции тех. карты
@@ -58,7 +63,7 @@ final class TechCards extends Component
         $this->cookingInstructions = $techCard->cooking_instructions ?? '';
         $this->isActive = $techCard->is_active;
 
-        $this->cardItems = $techCard->items->map(fn(TechCardItem $item) => [
+        $this->cardItems = $techCard->items->map(fn (TechCardItem $item) => [
             'ingredient_id' => $item->ingredient_id,
             'quantity' => (string) $item->quantity,
             'loss_percent' => (string) $item->loss_percent,
@@ -145,6 +150,7 @@ final class TechCards extends Component
     public function products()
     {
         $orgId = auth()->user()->organization_id;
+
         return Product::where('organization_id', $orgId)->orderBy('name')->get();
     }
 
@@ -152,6 +158,7 @@ final class TechCards extends Component
     public function ingredients()
     {
         $orgId = auth()->user()->organization_id;
+
         return Ingredient::where('organization_id', $orgId)->active()->with('unit')->orderBy('name')->get();
     }
 
@@ -160,8 +167,8 @@ final class TechCards extends Component
         $orgId = auth()->user()->organization_id;
 
         $techCards = TechCard::query()
-            ->whereHas('product', fn($q) => $q->where('organization_id', $orgId))
-            ->when($this->search, fn($q) => $q->whereHas('product', fn($q2) => $q2->where('name', 'like', "%{$this->search}%")))
+            ->whereHas('product', fn ($q) => $q->where('organization_id', $orgId))
+            ->when($this->search, fn ($q) => $q->whereHas('product', fn ($q2) => $q2->where('name', 'like', "%{$this->search}%")))
             ->with(['product', 'items.ingredient.unit'])
             ->latest()
             ->paginate(20);

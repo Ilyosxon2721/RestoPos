@@ -12,7 +12,7 @@ class DeliveryZoneController extends Controller
     public function index(Request $request): JsonResponse
     {
         $zones = DeliveryZone::query()
-            ->when($request->boolean('active_only'), fn($q) => $q->active())
+            ->when($request->boolean('active_only'), fn ($q) => $q->active())
             ->orderBy('name')
             ->get();
 
@@ -86,7 +86,7 @@ class DeliveryZoneController extends Controller
                     'data' => [
                         'zone' => $zone,
                         'available' => true,
-                    ]
+                    ],
                 ]);
             }
         }
@@ -95,7 +95,7 @@ class DeliveryZoneController extends Controller
             'data' => [
                 'zone' => null,
                 'available' => false,
-            ]
+            ],
         ]);
     }
 }

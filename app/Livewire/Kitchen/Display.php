@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Livewire\Kitchen;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Order\Models\Order;
 use App\Domain\Order\Models\OrderItem;
 use App\Support\Enums\OrderItemStatus;
 use Illuminate\Support\Collection;
@@ -18,8 +17,11 @@ final class Display extends Component
 {
     // PIN-авторизация оператора
     public bool $pinLocked = true;
+
     public string $pin = '';
+
     public ?int $operatorId = null;
+
     public ?string $operatorName = null;
 
     public string $filter = 'all';
@@ -38,7 +40,7 @@ final class Display extends Component
             if ($validBranch) {
                 session(['current_branch_id' => (int) $requestBranch]);
             }
-        } elseif (! session('current_branch_id')) {
+        } elseif (!session('current_branch_id')) {
             $branchId = $user->employee?->branch_id
                 ?? $user->organization?->branches()->where('is_active', true)->first()?->id;
             if ($branchId) {
@@ -68,12 +70,12 @@ final class Display extends Component
 
         $query = User::where('pin_code', $pinCode)
             ->where('is_active', true)
-            ->whereHas('roles', fn($q) => $q->whereIn('slug', ['cook', 'owner', 'admin']));
+            ->whereHas('roles', fn ($q) => $q->whereIn('slug', ['cook', 'owner', 'admin']));
 
         if ($branchId) {
             $query->where(function ($q) use ($branchId, $orgId) {
-                $q->whereHas('employee', fn($eq) => $eq->where('branch_id', $branchId))
-                  ->orWhere('organization_id', $orgId);
+                $q->whereHas('employee', fn ($eq) => $eq->where('branch_id', $branchId))
+                    ->orWhere('organization_id', $orgId);
             });
         } elseif ($orgId) {
             $query->where('organization_id', $orgId);
@@ -81,12 +83,12 @@ final class Display extends Component
 
         $user = $query->first();
 
-        if (! $user) {
+        if (!$user) {
             throw new \Exception('invalid_pin');
         }
 
         $this->operatorId = $user->id;
-        $this->operatorName = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: $user->email;
+        $this->operatorName = trim(($user->first_name ?? '').' '.($user->last_name ?? '')) ?: $user->email;
         $this->pinLocked = false;
         $this->pin = '';
 
@@ -124,7 +126,7 @@ final class Display extends Component
                 OrderItemStatus::PREPARING,
                 OrderItemStatus::READY,
             ])
-            ->when($branchId, fn($q) => $q->whereHas('order', fn($oq) => $oq->where('branch_id', $branchId)))
+            ->when($branchId, fn ($q) => $q->whereHas('order', fn ($oq) => $oq->where('branch_id', $branchId)))
             ->with(['order.table', 'product']);
 
         if ($this->filter !== 'all') {
@@ -201,7 +203,7 @@ final class Display extends Component
                 OrderItemStatus::PREPARING,
                 OrderItemStatus::READY,
             ])
-            ->when($branchId, fn($q) => $q->whereHas('order', fn($oq) => $oq->where('branch_id', $branchId)))
+            ->when($branchId, fn ($q) => $q->whereHas('order', fn ($oq) => $oq->where('branch_id', $branchId)))
             ->get();
 
         $avgPrepTime = $items

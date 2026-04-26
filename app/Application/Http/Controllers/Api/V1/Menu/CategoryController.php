@@ -3,8 +3,8 @@
 namespace App\Application\Http\Controllers\Api\V1\Menu;
 
 use App\Application\Http\Controllers\Controller;
-use App\Domain\Menu\Models\Category;
 use App\Domain\Menu\Actions\CreateCategoryAction;
+use App\Domain\Menu\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -16,10 +16,10 @@ class CategoryController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Category::query()
-            ->when($request->boolean('root_only'), fn($q) => $q->root())
-            ->when($request->boolean('active_only'), fn($q) => $q->active())
-            ->when($request->has('parent_id'), fn($q) => $q->where('parent_id', $request->input('parent_id')))
-            ->with($request->boolean('with_children') ? ['children' => fn($q) => $q->active()->ordered()] : [])
+            ->when($request->boolean('root_only'), fn ($q) => $q->root())
+            ->when($request->boolean('active_only'), fn ($q) => $q->active())
+            ->when($request->has('parent_id'), fn ($q) => $q->where('parent_id', $request->input('parent_id')))
+            ->with($request->boolean('with_children') ? ['children' => fn ($q) => $q->active()->ordered()] : [])
             ->ordered();
 
         $categories = $request->boolean('paginate')
@@ -38,8 +38,8 @@ class CategoryController extends Controller
     {
         $categories = Category::query()
             ->root()
-            ->when($request->boolean('active_only'), fn($q) => $q->active())
-            ->with(['descendants' => fn($q) => $q->when($request->boolean('active_only'), fn($sq) => $sq->active())->ordered()])
+            ->when($request->boolean('active_only'), fn ($q) => $q->active())
+            ->with(['descendants' => fn ($q) => $q->when($request->boolean('active_only'), fn ($sq) => $sq->active())->ordered()])
             ->ordered()
             ->get();
 
@@ -53,7 +53,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category): JsonResponse
     {
-        $category->load(['parent', 'children', 'products' => fn($q) => $q->active()->ordered()->limit(10)]);
+        $category->load(['parent', 'children', 'products' => fn ($q) => $q->active()->ordered()->limit(10)]);
 
         return response()->json([
             'data' => $category,
@@ -117,7 +117,7 @@ class CategoryController extends Controller
         }
 
         $category->update($request->only([
-            'name', 'parent_id', 'slug', 'description', 'image', 'color', 'icon', 'sort_order', 'is_active'
+            'name', 'parent_id', 'slug', 'description', 'image', 'color', 'icon', 'sort_order', 'is_active',
         ]));
 
         return response()->json([

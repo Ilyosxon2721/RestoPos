@@ -15,6 +15,7 @@ final class Movement extends Component
     use WithPagination;
 
     public string $search = '';
+
     public string $typeFilter = '';
 
     public function updatedSearch(): void
@@ -32,9 +33,9 @@ final class Movement extends Component
         $orgId = auth()->user()->organization_id;
 
         $movements = StockMovement::query()
-            ->whereHas('warehouse.branch', fn($q) => $q->where('organization_id', $orgId))
-            ->when($this->typeFilter, fn($q) => $q->where('type', $this->typeFilter))
-            ->when($this->search, fn($q) => $q->whereHas('ingredient', fn($q2) => $q2->where('name', 'like', "%{$this->search}%")))
+            ->whereHas('warehouse.branch', fn ($q) => $q->where('organization_id', $orgId))
+            ->when($this->typeFilter, fn ($q) => $q->where('type', $this->typeFilter))
+            ->when($this->search, fn ($q) => $q->whereHas('ingredient', fn ($q2) => $q2->where('name', 'like', "%{$this->search}%")))
             ->with(['warehouse', 'ingredient.unit', 'user'])
             ->latest()
             ->paginate(30);

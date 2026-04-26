@@ -15,7 +15,7 @@ class EmployeeController extends Controller
         $branchId = $request->input('branch_id') ?? app('current.branch_id');
 
         $employees = Employee::where('branch_id', $branchId)
-            ->when($request->boolean('active_only'), fn($q) => $q->whereNotNull('hire_date'))
+            ->when($request->boolean('active_only'), fn ($q) => $q->whereNotNull('hire_date'))
             ->with('user')
             ->orderBy('created_at', 'desc')
             ->paginate($request->input('per_page', 20));
@@ -25,7 +25,7 @@ class EmployeeController extends Controller
 
     public function show(Employee $employee): JsonResponse
     {
-        $employee->load(['user', 'shifts' => fn($q) => $q->latest()->limit(10)]);
+        $employee->load(['user', 'shifts' => fn ($q) => $q->latest()->limit(10)]);
 
         return response()->json(['data' => $employee]);
     }
@@ -106,8 +106,8 @@ class EmployeeController extends Controller
         $branchId = $request->input('branch_id') ?? app('current.branch_id');
 
         $shifts = EmployeeShift::where('branch_id', $branchId)
-            ->when($request->has('employee_id'), fn($q) => $q->where('employee_id', $request->input('employee_id')))
-            ->when($request->has('date'), fn($q) => $q->whereDate('clock_in', $request->input('date')))
+            ->when($request->has('employee_id'), fn ($q) => $q->where('employee_id', $request->input('employee_id')))
+            ->when($request->has('date'), fn ($q) => $q->whereDate('clock_in', $request->input('date')))
             ->with('employee.user')
             ->latest('clock_in')
             ->paginate($request->input('per_page', 20));

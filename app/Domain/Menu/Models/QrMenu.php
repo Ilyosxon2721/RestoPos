@@ -6,14 +6,14 @@ namespace App\Domain\Menu\Models;
 
 use App\Domain\Organization\Models\Branch;
 use App\Domain\Organization\Models\Organization;
-use App\Support\Traits\HasUuid;
 use App\Support\Traits\BelongsToOrganization;
+use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QrMenu extends Model
 {
-    use HasUuid, BelongsToOrganization;
+    use BelongsToOrganization, HasUuid;
 
     protected $fillable = [
         'organization_id',

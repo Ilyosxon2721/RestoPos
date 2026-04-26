@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Feature\Api;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Models\Branch;
+use App\Domain\Organization\Models\Organization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,7 +15,9 @@ class AuthApiTest extends TestCase
     use RefreshDatabase;
 
     private Organization $organization;
+
     private Branch $branch;
+
     private User $user;
 
     protected function setUp(): void
@@ -48,23 +50,23 @@ class AuthApiTest extends TestCase
     public function user_can_login_via_api(): void
     {
         $response = $this->postJson('/api/v1/auth/login', [
-            'email' => 'test@example.com',
+            'login' => 'test@example.com',
             'password' => 'password',
         ]);
 
         $response->assertStatus(200)
-            ->assertJsonStructure(['data' => ['token', 'user']]);
+            ->assertJsonStructure(['data' => ['token', 'user', 'expires_at']]);
     }
 
     /** @test */
     public function user_cannot_login_with_invalid_credentials(): void
     {
         $response = $this->postJson('/api/v1/auth/login', [
-            'email' => 'test@example.com',
+            'login' => 'test@example.com',
             'password' => 'wrong',
         ]);
 
-        $response->assertStatus(401);
+        $response->assertStatus(422);
     }
 
     /** @test */

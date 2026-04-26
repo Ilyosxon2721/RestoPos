@@ -12,8 +12,8 @@ class CustomerController extends Controller
     public function index(Request $request): JsonResponse
     {
         $customers = Customer::query()
-            ->when($request->has('search'), fn($q) => $q->search($request->input('search')))
-            ->when($request->has('group_id'), fn($q) => $q->where('customer_group_id', $request->input('group_id')))
+            ->when($request->has('search'), fn ($q) => $q->search($request->input('search')))
+            ->when($request->has('group_id'), fn ($q) => $q->where('customer_group_id', $request->input('group_id')))
             ->with('group')
             ->orderBy('first_name')
             ->paginate($request->input('per_page', 20));
@@ -35,7 +35,7 @@ class CustomerController extends Controller
 
     public function show(Customer $customer): JsonResponse
     {
-        $customer->load(['group', 'bonusTransactions' => fn($q) => $q->latest()->limit(10)]);
+        $customer->load(['group', 'bonusTransactions' => fn ($q) => $q->latest()->limit(10)]);
 
         return response()->json(['data' => $customer]);
     }
@@ -66,7 +66,7 @@ class CustomerController extends Controller
         $request->validate([
             'first_name' => 'sometimes|string|max:255',
             'last_name' => 'nullable|string|max:255',
-            'phone' => 'sometimes|string|max:20|unique:customers,phone,' . $customer->id,
+            'phone' => 'sometimes|string|max:20|unique:customers,phone,'.$customer->id,
             'email' => 'nullable|email|max:255',
             'birth_date' => 'nullable|date',
             'gender' => 'nullable|string|in:male,female',

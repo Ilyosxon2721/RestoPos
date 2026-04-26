@@ -3,8 +3,8 @@
 namespace App\Application\Http\Controllers\Api\V1\Menu;
 
 use App\Application\Http\Controllers\Controller;
-use App\Domain\Menu\Models\ModifierGroup;
 use App\Domain\Menu\Models\Modifier;
+use App\Domain\Menu\Models\ModifierGroup;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -16,8 +16,8 @@ class ModifierController extends Controller
     public function index(Request $request): JsonResponse
     {
         $groups = ModifierGroup::query()
-            ->when($request->boolean('active_only'), fn($q) => $q->active())
-            ->with(['modifiers' => fn($q) => $q->when($request->boolean('active_only'), fn($sq) => $sq->active())->ordered()])
+            ->when($request->boolean('active_only'), fn ($q) => $q->active())
+            ->with(['modifiers' => fn ($q) => $q->when($request->boolean('active_only'), fn ($sq) => $sq->active())->ordered()])
             ->orderBy('name')
             ->get();
 
@@ -99,7 +99,7 @@ class ModifierController extends Controller
         ]);
 
         $modifierGroup->update($request->only([
-            'name', 'min_selections', 'max_selections', 'is_multiple', 'is_active'
+            'name', 'min_selections', 'max_selections', 'is_multiple', 'is_active',
         ]));
 
         return response()->json([
@@ -170,7 +170,7 @@ class ModifierController extends Controller
         ]);
 
         $modifier->update($request->only([
-            'name', 'price', 'sort_order', 'is_default', 'is_active'
+            'name', 'price', 'sort_order', 'is_default', 'is_active',
         ]));
 
         return response()->json([

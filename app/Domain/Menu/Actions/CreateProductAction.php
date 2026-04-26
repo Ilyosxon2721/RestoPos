@@ -3,9 +3,7 @@
 namespace App\Domain\Menu\Actions;
 
 use App\Domain\Menu\Models\Product;
-use App\Domain\Menu\Models\ProductPrice;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class CreateProductAction
 {
@@ -53,6 +51,7 @@ class CreateProductAction
     private function generateSku(int $organizationId): string
     {
         $count = Product::where('organization_id', $organizationId)->count();
+
         return sprintf('SKU-%06d', $count + 1);
     }
 }

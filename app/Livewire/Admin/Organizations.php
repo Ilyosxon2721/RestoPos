@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Domain\Organization\Models\Organization;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Layout('components.layouts.admin')]
@@ -15,6 +15,7 @@ class Organizations extends Component
     use WithPagination;
 
     public string $search = '';
+
     public string $statusFilter = '';
 
     public function updatedSearch(): void
@@ -31,7 +32,7 @@ class Organizations extends Component
     public function render()
     {
         $organizations = Organization::query()
-            ->when($this->search, fn($q) => $q->where('name', 'like', "%{$this->search}%"))
+            ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
             ->withCount('branches')
             ->latest()
             ->paginate(20);
