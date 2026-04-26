@@ -24,7 +24,7 @@ final class Import extends Component
     #[Url(as: 'tab', keep: false)]
     public string $tab = 'ingredients';
 
-    #[Validate(['file' => 'required|file|mimes:csv,txt|max:20480'])]
+    #[Validate(['file' => 'required|file|mimes:csv,txt,xlsx|max:20480'])]
     public ?TemporaryUploadedFile $file = null;
 
     public bool $dryRun = true;

@@ -16,10 +16,9 @@ class ImportTechCardsAction
 
     public function execute(string $csvPath, int $organizationId, bool $dryRun = false): ImportResult
     {
-        $reader = new CsvReader($csvPath);
         $result = new ImportResult();
 
-        $rowsByProduct = $this->groupByProduct($reader);
+        $rowsByProduct = $this->groupByProduct(SpreadsheetReader::open($csvPath));
 
         $callback = function () use ($rowsByProduct, $organizationId, $result): void {
             foreach ($rowsByProduct as $productKey => $bundle) {
@@ -44,12 +43,13 @@ class ImportTechCardsAction
     }
 
     /**
+     * @param iterable<int, array<string, string>> $rows
      * @return array<string, array{firstLine:int, rows: list<array<string, string>>}>
      */
-    private function groupByProduct(CsvReader $reader): array
+    private function groupByProduct(iterable $rows): array
     {
         $groups = [];
-        foreach ($reader->rows() as $line => $row) {
+        foreach ($rows as $line => $row) {
             $key = HeaderMap::value($row, HeaderMap::TECH_CARDS, 'product_external_id')
                 ?? HeaderMap::value($row, HeaderMap::TECH_CARDS, 'product_sku')
                 ?? HeaderMap::value($row, HeaderMap::TECH_CARDS, 'product_name');

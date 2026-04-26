@@ -21,11 +21,10 @@ class ImportProductsAction
         ?int $branchId = null,
         bool $dryRun = false,
     ): ImportResult {
-        $reader = new CsvReader($csvPath);
         $result = new ImportResult();
 
-        $callback = function () use ($reader, $organizationId, $branchId, $result): void {
-            foreach ($reader->rows() as $line => $row) {
+        $callback = function () use ($csvPath, $organizationId, $branchId, $result): void {
+            foreach (SpreadsheetReader::open($csvPath) as $line => $row) {
                 $this->importRow($row, $line, $organizationId, $branchId, $result);
             }
         };

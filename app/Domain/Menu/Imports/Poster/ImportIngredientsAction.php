@@ -14,11 +14,10 @@ class ImportIngredientsAction
 
     public function execute(string $csvPath, int $organizationId, bool $dryRun = false): ImportResult
     {
-        $reader = new CsvReader($csvPath);
         $result = new ImportResult();
 
-        $callback = function () use ($reader, $organizationId, $result): void {
-            foreach ($reader->rows() as $line => $row) {
+        $callback = function () use ($csvPath, $organizationId, $result): void {
+            foreach (SpreadsheetReader::open($csvPath) as $line => $row) {
                 $this->importRow($row, $line, $organizationId, $result);
             }
         };

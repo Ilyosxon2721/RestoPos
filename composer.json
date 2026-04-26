@@ -15,6 +15,7 @@
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^2.10.1",
         "livewire/livewire": "^4.1",
+        "openspout/openspout": "^5.6",
         "predis/predis": "^2.2",
         "pusher/pusher-php-server": "^7.2",
         "sentry/sentry-laravel": "^4.25",

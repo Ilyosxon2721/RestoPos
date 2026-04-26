@@ -2,7 +2,7 @@
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Заголовок --}}
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-900">Импорт меню из Poster (CSV)</h1>
+            <h1 class="text-2xl font-bold text-gray-900">Импорт меню из Poster (CSV / XLSX)</h1>
             <p class="mt-1 text-sm text-gray-600">
                 Загружайте файлы по очереди: <strong>1) Ингредиенты</strong> → <strong>2) Товары</strong> → <strong>3) Тех. карты</strong>.
                 Порядок важен: тех-карты ссылаются на ингредиенты и блюда.
@@ -50,7 +50,7 @@
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                     </svg>
-                    Скачать образец CSV
+                    Скачать образец (CSV)
                 </button>
             </div>
 
@@ -78,13 +78,14 @@
             <form wire:submit.prevent="process">
                 {{-- Файл --}}
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">CSV-файл</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Файл (CSV или XLSX)</label>
                     <input
                         type="file"
                         wire:model="file"
-                        accept=".csv,text/csv"
+                        accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                     >
+                    <p class="mt-1 text-xs text-gray-500">Поддерживаются CSV и XLSX (до 20&nbsp;МБ).</p>
                     @error('file') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
 
                     <div wire:loading wire:target="file" class="mt-1 text-xs text-gray-500">Загрузка файла…</div>
