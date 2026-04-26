@@ -19,6 +19,7 @@
         "pusher/pusher-php-server": "^7.2",
         "sentry/sentry-laravel": "^4.25",
         "spatie/laravel-activitylog": "^4.11",
+        "spatie/laravel-backup": "^10.2",
         "spatie/laravel-data": "^4.11",
         "spatie/laravel-permission": "^6.24",
         "spatie/laravel-translatable": "^6.8"

@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Resolve tenant (organization) from subdomain on every web request
         $middleware->web(append: [
             \App\Application\Http\Middleware\ResolveSubdomain::class,
+            \App\Application\Http\Middleware\SecurityHeaders::class,
         ]);
 
         $middleware->api(prepend: [
