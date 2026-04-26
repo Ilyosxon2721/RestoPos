@@ -93,6 +93,7 @@
                         <a href="/cabinet/menu/ingredients" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/ingredients*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Ингредиенты</a>
                         <a href="/cabinet/menu/tech-cards" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/tech-cards*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Тех. карты</a>
                         <a href="/cabinet/menu/qr-menu" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/qr-menu*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">QR-меню</a>
+                        <a href="/cabinet/menu/import" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/import*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Импорт из Poster</a>
                     </div>
                 </div>
                 {{-- Меню (свёрнутый sidebar) --}}
