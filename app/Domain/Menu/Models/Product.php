@@ -22,6 +22,8 @@ class Product extends Model
 
     protected $fillable = [
         'organization_id',
+        'external_source',
+        'external_id',
         'category_id',
         'workshop_id',
         'unit_id',

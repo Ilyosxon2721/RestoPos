@@ -20,6 +20,8 @@ class Category extends Model
 
     protected $fillable = [
         'organization_id',
+        'external_source',
+        'external_id',
         'parent_id',
         'name',
         'slug',
