@@ -94,8 +94,13 @@ return new class extends Migration
             $table->index(['organization_id', 'category_id']);
             $table->index('barcode');
             $table->index('sku');
-            $table->fullText(['name', 'description']);
         });
+
+        if (Schema::getConnection()->getDriverName() === 'mysql') {
+            Schema::table('products', function (Blueprint $table) {
+                $table->fullText(['name', 'description']);
+            });
+        }
 
         // Цены по филиалам (если отличаются)
         Schema::create('product_prices', function (Blueprint $table) {
