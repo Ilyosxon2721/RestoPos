@@ -4,7 +4,6 @@ namespace App\Application\Http\Controllers\Api\V1\Payment;
 
 use App\Application\Http\Controllers\Controller;
 use App\Domain\Payment\Models\CashShift;
-use App\Domain\Payment\Models\CashOperation;
 use App\Support\Enums\CashShiftStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,8 +19,8 @@ class CashShiftController extends Controller
 
         $query = CashShift::query()
             ->where('branch_id', $branchId)
-            ->when($request->boolean('today'), fn($q) => $q->today())
-            ->when($request->has('status'), fn($q) => $q->where('status', $request->input('status')))
+            ->when($request->boolean('today'), fn ($q) => $q->today())
+            ->when($request->has('status'), fn ($q) => $q->where('status', $request->input('status')))
             ->with(['openedByUser', 'closedByUser', 'terminal'])
             ->latest('opened_at');
 
@@ -207,7 +206,7 @@ class CashShiftController extends Controller
                 'closing_cash' => $cashShift->closing_cash,
                 'cash_difference' => $cashShift->cash_difference,
             ],
-            'operations' => $cashShift->cashOperations->map(fn($op) => [
+            'operations' => $cashShift->cashOperations->map(fn ($op) => [
                 'type' => $op->type,
                 'amount' => $op->amount,
                 'reason' => $op->reason,

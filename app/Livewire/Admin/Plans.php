@@ -5,23 +5,34 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Domain\Platform\Models\Plan;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.admin')]
 class Plans extends Component
 {
     public bool $showModal = false;
+
     public ?int $editingId = null;
+
     public string $name = '';
+
     public string $slug = '';
+
     public string $description = '';
+
     public string $price = '0';
+
     public string $billing_period = 'monthly';
+
     public int $max_branches = 1;
+
     public int $max_users = 3;
+
     public int $max_products = 100;
+
     public bool $is_active = true;
+
     public int $sort_order = 0;
 
     protected function rules(): array

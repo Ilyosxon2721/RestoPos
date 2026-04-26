@@ -54,7 +54,7 @@ class RedirectByRole
     {
         $user = auth()->user();
 
-        if (! $user) {
+        if (!$user) {
             return redirect('/login');
         }
 
@@ -64,6 +64,7 @@ class RedirectByRole
         // Если уже на субдомене — определяем путь по роли (все роли работают)
         if ($onSubdomain) {
             $targetPath = $this->resolveTargetPath($userRoles);
+
             return redirect($targetPath);
         }
 
@@ -93,6 +94,7 @@ class RedirectByRole
                 return $path;
             }
         }
+
         return null;
     }
 
@@ -103,6 +105,7 @@ class RedirectByRole
                 return $path;
             }
         }
+
         return null;
     }
 
@@ -121,13 +124,13 @@ class RedirectByRole
 
     private function canRedirectToSubdomain($user): bool
     {
-        if (! $user->organization?->subdomain) {
+        if (!$user->organization?->subdomain) {
             return false;
         }
 
         $baseDomain = config('forris.base_domain');
 
-        return ! empty($baseDomain);
+        return !empty($baseDomain);
     }
 
     private function redirectToSubdomain(Request $request, string $subdomain, string $targetPath): \Illuminate\Http\RedirectResponse
@@ -135,7 +138,7 @@ class RedirectByRole
         $baseDomain = config('forris.base_domain');
         $scheme = $request->isSecure() ? 'https' : 'http';
         $port = $request->getPort();
-        $portSuffix = in_array($port, [80, 443]) ? '' : ':' . $port;
+        $portSuffix = in_array($port, [80, 443]) ? '' : ':'.$port;
 
         return redirect("{$scheme}://{$subdomain}.{$baseDomain}{$portSuffix}{$targetPath}");
     }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Domain\Menu\Models;
 
 use App\Support\Traits\BelongsToOrganization;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,7 +14,7 @@ use Spatie\Translatable\HasTranslations;
 
 class Category extends Model
 {
-    use HasFactory, BelongsToOrganization, HasTranslations, SoftDeletes;
+    use BelongsToOrganization, HasFactory, HasTranslations, SoftDeletes;
 
     public array $translatable = ['name', 'description'];
 
@@ -123,5 +123,4 @@ class Category extends Model
     {
         return \Database\Factories\CategoryFactory::new();
     }
-
 }

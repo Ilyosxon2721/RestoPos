@@ -59,7 +59,7 @@ beforeEach(function (): void {
 });
 
 it('rejects unauthenticated requests', function (): void {
-    $response = $this->getJson('/api/v1/orders?branch_id=' . $this->branch->id);
+    $response = $this->getJson('/api/v1/orders?branch_id='.$this->branch->id);
 
     $response->assertStatus(401);
 });
@@ -71,7 +71,7 @@ it('can list orders', function (): void {
         'branch_id' => $this->branch->id,
     ]);
 
-    $response = $this->getJson('/api/v1/orders?branch_id=' . $this->branch->id);
+    $response = $this->getJson('/api/v1/orders?branch_id='.$this->branch->id);
 
     $response->assertOk()
         ->assertJsonPath('data.total', 3);

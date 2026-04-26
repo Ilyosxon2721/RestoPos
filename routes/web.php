@@ -24,8 +24,10 @@ Route::get('/', function () {
         if (auth()->check()) {
             return redirect('/redirect');
         }
+
         return redirect('/login');
     }
+
     return view('landing');
 })->name('landing');
 

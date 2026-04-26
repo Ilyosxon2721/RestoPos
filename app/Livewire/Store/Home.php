@@ -14,7 +14,9 @@ use Livewire\Component;
 final class Home extends Component
 {
     public StoreSettings $store;
+
     public string $search = '';
+
     public ?int $selectedCategory = null;
 
     public function mount(string $slug): void
@@ -52,7 +54,7 @@ final class Home extends Component
             ->where('organization_id', $this->store->organization_id)
             ->where('is_visible', true)
             ->whereNull('parent_id')
-            ->with(['children' => fn($q) => $q->where('is_visible', true)->orderBy('sort_order')])
+            ->with(['children' => fn ($q) => $q->where('is_visible', true)->orderBy('sort_order')])
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();

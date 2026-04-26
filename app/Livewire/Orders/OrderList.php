@@ -6,7 +6,6 @@ namespace App\Livewire\Orders;
 
 use App\Domain\Order\Models\Order;
 use App\Support\Enums\OrderStatus;
-use App\Support\Enums\PaymentStatus;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -27,6 +26,7 @@ class OrderList extends Component
     public string $searchQuery = '';
 
     public bool $showDetailModal = false;
+
     public ?Order $selectedOrder = null;
 
     public function mount(): void
@@ -67,9 +67,9 @@ class OrderList extends Component
 
         if ($this->searchQuery !== '') {
             $query->where(function ($q) {
-                $q->where('order_number', 'like', '%' . $this->searchQuery . '%')
+                $q->where('order_number', 'like', '%'.$this->searchQuery.'%')
                     ->orWhereHas('waiter', function ($wq) {
-                        $wq->where('name', 'like', '%' . $this->searchQuery . '%');
+                        $wq->where('name', 'like', '%'.$this->searchQuery.'%');
                     });
             });
         }
@@ -95,6 +95,7 @@ class OrderList extends Component
 
         if ($order->status === OrderStatus::COMPLETED || $order->status === OrderStatus::CANCELLED) {
             session()->flash('error', 'Невозможно отменить этот заказ.');
+
             return;
         }
 

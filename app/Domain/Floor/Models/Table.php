@@ -6,7 +6,6 @@ namespace App\Domain\Floor\Models;
 
 use App\Support\Enums\TableStatus;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -175,5 +174,4 @@ class Table extends Model
     {
         return \Database\Factories\TableFactory::new();
     }
-
 }

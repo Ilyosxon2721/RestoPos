@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire\Cabinet\Warehouse;
 
-use App\Domain\Warehouse\Models\Ingredient;
 use App\Domain\Warehouse\Models\Inventory as InventoryModel;
 use App\Domain\Warehouse\Models\Stock;
 use App\Domain\Warehouse\Models\StockMovement;
@@ -24,7 +23,9 @@ final class Inventory extends Component
     public bool $showModal = false;
 
     public ?int $warehouseId = null;
+
     public string $notes = '';
+
     public array $inventoryItems = [];
 
     public function create(): void
@@ -36,16 +37,18 @@ final class Inventory extends Component
 
     public function loadStockItems(): void
     {
-        if (! $this->warehouseId) return;
+        if (!$this->warehouseId) {
+            return;
+        }
 
         $stocks = Stock::where('warehouse_id', $this->warehouseId)
             ->with('ingredient.unit')
             ->where('quantity', '>', 0)
             ->get();
 
-        $this->inventoryItems = $stocks->map(fn($stock) => [
+        $this->inventoryItems = $stocks->map(fn ($stock) => [
             'ingredient_id' => $stock->ingredient_id,
-            'ingredient_name' => $stock->ingredient->name . ' (' . ($stock->ingredient->unit?->short_name ?? '') . ')',
+            'ingredient_name' => $stock->ingredient->name.' ('.($stock->ingredient->unit?->short_name ?? '').')',
             'expected_quantity' => (string) $stock->quantity,
             'actual_quantity' => '',
             'cost_price' => (string) $stock->average_cost,
@@ -101,7 +104,7 @@ final class Inventory extends Component
                         'cost_price' => (float) ($item['cost_price'] ?? 0),
                         'reference_type' => InventoryModel::class,
                         'reference_id' => $inventory->id,
-                        'notes' => 'Инвентаризация: ожидалось ' . $expected . ', фактически ' . $actual,
+                        'notes' => 'Инвентаризация: ожидалось '.$expected.', фактически '.$actual,
                     ]);
                 }
             }
@@ -114,7 +117,8 @@ final class Inventory extends Component
     public function warehouses()
     {
         $orgId = auth()->user()->organization_id;
-        return Warehouse::whereHas('branch', fn($q) => $q->where('organization_id', $orgId))
+
+        return Warehouse::whereHas('branch', fn ($q) => $q->where('organization_id', $orgId))
             ->where('is_active', true)->with('branch')->get();
     }
 
@@ -123,7 +127,7 @@ final class Inventory extends Component
         $orgId = auth()->user()->organization_id;
 
         $inventories = InventoryModel::query()
-            ->whereHas('warehouse.branch', fn($q) => $q->where('organization_id', $orgId))
+            ->whereHas('warehouse.branch', fn ($q) => $q->where('organization_id', $orgId))
             ->with(['warehouse', 'user', 'items.ingredient'])
             ->latest()
             ->paginate(20);

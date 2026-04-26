@@ -13,12 +13,13 @@ use Livewire\WithPagination;
 
 class CustomerList extends Component
 {
-    use WithPagination, ResolvesLayout;
+    use ResolvesLayout, WithPagination;
 
     #[Url]
     public string $searchQuery = '';
 
     public bool $showModal = false;
+
     public ?int $editingId = null;
 
     #[Rule('required|string|max:100')]
@@ -123,10 +124,10 @@ class CustomerList extends Component
 
         if ($this->searchQuery !== '') {
             $query->where(function ($q) {
-                $q->where('first_name', 'like', '%' . $this->searchQuery . '%')
-                    ->orWhere('last_name', 'like', '%' . $this->searchQuery . '%')
-                    ->orWhere('phone', 'like', '%' . $this->searchQuery . '%')
-                    ->orWhere('email', 'like', '%' . $this->searchQuery . '%');
+                $q->where('first_name', 'like', '%'.$this->searchQuery.'%')
+                    ->orWhere('last_name', 'like', '%'.$this->searchQuery.'%')
+                    ->orWhere('phone', 'like', '%'.$this->searchQuery.'%')
+                    ->orWhere('email', 'like', '%'.$this->searchQuery.'%');
             });
         }
 

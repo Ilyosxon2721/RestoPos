@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire\Cabinet\Settings;
 
 use App\Domain\Organization\Models\Organization;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 /**
  * Настройки налогов — НДС, ставка, включение в цену, сервисный сбор.
@@ -15,9 +15,13 @@ use Livewire\Attributes\Layout;
 final class Taxes extends Component
 {
     public bool $taxEnabled = false;
+
     public float $taxRate = 0;
+
     public bool $taxIncludedInPrice = true;
+
     public bool $serviceChargeEnabled = false;
+
     public float $serviceChargePercent = 10;
 
     public function mount(): void

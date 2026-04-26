@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Livewire\Cabinet;
 
 use App\Domain\Order\Models\Order;
-use App\Domain\Payment\Models\Payment;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.cabinet')]
 class Finance extends Component
@@ -18,7 +17,7 @@ class Finance extends Component
     #[Computed]
     public function revenue(): float
     {
-        $query = Order::whereHas('branch', fn($q) => $q->where('organization_id', auth()->user()->organization_id))
+        $query = Order::whereHas('branch', fn ($q) => $q->where('organization_id', auth()->user()->organization_id))
             ->where('status', 'completed');
 
         return (float) match ($this->period) {
@@ -32,7 +31,7 @@ class Finance extends Component
     #[Computed]
     public function ordersCount(): int
     {
-        $query = Order::whereHas('branch', fn($q) => $q->where('organization_id', auth()->user()->organization_id));
+        $query = Order::whereHas('branch', fn ($q) => $q->where('organization_id', auth()->user()->organization_id));
 
         return match ($this->period) {
             'today' => $query->whereDate('created_at', today())->count(),

@@ -93,7 +93,7 @@ class DeliveryOrder extends Model
         }
     }
 
-    public function cancel(string $reason = null): void
+    public function cancel(?string $reason = null): void
     {
         $this->update([
             'status' => DeliveryStatus::FAILED,

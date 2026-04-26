@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire\Cabinet\Settings;
 
 use App\Domain\Organization\Models\Organization;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 /**
  * Настройки заказов — автопринятие, формат номера, тип/источник по умолчанию, кассовая смена.
@@ -15,9 +15,13 @@ use Livewire\Attributes\Layout;
 final class Orders extends Component
 {
     public bool $autoAccept = false;
+
     public string $numberFormat = '';
+
     public string $defaultType = 'dine_in';
+
     public string $defaultSource = 'pos';
+
     public bool $requireCashShift = true;
 
     public function mount(): void

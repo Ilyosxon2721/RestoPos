@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Domain\Order;
 
-use App\Domain\Order\Models\Order;
 use App\Support\Enums\OrderStatus;
 use App\Support\Enums\PaymentStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;

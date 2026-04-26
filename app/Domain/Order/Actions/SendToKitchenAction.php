@@ -3,9 +3,8 @@
 namespace App\Domain\Order\Actions;
 
 use App\Domain\Order\Models\Order;
-use App\Domain\Order\Models\OrderItem;
-use App\Support\Enums\OrderStatus;
 use App\Support\Enums\OrderItemStatus;
+use App\Support\Enums\OrderStatus;
 use Illuminate\Support\Facades\DB;
 
 class SendToKitchenAction

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Livewire\Cabinet;
 
+use App\Domain\Customer\Models\Customer;
 use App\Domain\Order\Models\Order;
 use App\Domain\Organization\Models\Branch;
-use App\Domain\Customer\Models\Customer;
 use App\Domain\Staff\Models\Employee;
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.cabinet')]
 class Dashboard extends Component
@@ -24,7 +24,7 @@ class Dashboard extends Component
     #[Computed]
     public function totalEmployees(): int
     {
-        return Employee::whereHas('user', fn($q) => $q->where('organization_id', auth()->user()->organization_id))->count();
+        return Employee::whereHas('user', fn ($q) => $q->where('organization_id', auth()->user()->organization_id))->count();
     }
 
     #[Computed]
@@ -36,7 +36,7 @@ class Dashboard extends Component
     #[Computed]
     public function todayRevenue(): float
     {
-        return (float) Order::whereHas('branch', fn($q) => $q->where('organization_id', auth()->user()->organization_id))
+        return (float) Order::whereHas('branch', fn ($q) => $q->where('organization_id', auth()->user()->organization_id))
             ->whereDate('created_at', today())
             ->where('status', 'completed')
             ->sum('total_amount');
@@ -45,7 +45,7 @@ class Dashboard extends Component
     #[Computed]
     public function recentOrders()
     {
-        return Order::whereHas('branch', fn($q) => $q->where('organization_id', auth()->user()->organization_id))
+        return Order::whereHas('branch', fn ($q) => $q->where('organization_id', auth()->user()->organization_id))
             ->with('branch')
             ->latest()
             ->take(10)

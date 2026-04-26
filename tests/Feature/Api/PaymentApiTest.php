@@ -60,7 +60,7 @@ beforeEach(function (): void {
 });
 
 it('can list payment methods', function (): void {
-    $response = $this->getJson('/api/v1/payments/methods?branch_id=' . $this->branch->id);
+    $response = $this->getJson('/api/v1/payments/methods?branch_id='.$this->branch->id);
 
     $response->assertOk()
         ->assertJsonCount(2, 'data');
@@ -74,7 +74,7 @@ it('can process a cash payment', function (): void {
         'payment_status' => PaymentStatus::UNPAID,
     ]);
 
-    $response = $this->postJson('/api/v1/payments/process?branch_id=' . $this->branch->id, [
+    $response = $this->postJson('/api/v1/payments/process?branch_id='.$this->branch->id, [
         'order_id' => $order->id,
         'method' => 'cash',
         'amount' => 50000,
@@ -97,7 +97,7 @@ it('can process a card payment', function (): void {
         'payment_status' => PaymentStatus::UNPAID,
     ]);
 
-    $response = $this->postJson('/api/v1/payments/process?branch_id=' . $this->branch->id, [
+    $response = $this->postJson('/api/v1/payments/process?branch_id='.$this->branch->id, [
         'order_id' => $order->id,
         'method' => 'card',
         'amount' => 75000,
@@ -115,7 +115,7 @@ it('rejects payment for already paid order', function (): void {
         'payment_status' => PaymentStatus::PAID,
     ]);
 
-    $response = $this->postJson('/api/v1/payments/process?branch_id=' . $this->branch->id, [
+    $response = $this->postJson('/api/v1/payments/process?branch_id='.$this->branch->id, [
         'order_id' => $order->id,
         'method' => 'cash',
         'amount' => 50000,
@@ -142,7 +142,7 @@ it('can refund a payment', function (): void {
         'paid_at' => now(),
     ]);
 
-    $response = $this->postJson("/api/v1/payments/{$payment->id}/refund?branch_id=" . $this->branch->id, [
+    $response = $this->postJson("/api/v1/payments/{$payment->id}/refund?branch_id=".$this->branch->id, [
         'reason' => 'Ошибка в заказе',
     ]);
 

@@ -9,9 +9,9 @@ use App\Domain\Order\Actions\CreateOrderAction;
 use App\Domain\Order\Models\Order;
 use App\Domain\Organization\Models\Branch;
 use App\Domain\Payment\Models\CashShift;
+use App\Support\Enums\OrderSource;
 use App\Support\Enums\OrderStatus;
 use App\Support\Enums\OrderType;
-use App\Support\Enums\OrderSource;
 use App\Support\Enums\PaymentStatus;
 use App\Support\Enums\TableStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,7 +26,7 @@ class CreateOrderActionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->action = new CreateOrderAction();
+        $this->action = new CreateOrderAction;
     }
 
     /** @test */

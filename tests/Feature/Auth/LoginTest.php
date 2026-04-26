@@ -14,6 +14,7 @@ class LoginTest extends TestCase
     use RefreshDatabase;
 
     private Organization $organization;
+
     private User $user;
 
     protected function setUp(): void

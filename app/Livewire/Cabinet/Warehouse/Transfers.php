@@ -24,8 +24,11 @@ final class Transfers extends Component
     public bool $showModal = false;
 
     public ?int $fromWarehouseId = null;
+
     public ?int $toWarehouseId = null;
+
     public string $notes = '';
+
     public array $transferItems = [];
 
     public function create(): void
@@ -126,7 +129,8 @@ final class Transfers extends Component
     public function warehouses()
     {
         $orgId = auth()->user()->organization_id;
-        return Warehouse::whereHas('branch', fn($q) => $q->where('organization_id', $orgId))
+
+        return Warehouse::whereHas('branch', fn ($q) => $q->where('organization_id', $orgId))
             ->where('is_active', true)->with('branch')->get();
     }
 
@@ -142,9 +146,9 @@ final class Transfers extends Component
         $orgId = auth()->user()->organization_id;
 
         $transfers = Transfer::query()
-            ->where(fn($q) => $q
-                ->whereHas('fromWarehouse.branch', fn($q2) => $q2->where('organization_id', $orgId))
-                ->orWhereHas('toWarehouse.branch', fn($q2) => $q2->where('organization_id', $orgId))
+            ->where(fn ($q) => $q
+                ->whereHas('fromWarehouse.branch', fn ($q2) => $q2->where('organization_id', $orgId))
+                ->orWhereHas('toWarehouse.branch', fn ($q2) => $q2->where('organization_id', $orgId))
             )
             ->with(['fromWarehouse', 'toWarehouse', 'user', 'items.ingredient'])
             ->latest()

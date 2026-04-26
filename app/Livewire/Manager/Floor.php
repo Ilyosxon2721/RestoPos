@@ -6,8 +6,8 @@ namespace App\Livewire\Manager;
 
 use App\Domain\Floor\Models\Hall;
 use App\Domain\Floor\Models\Table;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.manager')]
 class Floor extends Component
@@ -16,14 +16,20 @@ class Floor extends Component
 
     // Модалка зала
     public bool $showHallModal = false;
+
     public ?int $editingHallId = null;
+
     public string $hallName = '';
 
     // Модалка стола
     public bool $showTableModal = false;
+
     public ?int $editingTableId = null;
+
     public string $tableName = '';
+
     public string $tableCapacity = '4';
+
     public string $tableShape = 'square';
 
     public function mount(): void
@@ -90,7 +96,9 @@ class Floor extends Component
 
     public function createTable(): void
     {
-        if (! $this->selectedHall) return;
+        if (!$this->selectedHall) {
+            return;
+        }
 
         $this->reset(['editingTableId', 'tableCapacity', 'tableShape']);
 

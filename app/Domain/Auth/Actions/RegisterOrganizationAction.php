@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Auth\Actions;
 
-use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Models\Role;
-use App\Domain\Organization\Models\Organization;
+use App\Domain\Auth\Models\User;
 use App\Domain\Organization\Models\Branch;
+use App\Domain\Organization\Models\Organization;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -61,11 +61,11 @@ class RegisterOrganizationAction
                 ->where('slug', 'owner')
                 ->where(function ($q) use ($organization) {
                     $q->where('organization_id', $organization->id)
-                      ->orWhereNull('organization_id');
+                        ->orWhereNull('organization_id');
                 })
                 ->first();
 
-            if (! $ownerRole) {
+            if (!$ownerRole) {
                 $ownerRole = Role::withoutGlobalScopes()->create([
                     'organization_id' => $organization->id,
                     'name' => 'Владелец',

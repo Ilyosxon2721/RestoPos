@@ -2,9 +2,9 @@
 
 namespace App\Domain\Order\Actions;
 
+use App\Domain\Menu\Models\Product;
 use App\Domain\Order\Models\Order;
 use App\Domain\Order\Models\OrderItem;
-use App\Domain\Menu\Models\Product;
 use App\Support\Enums\OrderItemStatus;
 use Illuminate\Support\Facades\DB;
 

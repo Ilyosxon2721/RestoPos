@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Feature\Api;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Models\Branch;
+use App\Domain\Organization\Models\Organization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,7 +15,9 @@ class AuthApiTest extends TestCase
     use RefreshDatabase;
 
     private Organization $organization;
+
     private Branch $branch;
+
     private User $user;
 
     protected function setUp(): void

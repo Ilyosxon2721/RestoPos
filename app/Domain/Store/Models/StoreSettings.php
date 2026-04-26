@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Store\Models;
 
-use App\Domain\Organization\Models\Organization;
 use App\Domain\Menu\Models\Product;
+use App\Domain\Organization\Models\Organization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

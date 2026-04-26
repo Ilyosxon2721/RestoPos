@@ -2,13 +2,13 @@
 
 namespace App\Domain\Menu\Models;
 
-use App\Support\Traits\HasUuid;
 use App\Support\Traits\BelongsToOrganization;
+use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 
 class Unit extends Model
 {
-    use HasUuid, BelongsToOrganization;
+    use BelongsToOrganization, HasUuid;
 
     protected $fillable = [
         'organization_id',

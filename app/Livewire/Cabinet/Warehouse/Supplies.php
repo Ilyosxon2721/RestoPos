@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Livewire\Cabinet\Warehouse;
 
 use App\Domain\Warehouse\Models\Ingredient;
-use App\Domain\Warehouse\Models\Supply;
-use App\Domain\Warehouse\Models\SupplyItem;
-use App\Domain\Warehouse\Models\Supplier;
-use App\Domain\Warehouse\Models\Warehouse;
 use App\Domain\Warehouse\Models\Stock;
 use App\Domain\Warehouse\Models\StockBatch;
 use App\Domain\Warehouse\Models\StockMovement;
+use App\Domain\Warehouse\Models\Supplier;
+use App\Domain\Warehouse\Models\Supply;
+use App\Domain\Warehouse\Models\Warehouse;
 use App\Support\Enums\StockMovementType;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -25,17 +24,24 @@ final class Supplies extends Component
     use WithPagination;
 
     public string $search = '';
+
     public string $statusFilter = '';
 
     // Модалка
     public bool $showModal = false;
+
     public ?int $editingId = null;
 
     public ?int $warehouseId = null;
+
     public ?int $supplierId = null;
+
     public string $documentNumber = '';
+
     public ?string $documentDate = null;
+
     public string $notes = '';
+
     public array $supplyItems = [];
 
     public function updatedSearch(): void
@@ -162,7 +168,8 @@ final class Supplies extends Component
     public function warehouses()
     {
         $orgId = auth()->user()->organization_id;
-        return Warehouse::whereHas('branch', fn($q) => $q->where('organization_id', $orgId))
+
+        return Warehouse::whereHas('branch', fn ($q) => $q->where('organization_id', $orgId))
             ->where('is_active', true)
             ->with('branch')
             ->get();
@@ -192,11 +199,11 @@ final class Supplies extends Component
         $orgId = auth()->user()->organization_id;
 
         $supplies = Supply::query()
-            ->whereHas('warehouse.branch', fn($q) => $q->where('organization_id', $orgId))
-            ->when($this->statusFilter, fn($q) => $q->where('status', $this->statusFilter))
-            ->when($this->search, fn($q) => $q->where(fn($q2) => $q2
+            ->whereHas('warehouse.branch', fn ($q) => $q->where('organization_id', $orgId))
+            ->when($this->statusFilter, fn ($q) => $q->where('status', $this->statusFilter))
+            ->when($this->search, fn ($q) => $q->where(fn ($q2) => $q2
                 ->where('document_number', 'like', "%{$this->search}%")
-                ->orWhereHas('supplier', fn($q3) => $q3->where('name', 'like', "%{$this->search}%"))
+                ->orWhereHas('supplier', fn ($q3) => $q3->where('name', 'like', "%{$this->search}%"))
             ))
             ->with(['supplier', 'warehouse', 'user', 'items.ingredient'])
             ->latest()

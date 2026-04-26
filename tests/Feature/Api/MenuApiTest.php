@@ -6,7 +6,6 @@ namespace Tests\Feature\Api;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Menu\Models\Category;
-use App\Domain\Menu\Models\Product;
 use App\Domain\Organization\Models\Branch;
 use App\Domain\Organization\Models\Organization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,8 +16,11 @@ class MenuApiTest extends TestCase
     use RefreshDatabase;
 
     private Organization $organization;
+
     private Branch $branch;
+
     private User $user;
+
     private string $token;
 
     protected function setUp(): void

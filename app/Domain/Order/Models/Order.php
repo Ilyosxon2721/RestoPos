@@ -2,24 +2,24 @@
 
 namespace App\Domain\Order\Models;
 
-use App\Support\Traits\HasUuid;
-use App\Support\Traits\BelongsToBranch;
+use App\Domain\Customer\Models\Customer;
+use App\Domain\Floor\Models\Table;
+use App\Domain\Payment\Models\CashShift;
+use App\Domain\Staff\Models\Employee;
+use App\Support\Enums\OrderSource;
 use App\Support\Enums\OrderStatus;
 use App\Support\Enums\OrderType;
-use App\Support\Enums\OrderSource;
 use App\Support\Enums\PaymentStatus;
-use App\Domain\Floor\Models\Table;
-use App\Domain\Staff\Models\Employee;
-use App\Domain\Customer\Models\Customer;
-use App\Domain\Payment\Models\CashShift;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Traits\BelongsToBranch;
+use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
-    use HasFactory, HasUuid, BelongsToBranch;
+    use BelongsToBranch, HasFactory, HasUuid;
 
     protected $fillable = [
         'branch_id',
@@ -90,7 +90,7 @@ class Order extends Model
             ->whereDate('created_at', today())
             ->count();
 
-        return $today . '-' . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+        return $today.'-'.str_pad($count + 1, 4, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -283,5 +283,4 @@ class Order extends Model
     {
         return \Database\Factories\OrderFactory::new();
     }
-
 }

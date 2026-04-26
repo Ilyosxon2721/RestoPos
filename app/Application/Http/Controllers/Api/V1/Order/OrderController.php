@@ -3,11 +3,11 @@
 namespace App\Application\Http\Controllers\Api\V1\Order;
 
 use App\Application\Http\Controllers\Controller;
-use App\Domain\Order\Models\Order;
-use App\Domain\Order\Actions\CreateOrderAction;
 use App\Domain\Order\Actions\AddOrderItemAction;
-use App\Domain\Order\Actions\SendToKitchenAction;
 use App\Domain\Order\Actions\CloseOrderAction;
+use App\Domain\Order\Actions\CreateOrderAction;
+use App\Domain\Order\Actions\SendToKitchenAction;
+use App\Domain\Order\Models\Order;
 use App\Domain\Order\Services\OrderCalculationService;
 use App\Support\Enums\OrderStatus;
 use Illuminate\Http\JsonResponse;
@@ -24,11 +24,11 @@ class OrderController extends Controller
 
         $query = Order::query()
             ->where('branch_id', $branchId)
-            ->when($request->boolean('open_only'), fn($q) => $q->open())
-            ->when($request->boolean('today'), fn($q) => $q->today())
-            ->when($request->has('status'), fn($q) => $q->where('status', $request->input('status')))
-            ->when($request->has('table_id'), fn($q) => $q->forTable($request->input('table_id')))
-            ->when($request->has('waiter_id'), fn($q) => $q->where('waiter_id', $request->input('waiter_id')))
+            ->when($request->boolean('open_only'), fn ($q) => $q->open())
+            ->when($request->boolean('today'), fn ($q) => $q->today())
+            ->when($request->has('status'), fn ($q) => $q->where('status', $request->input('status')))
+            ->when($request->has('table_id'), fn ($q) => $q->forTable($request->input('table_id')))
+            ->when($request->has('waiter_id'), fn ($q) => $q->where('waiter_id', $request->input('waiter_id')))
             ->with(['table.hall', 'waiter', 'customer'])
             ->latest();
 

@@ -81,5 +81,4 @@ class Organization extends Model
     {
         return \Database\Factories\OrganizationFactory::new();
     }
-
 }

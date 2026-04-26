@@ -14,9 +14,9 @@ class CourierController extends Controller
     {
         $couriers = Courier::query()
             ->with(['employee', 'activeDeliveries'])
-            ->when($request->boolean('active_only'), fn($q) => $q->active())
-            ->when($request->boolean('available_only'), fn($q) => $q->available())
-            ->when($request->boolean('online_only'), fn($q) => $q->online())
+            ->when($request->boolean('active_only'), fn ($q) => $q->active())
+            ->when($request->boolean('available_only'), fn ($q) => $q->available())
+            ->when($request->boolean('online_only'), fn ($q) => $q->online())
             ->orderBy('name')
             ->get();
 
@@ -69,7 +69,7 @@ class CourierController extends Controller
     {
         if ($courier->activeDeliveries()->exists()) {
             return response()->json([
-                'message' => 'Невозможно удалить курьера с активными доставками'
+                'message' => 'Невозможно удалить курьера с активными доставками',
             ], 422);
         }
 

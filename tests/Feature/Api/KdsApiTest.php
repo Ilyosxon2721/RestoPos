@@ -57,7 +57,7 @@ it('can list kitchen orders', function (): void {
         'sent_to_kitchen_at' => now(),
     ]);
 
-    $response = $this->getJson('/api/v1/kds/orders?branch_id=' . $this->branch->id);
+    $response = $this->getJson('/api/v1/kds/orders?branch_id='.$this->branch->id);
 
     $response->assertOk()
         ->assertJsonCount(1, 'data');
@@ -77,7 +77,7 @@ it('can start preparing an item', function (): void {
         'sent_to_kitchen_at' => now(),
     ]);
 
-    $response = $this->postJson("/api/v1/kds/items/{$item->id}/start?branch_id=" . $this->branch->id);
+    $response = $this->postJson("/api/v1/kds/items/{$item->id}/start?branch_id=".$this->branch->id);
 
     $response->assertOk();
 
@@ -99,7 +99,7 @@ it('can mark item as ready', function (): void {
         'sent_to_kitchen_at' => now()->subMinutes(10),
     ]);
 
-    $response = $this->postJson("/api/v1/kds/items/{$item->id}/ready?branch_id=" . $this->branch->id);
+    $response = $this->postJson("/api/v1/kds/items/{$item->id}/ready?branch_id=".$this->branch->id);
 
     $response->assertOk();
 
@@ -123,7 +123,7 @@ it('can mark item as served', function (): void {
         'ready_at' => now()->subMinutes(2),
     ]);
 
-    $response = $this->postJson("/api/v1/kds/items/{$item->id}/served?branch_id=" . $this->branch->id);
+    $response = $this->postJson("/api/v1/kds/items/{$item->id}/served?branch_id=".$this->branch->id);
 
     $response->assertOk();
 
@@ -144,13 +144,13 @@ it('cannot start preparing an item that is not sent', function (): void {
         'status' => OrderItemStatus::PENDING,
     ]);
 
-    $response = $this->postJson("/api/v1/kds/items/{$item->id}/start?branch_id=" . $this->branch->id);
+    $response = $this->postJson("/api/v1/kds/items/{$item->id}/start?branch_id=".$this->branch->id);
 
     $response->assertStatus(422);
 });
 
 it('can view kitchen statistics', function (): void {
-    $response = $this->getJson('/api/v1/kds/statistics?branch_id=' . $this->branch->id);
+    $response = $this->getJson('/api/v1/kds/statistics?branch_id='.$this->branch->id);
 
     $response->assertOk()
         ->assertJsonStructure([

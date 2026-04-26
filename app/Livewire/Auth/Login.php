@@ -51,16 +51,18 @@ final class Login extends Component
                 ->where('is_active', true)
                 ->first();
 
-            if (! $user || ! Hash::check($this->password, $user->password)) {
+            if (!$user || !Hash::check($this->password, $user->password)) {
                 $this->addError('email', 'Неверный email или пароль.');
+
                 return;
             }
 
             Auth::login($user, $this->remember);
         } else {
             // Главный домен: ищем по email среди всех организаций
-            if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+            if (!Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
                 $this->addError('email', 'Неверный email или пароль.');
+
                 return;
             }
         }
@@ -87,7 +89,7 @@ final class Login extends Component
 
         $user = $query->first();
 
-        if (! $user) {
+        if (!$user) {
             throw new \Exception('invalid_pin');
         }
 
@@ -99,7 +101,7 @@ final class Login extends Component
 
     public function togglePinLogin(): void
     {
-        $this->showPinLogin = ! $this->showPinLogin;
+        $this->showPinLogin = !$this->showPinLogin;
         $this->resetErrorBag();
         $this->pin = '';
     }

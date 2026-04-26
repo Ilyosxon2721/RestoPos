@@ -12,9 +12,10 @@ use Illuminate\Notifications\Notifiable;
 
 class PlatformAdmin extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUuid, SoftDeletes;
+    use HasFactory, HasUuid, Notifiable, SoftDeletes;
 
     protected $table = 'platform_admins';
+
     protected $guard = 'platform';
 
     protected $fillable = [

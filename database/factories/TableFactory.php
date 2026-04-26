@@ -19,7 +19,7 @@ class TableFactory extends Factory
     {
         return [
             'hall_id' => Hall::factory(),
-            'name' => 'Стол ' . fake()->numberBetween(1, 50),
+            'name' => 'Стол '.fake()->numberBetween(1, 50),
             'capacity' => fake()->numberBetween(2, 8),
             'shape' => 'square',
             'pos_x' => fake()->numberBetween(0, 500),

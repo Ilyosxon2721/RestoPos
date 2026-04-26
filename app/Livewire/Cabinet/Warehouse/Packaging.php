@@ -24,10 +24,15 @@ final class Packaging extends Component
     public bool $showModal = false;
 
     public ?int $warehouseId = null;
+
     public ?int $sourceIngredientId = null;
+
     public string $sourceQuantity = '';
+
     public ?int $targetIngredientId = null;
+
     public string $targetQuantity = '';
+
     public string $notes = '';
 
     public function create(): void
@@ -90,7 +95,7 @@ final class Packaging extends Component
                 'type' => StockMovementType::PRODUCTION,
                 'quantity' => -$sourceQty,
                 'cost_price' => $costPrice,
-                'notes' => 'Фасовка (расход): ' . ($this->notes ?: ''),
+                'notes' => 'Фасовка (расход): '.($this->notes ?: ''),
             ]);
 
             // === Приход на цель ===
@@ -139,7 +144,7 @@ final class Packaging extends Component
                 'type' => StockMovementType::PRODUCTION,
                 'quantity' => $targetQty,
                 'cost_price' => round($targetCostPerUnit, 4),
-                'notes' => 'Фасовка (приход): ' . ($this->notes ?: ''),
+                'notes' => 'Фасовка (приход): '.($this->notes ?: ''),
             ]);
         });
 

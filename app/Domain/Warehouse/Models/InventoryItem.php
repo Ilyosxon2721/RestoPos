@@ -43,6 +43,7 @@ class InventoryItem extends Model
         if ($this->actual_quantity === null) {
             return 0;
         }
+
         return (float) $this->actual_quantity - (float) $this->expected_quantity;
     }
 }

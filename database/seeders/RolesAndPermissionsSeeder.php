@@ -109,40 +109,40 @@ class RolesAndPermissionsSeeder extends Seeder
             'director' => [
                 'orders.*', 'menu.*', 'warehouse.*', 'staff.view', 'staff.manage',
                 'finance.*', 'reports.*', 'customers.*', 'delivery.*', 'reservations.*',
-                'settings.branch'
+                'settings.branch',
             ],
             'admin' => [
                 'orders.*', 'menu.*', 'warehouse.view', 'warehouse.supply',
                 'staff.view', 'finance.view', 'finance.cash_operations', 'finance.cash_shift',
-                'reports.view', 'customers.*', 'delivery.*', 'reservations.*'
+                'reports.view', 'customers.*', 'delivery.*', 'reservations.*',
             ],
             'accountant' => [
-                'finance.*', 'reports.*', 'warehouse.view', 'staff.salary'
+                'finance.*', 'reports.*', 'warehouse.view', 'staff.salary',
             ],
             'head_waiter' => [
                 'orders.*', 'menu.view', 'menu.stop_list', 'customers.view',
-                'reservations.*', 'reports.view'
+                'reservations.*', 'reports.view',
             ],
             'waiter' => [
                 'orders.view', 'orders.create', 'orders.edit', 'menu.view',
-                'customers.view', 'reservations.view'
+                'customers.view', 'reservations.view',
             ],
             'bartender' => [
-                'orders.view', 'orders.create', 'orders.edit', 'menu.view', 'menu.stop_list'
+                'orders.view', 'orders.create', 'orders.edit', 'menu.view', 'menu.stop_list',
             ],
             'cashier' => [
                 'orders.view', 'orders.create', 'orders.edit', 'orders.discount',
                 'finance.cash_operations', 'finance.cash_shift', 'customers.view',
-                'customers.bonuses', 'reports.view'
+                'customers.bonuses', 'reports.view',
             ],
             'cook' => [
-                'orders.view', 'menu.view', 'menu.stop_list'
+                'orders.view', 'menu.view', 'menu.stop_list',
             ],
             'courier' => [
-                'orders.view', 'delivery.view'
+                'orders.view', 'delivery.view',
             ],
             'storekeeper' => [
-                'warehouse.*', 'menu.view'
+                'warehouse.*', 'menu.view',
             ],
         ];
 
@@ -150,7 +150,9 @@ class RolesAndPermissionsSeeder extends Seeder
         $allRoles = DB::table('roles')->pluck('id', 'slug')->toArray();
 
         foreach ($rolePermissions as $roleSlug => $permissionPatterns) {
-            if (!isset($allRoles[$roleSlug])) continue;
+            if (!isset($allRoles[$roleSlug])) {
+                continue;
+            }
 
             $roleId = $allRoles[$roleSlug];
 
@@ -167,7 +169,7 @@ class RolesAndPermissionsSeeder extends Seeder
                     // Все права модуля
                     $module = str_replace('.*', '', $pattern);
                     foreach ($allPermissions as $permSlug => $permId) {
-                        if (str_starts_with($permSlug, $module . '.')) {
+                        if (str_starts_with($permSlug, $module.'.')) {
                             DB::table('role_permissions')->insert([
                                 'role_id' => $roleId,
                                 'permission_id' => $permId,

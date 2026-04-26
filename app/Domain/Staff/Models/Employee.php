@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Domain\Staff\Models;
 
-use App\Support\Traits\BelongsToBranch;
-use App\Support\Enums\SalaryType;
 use App\Domain\Auth\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Enums\SalaryType;
+use App\Support\Traits\BelongsToBranch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Employee extends Model
 {
-    use HasFactory, BelongsToBranch;
+    use BelongsToBranch, HasFactory;
 
     protected $fillable = [
         'user_id',
@@ -120,5 +120,4 @@ class Employee extends Model
     {
         return \Database\Factories\EmployeeFactory::new();
     }
-
 }

@@ -13,8 +13,8 @@ class NotificationController extends Controller
     {
         $notifications = Notification::query()
             ->forUser($request->user()->id)
-            ->when($request->boolean('unread_only'), fn($q) => $q->unread())
-            ->when($request->input('type'), fn($q, $type) => $q->ofType($type))
+            ->when($request->boolean('unread_only'), fn ($q) => $q->unread())
+            ->when($request->input('type'), fn ($q, $type) => $q->ofType($type))
             ->orderByDesc('created_at')
             ->paginate($request->input('per_page', 20));
 

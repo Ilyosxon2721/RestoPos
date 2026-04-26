@@ -1,28 +1,28 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Application\Http\Controllers\Api\V1\Auth\AuthController;
-use App\Application\Http\Controllers\Api\V1\Organization\BranchController;
-use App\Application\Http\Controllers\Api\V1\Menu\CategoryController;
-use App\Application\Http\Controllers\Api\V1\Menu\ProductController;
-use App\Application\Http\Controllers\Api\V1\Menu\ModifierController;
-use App\Application\Http\Controllers\Api\V1\Floor\HallController;
-use App\Application\Http\Controllers\Api\V1\Floor\TableController;
-use App\Application\Http\Controllers\Api\V1\Reservation\ReservationController;
-use App\Application\Http\Controllers\Api\V1\Order\OrderController;
-use App\Application\Http\Controllers\Api\V1\Payment\CashShiftController;
-use App\Application\Http\Controllers\Api\V1\Payment\PaymentController;
-use App\Application\Http\Controllers\Api\V1\Kds\KdsController;
 use App\Application\Http\Controllers\Api\V1\Customer\CustomerController;
-use App\Application\Http\Controllers\Api\V1\Warehouse\StockController;
-use App\Application\Http\Controllers\Api\V1\Warehouse\SupplyController;
-use App\Application\Http\Controllers\Api\V1\Staff\EmployeeController;
-use App\Application\Http\Controllers\Api\V1\Report\ReportController;
-use App\Application\Http\Controllers\Api\V1\Delivery\DeliveryZoneController;
 use App\Application\Http\Controllers\Api\V1\Delivery\CourierController;
 use App\Application\Http\Controllers\Api\V1\Delivery\DeliveryOrderController;
-use App\Application\Http\Controllers\Api\V1\Infrastructure\PrinterController;
+use App\Application\Http\Controllers\Api\V1\Delivery\DeliveryZoneController;
+use App\Application\Http\Controllers\Api\V1\Floor\HallController;
+use App\Application\Http\Controllers\Api\V1\Floor\TableController;
 use App\Application\Http\Controllers\Api\V1\Infrastructure\NotificationController;
+use App\Application\Http\Controllers\Api\V1\Infrastructure\PrinterController;
+use App\Application\Http\Controllers\Api\V1\Kds\KdsController;
+use App\Application\Http\Controllers\Api\V1\Menu\CategoryController;
+use App\Application\Http\Controllers\Api\V1\Menu\ModifierController;
+use App\Application\Http\Controllers\Api\V1\Menu\ProductController;
+use App\Application\Http\Controllers\Api\V1\Order\OrderController;
+use App\Application\Http\Controllers\Api\V1\Organization\BranchController;
+use App\Application\Http\Controllers\Api\V1\Payment\CashShiftController;
+use App\Application\Http\Controllers\Api\V1\Payment\PaymentController;
+use App\Application\Http\Controllers\Api\V1\Report\ReportController;
+use App\Application\Http\Controllers\Api\V1\Reservation\ReservationController;
+use App\Application\Http\Controllers\Api\V1\Staff\EmployeeController;
+use App\Application\Http\Controllers\Api\V1\Warehouse\StockController;
+use App\Application\Http\Controllers\Api\V1\Warehouse\SupplyController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------

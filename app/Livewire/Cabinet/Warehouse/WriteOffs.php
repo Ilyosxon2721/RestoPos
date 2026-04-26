@@ -25,8 +25,11 @@ final class WriteOffs extends Component
     public bool $showModal = false;
 
     public ?int $warehouseId = null;
+
     public string $reason = 'spoilage';
+
     public string $notes = '';
+
     public array $writeOffItems = [];
 
     public function create(): void
@@ -106,7 +109,9 @@ final class WriteOffs extends Component
                     ->get();
 
                 foreach ($batches as $batch) {
-                    if ($remaining <= 0) break;
+                    if ($remaining <= 0) {
+                        break;
+                    }
                     $deduct = min($remaining, (float) $batch->remaining_quantity);
                     $batch->update(['remaining_quantity' => (float) $batch->remaining_quantity - $deduct]);
                     $remaining -= $deduct;
@@ -135,7 +140,8 @@ final class WriteOffs extends Component
     public function warehouses()
     {
         $orgId = auth()->user()->organization_id;
-        return Warehouse::whereHas('branch', fn($q) => $q->where('organization_id', $orgId))
+
+        return Warehouse::whereHas('branch', fn ($q) => $q->where('organization_id', $orgId))
             ->where('is_active', true)->with('branch')->get();
     }
 
@@ -151,7 +157,7 @@ final class WriteOffs extends Component
         $orgId = auth()->user()->organization_id;
 
         $writeOffs = WriteOff::query()
-            ->whereHas('warehouse.branch', fn($q) => $q->where('organization_id', $orgId))
+            ->whereHas('warehouse.branch', fn ($q) => $q->where('organization_id', $orgId))
             ->with(['warehouse', 'user', 'items.ingredient'])
             ->latest()
             ->paginate(20);

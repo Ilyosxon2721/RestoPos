@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire\Cabinet\Marketing;
 
 use App\Domain\Customer\Models\Promotion;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Layout('components.layouts.cabinet')]
@@ -18,28 +18,45 @@ final class Promotions extends Component
 
     // Модалка создания/редактирования
     public bool $showModal = false;
+
     public ?int $editingId = null;
 
     // Поля формы
     public string $name = '';
+
     public string $description = '';
+
     public string $type = 'discount';
+
     public string $discountType = 'percent';
+
     public string $discountValue = '0';
+
     public string $startDate = '';
+
     public string $endDate = '';
+
     public bool $isActive = true;
+
     public array $activeDays = [];
+
     public string $activeHoursFrom = '';
+
     public string $activeHoursTo = '';
+
     public string $minOrderAmount = '0';
+
     public string $maxDiscountAmount = '';
+
     public string $promoCode = '';
+
     public string $usageLimit = '';
 
     // Модалка подтверждения удаления
     public bool $showDeleteModal = false;
+
     public ?int $deletingId = null;
+
     public string $deletingName = '';
 
     protected array $typeLabels = [
@@ -182,7 +199,7 @@ final class Promotions extends Component
         $orgId = auth()->user()->organization_id;
 
         $promotions = Promotion::where('organization_id', $orgId)
-            ->when($this->search, fn($q) => $q->where('name', 'like', "%{$this->search}%"))
+            ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
             ->latest()
             ->paginate(20);
 

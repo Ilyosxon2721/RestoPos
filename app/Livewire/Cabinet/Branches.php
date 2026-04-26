@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace App\Livewire\Cabinet;
 
 use App\Domain\Organization\Models\Branch;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.cabinet')]
 class Branches extends Component
 {
     public bool $showModal = false;
+
     public ?int $editingId = null;
+
     public string $name = '';
+
     public string $address = '';
+
     public string $phone = '';
 
     protected function rules(): array
@@ -67,6 +71,7 @@ class Branches extends Component
     public function render()
     {
         $branches = Branch::where('organization_id', auth()->user()->organization_id)->latest()->get();
+
         return view('livewire.cabinet.branches', compact('branches'));
     }
 }

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Livewire\Cabinet;
 
-use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Models\Role;
+use App\Domain\Auth\Models\User;
 use App\Domain\Organization\Models\Branch;
 use App\Domain\Staff\Models\Employee;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Layout('components.layouts.cabinet')]
@@ -24,16 +24,25 @@ class Staff extends Component
 
     // Модалка создания/редактирования
     public bool $showModal = false;
+
     public ?int $editingUserId = null;
 
     public string $firstName = '';
+
     public string $lastName = '';
+
     public string $email = '';
+
     public string $phone = '';
+
     public string $password = '';
+
     public string $pinCode = '';
+
     public ?int $roleId = null;
+
     public ?int $branchId = null;
+
     public string $position = '';
 
     public function updatedSearch(): void
@@ -80,7 +89,7 @@ class Staff extends Component
             'position' => 'nullable|string|max:255',
         ];
 
-        if (! $this->editingUserId) {
+        if (!$this->editingUserId) {
             $rules['password'] = 'required|min:6';
         } else {
             $rules['password'] = 'nullable|min:6';
@@ -94,11 +103,12 @@ class Staff extends Component
         if ($this->pinCode) {
             $pinExists = User::where('organization_id', $orgId)
                 ->where('pin_code', $this->pinCode)
-                ->when($this->editingUserId, fn($q) => $q->where('id', '!=', $this->editingUserId))
+                ->when($this->editingUserId, fn ($q) => $q->where('id', '!=', $this->editingUserId))
                 ->exists();
 
             if ($pinExists) {
                 $this->addError('pinCode', 'Этот PIN-код уже используется другим сотрудником.');
+
                 return;
             }
         }
@@ -157,7 +167,7 @@ class Staff extends Component
     public function toggleActive(int $userId): void
     {
         $user = User::where('organization_id', auth()->user()->organization_id)->findOrFail($userId);
-        $user->update(['is_active' => ! $user->is_active]);
+        $user->update(['is_active' => !$user->is_active]);
     }
 
     public function deleteUser(int $userId): void
@@ -179,7 +189,7 @@ class Staff extends Component
         $orgId = auth()->user()->organization_id;
 
         $users = User::where('organization_id', $orgId)
-            ->when($this->search, fn($q) => $q->where(fn($q2) => $q2
+            ->when($this->search, fn ($q) => $q->where(fn ($q2) => $q2
                 ->where('first_name', 'like', "%{$this->search}%")
                 ->orWhere('last_name', 'like', "%{$this->search}%")
                 ->orWhere('email', 'like', "%{$this->search}%")
@@ -189,7 +199,7 @@ class Staff extends Component
             ->paginate(20);
 
         $roles = Role::withoutGlobalScopes()
-            ->where(fn($q) => $q->where('organization_id', $orgId)->orWhere('is_system', true))
+            ->where(fn ($q) => $q->where('organization_id', $orgId)->orWhere('is_system', true))
             ->orderBy('name')
             ->get();
 

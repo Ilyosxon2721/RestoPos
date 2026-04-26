@@ -7,8 +7,8 @@ namespace App\Livewire\Store;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\CustomerAddress;
 use App\Domain\Delivery\Models\DeliveryZone;
-use App\Domain\Order\Models\Order;
 use App\Domain\Menu\Models\Product;
+use App\Domain\Order\Models\Order;
 use App\Domain\Store\Models\StoreSettings;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Validate;
@@ -24,18 +24,28 @@ final class Checkout extends Component
 
     // Адрес доставки
     public ?int $selectedAddressId = null;
+
     public bool $showNewAddress = false;
+
     public string $newAddress = '';
+
     public string $newApartment = '';
+
     public string $newEntrance = '';
+
     public string $newFloor = '';
+
     public string $newIntercom = '';
+
     public ?float $newLat = null;
+
     public ?float $newLng = null;
 
     // Контактные данные
     public string $contactName = '';
+
     public string $contactPhone = '';
+
     public string $comment = '';
 
     // Оплата
@@ -44,7 +54,9 @@ final class Checkout extends Component
 
     // Доставка
     public float $deliveryFee = 0;
+
     public string $deliveryInfo = '';
+
     public ?int $deliveryZoneId = null;
 
     public string $error = '';
@@ -124,6 +136,7 @@ final class Checkout extends Component
             $this->deliveryFee = 0;
             $this->deliveryInfo = '';
             $this->deliveryZoneId = null;
+
             return;
         }
 
@@ -145,6 +158,7 @@ final class Checkout extends Component
             $this->deliveryFee = 0;
             $this->deliveryInfo = 'Укажите адрес на карте для расчёта доставки';
             $this->deliveryZoneId = null;
+
             return;
         }
 
@@ -161,8 +175,8 @@ final class Checkout extends Component
                 $this->deliveryFee = $zone->delivery_fee;
 
                 if ($zone->free_delivery_from && $zone->free_delivery_from > 0) {
-                    $this->deliveryInfo = "Бесплатная доставка от " .
-                        number_format((float) $zone->free_delivery_from, 0, '.', ' ') .
+                    $this->deliveryInfo = 'Бесплатная доставка от '.
+                        number_format((float) $zone->free_delivery_from, 0, '.', ' ').
                         " {$this->store->currency}";
                 } elseif ($this->deliveryFee == 0) {
                     $this->deliveryInfo = 'Бесплатная доставка';
@@ -171,9 +185,10 @@ final class Checkout extends Component
                 }
 
                 if ($zone->estimated_time) {
-                    $this->deliveryInfo .= ($this->deliveryInfo ? ' | ' : '') .
+                    $this->deliveryInfo .= ($this->deliveryInfo ? ' | ' : '').
                         "~{$zone->estimated_time} мин";
                 }
+
                 return;
             }
         }
@@ -197,6 +212,7 @@ final class Checkout extends Component
 
         if ($this->orderType === 'delivery' && !$this->selectedAddressId && !$this->newAddress) {
             $this->error = 'Выберите адрес доставки';
+
             return;
         }
 
@@ -214,6 +230,7 @@ final class Checkout extends Component
     {
         if (empty($cartItems)) {
             $this->error = 'Корзина пуста';
+
             return;
         }
 
@@ -227,6 +244,7 @@ final class Checkout extends Component
             if (!$branch) {
                 $this->error = 'Ресторан временно не принимает заказы';
                 DB::rollBack();
+
                 return;
             }
 

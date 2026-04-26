@@ -22,9 +22,11 @@ final class Login extends Component
     public string $code = '';
 
     public string $firstName = '';
+
     public string $lastName = '';
 
     public ?int $customerId = null;
+
     public string $error = '';
 
     public function mount(string $slug): void
@@ -85,12 +87,14 @@ final class Login extends Component
 
         if (!$customer->verifyCode($this->code)) {
             $this->error = 'Неверный или просроченный код';
+
             return;
         }
 
         // Если клиент новый — запрашиваем имя
         if (empty($customer->first_name)) {
             $this->step = 'name';
+
             return;
         }
 
@@ -134,6 +138,7 @@ final class Login extends Component
         // Ограничение: не чаще 1 раза в минуту
         if ($customer->verification_code_sent_at && $customer->verification_code_sent_at->diffInSeconds(now()) < 60) {
             $this->error = 'Подождите минуту перед повторной отправкой';
+
             return;
         }
 

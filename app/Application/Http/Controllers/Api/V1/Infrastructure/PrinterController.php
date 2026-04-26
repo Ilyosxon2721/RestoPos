@@ -12,8 +12,8 @@ class PrinterController extends Controller
     public function index(Request $request): JsonResponse
     {
         $printers = Printer::query()
-            ->when($request->boolean('active_only'), fn($q) => $q->active())
-            ->when($request->input('type'), fn($q, $type) => $q->where('type', $type))
+            ->when($request->boolean('active_only'), fn ($q) => $q->active())
+            ->when($request->input('type'), fn ($q, $type) => $q->where('type', $type))
             ->orderBy('name')
             ->get();
 
@@ -107,15 +107,16 @@ class PrinterController extends Controller
 
             if ($socket) {
                 fclose($socket);
+
                 return response()->json([
                     'success' => true,
-                    'message' => 'Соединение успешно установлено'
+                    'message' => 'Соединение успешно установлено',
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => "Ошибка подключения: {$errstr} ({$errno})"
+                'message' => "Ошибка подключения: {$errstr} ({$errno})",
             ], 422);
         }
 
@@ -123,13 +124,13 @@ class PrinterController extends Controller
         if (file_exists($printer->usb_path)) {
             return response()->json([
                 'success' => true,
-                'message' => 'Устройство найдено'
+                'message' => 'Устройство найдено',
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'Устройство не найдено по указанному пути'
+            'message' => 'Устройство не найдено по указанному пути',
         ], 422);
     }
 }

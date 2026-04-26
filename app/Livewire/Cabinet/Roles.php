@@ -6,7 +6,6 @@ namespace App\Livewire\Cabinet;
 
 use App\Domain\Auth\Models\Role;
 use Illuminate\Support\Str;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -14,14 +13,19 @@ use Livewire\Component;
 final class Roles extends Component
 {
     public bool $showModal = false;
+
     public bool $showDeleteModal = false;
 
     public ?int $editingId = null;
+
     public string $name = '';
+
     public string $slug = '';
+
     public string $description = '';
 
     public ?int $deletingId = null;
+
     public string $deletingName = '';
 
     public function create(): void
@@ -104,11 +108,13 @@ final class Roles extends Component
 
         if ($role->users_count > 0) {
             $this->addError('delete', 'Невозможно удалить должность: к ней привязаны сотрудники.');
+
             return;
         }
 
         if ($role->is_system) {
             $this->addError('delete', 'Системные должности нельзя удалять.');
+
             return;
         }
 

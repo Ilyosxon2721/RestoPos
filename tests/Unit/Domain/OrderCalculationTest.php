@@ -8,8 +8,6 @@ use App\Domain\Floor\Models\Table;
 use App\Domain\Order\Models\Order;
 use App\Domain\Order\Models\OrderItem;
 use App\Domain\Order\Services\OrderCalculationService;
-use App\Support\Enums\OrderStatus;
-use App\Support\Enums\PaymentStatus;
 use App\Support\Enums\TableStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -23,7 +21,7 @@ class OrderCalculationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new OrderCalculationService();
+        $this->service = new OrderCalculationService;
     }
 
     /** @test */

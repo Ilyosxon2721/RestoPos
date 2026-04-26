@@ -8,7 +8,6 @@ use App\Domain\Floor\Models\Table;
 use App\Domain\Order\Models\Order;
 use App\Domain\Payment\Models\Payment;
 use App\Support\Enums\OrderStatus;
-use App\Support\Enums\PaymentStatus;
 use App\Support\Enums\TableStatus;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;

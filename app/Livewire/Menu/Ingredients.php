@@ -13,20 +13,30 @@ use Livewire\WithPagination;
 
 final class Ingredients extends Component
 {
-    use WithPagination, ResolvesLayout;
+    use ResolvesLayout, WithPagination;
 
     public string $search = '';
+
     public bool $showModal = false;
+
     public ?int $editingId = null;
 
     public string $name = '';
+
     public ?int $unitId = null;
+
     public string $sku = '';
+
     public string $barcode = '';
+
     public string $minStock = '0';
+
     public string $currentCost = '0';
+
     public string $lossPercent = '0';
+
     public ?int $shelfLifeDays = null;
+
     public bool $isActive = true;
 
     public function updatedSearch(): void
@@ -120,7 +130,7 @@ final class Ingredients extends Component
         $orgId = auth()->user()->organization_id;
 
         $ingredients = Ingredient::where('organization_id', $orgId)
-            ->when($this->search, fn($q) => $q->where(fn($q2) => $q2
+            ->when($this->search, fn ($q) => $q->where(fn ($q2) => $q2
                 ->where('name', 'like', "%{$this->search}%")
                 ->orWhere('sku', 'like', "%{$this->search}%")
                 ->orWhere('barcode', 'like', "%{$this->search}%")

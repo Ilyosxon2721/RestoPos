@@ -18,6 +18,7 @@ class UpdateOrderPaymentStatus
             Log::warning('Получен платёж без привязки к заказу', [
                 'payment_id' => $payment->id,
             ]);
+
             return;
         }
 

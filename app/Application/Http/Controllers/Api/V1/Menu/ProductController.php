@@ -3,9 +3,9 @@
 namespace App\Application\Http\Controllers\Api\V1\Menu;
 
 use App\Application\Http\Controllers\Controller;
-use App\Domain\Menu\Models\Product;
 use App\Domain\Menu\Actions\CreateProductAction;
 use App\Domain\Menu\Actions\UpdateProductAction;
+use App\Domain\Menu\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,19 +17,19 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Product::query()
-            ->when($request->boolean('active_only'), fn($q) => $q->active())
-            ->when($request->has('category_id'), fn($q) => $q->inCategory($request->input('category_id')))
-            ->when($request->has('workshop_id'), fn($q) => $q->inWorkshop($request->input('workshop_id')))
-            ->when($request->has('type'), fn($q) => $q->where('type', $request->input('type')))
-            ->when($request->boolean('popular_only'), fn($q) => $q->popular())
-            ->when($request->has('search'), fn($q) => $q->search($request->input('search')))
+            ->when($request->boolean('active_only'), fn ($q) => $q->active())
+            ->when($request->has('category_id'), fn ($q) => $q->inCategory($request->input('category_id')))
+            ->when($request->has('workshop_id'), fn ($q) => $q->inWorkshop($request->input('workshop_id')))
+            ->when($request->has('type'), fn ($q) => $q->where('type', $request->input('type')))
+            ->when($request->boolean('popular_only'), fn ($q) => $q->popular())
+            ->when($request->has('search'), fn ($q) => $q->search($request->input('search')))
             ->with(['category', 'workshop', 'unit'])
             ->ordered();
 
         // Include prices for specific branch
         if ($request->has('branch_id')) {
             $branchId = $request->input('branch_id');
-            $query->with(['prices' => fn($q) => $q->where('branch_id', $branchId)->where('is_active', true)]);
+            $query->with(['prices' => fn ($q) => $q->where('branch_id', $branchId)->where('is_active', true)]);
         }
 
         $products = $request->boolean('paginate', true)
@@ -90,7 +90,7 @@ class ProductController extends Controller
                 'organization_id' => $request->user()->organization_id,
                 ...$request->only([
                     'category_id', 'workshop_id', 'unit_id', 'name', 'sku', 'barcode',
-                    'description', 'image', 'type', 'cost_price', 'sort_order', 'prep_time'
+                    'description', 'image', 'type', 'cost_price', 'sort_order', 'prep_time',
                 ]),
                 'is_active' => $request->boolean('is_active', true),
                 'is_popular' => $request->boolean('is_popular', false),
@@ -143,7 +143,7 @@ class ProductController extends Controller
             $request->only([
                 'category_id', 'workshop_id', 'unit_id', 'name', 'sku', 'barcode',
                 'description', 'image', 'type', 'cost_price', 'sort_order', 'prep_time',
-                'is_active', 'is_popular', 'is_new'
+                'is_active', 'is_popular', 'is_new',
             ]),
             $request->has('prices') ? $request->input('prices') : null,
             $request->has('modifier_groups') ? $request->input('modifier_groups') : null

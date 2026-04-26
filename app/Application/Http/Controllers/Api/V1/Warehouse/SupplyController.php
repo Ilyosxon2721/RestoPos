@@ -3,9 +3,9 @@
 namespace App\Application\Http\Controllers\Api\V1\Warehouse;
 
 use App\Application\Http\Controllers\Controller;
-use App\Domain\Warehouse\Models\Supply;
 use App\Domain\Warehouse\Models\Stock;
 use App\Domain\Warehouse\Models\StockBatch;
+use App\Domain\Warehouse\Models\Supply;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,8 +16,8 @@ class SupplyController extends Controller
     {
         $branchId = $request->input('branch_id') ?? app('current.branch_id');
 
-        $supplies = Supply::whereHas('warehouse', fn($q) => $q->where('branch_id', $branchId))
-            ->when($request->has('status'), fn($q) => $q->where('status', $request->input('status')))
+        $supplies = Supply::whereHas('warehouse', fn ($q) => $q->where('branch_id', $branchId))
+            ->when($request->has('status'), fn ($q) => $q->where('status', $request->input('status')))
             ->with(['supplier', 'warehouse'])
             ->latest()
             ->paginate($request->input('per_page', 20));
@@ -50,7 +50,7 @@ class SupplyController extends Controller
                 'warehouse_id' => $request->input('warehouse_id'),
                 'supplier_id' => $request->input('supplier_id'),
                 'user_id' => $request->user()->id,
-                'number' => 'SUP-' . now()->format('YmdHis'),
+                'number' => 'SUP-'.now()->format('YmdHis'),
                 'status' => 'draft',
                 'notes' => $request->input('notes'),
             ]);

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Livewire\Staff;
 
 use App\Domain\Staff\Models\Employee;
-use App\Domain\Auth\Models\User;
 use App\Support\Traits\ResolvesLayout;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Url;
@@ -14,12 +13,13 @@ use Livewire\WithPagination;
 
 class EmployeeList extends Component
 {
-    use WithPagination, ResolvesLayout;
+    use ResolvesLayout, WithPagination;
 
     #[Url]
     public string $searchQuery = '';
 
     public bool $showModal = false;
+
     public ?int $editingId = null;
 
     #[Rule('required|string|max:255')]
@@ -127,9 +127,9 @@ class EmployeeList extends Component
 
         if ($this->searchQuery !== '') {
             $query->where(function ($q) {
-                $q->where('position', 'like', '%' . $this->searchQuery . '%')
+                $q->where('position', 'like', '%'.$this->searchQuery.'%')
                     ->orWhereHas('user', function ($uq) {
-                        $uq->where('name', 'like', '%' . $this->searchQuery . '%');
+                        $uq->where('name', 'like', '%'.$this->searchQuery.'%');
                     });
             });
         }

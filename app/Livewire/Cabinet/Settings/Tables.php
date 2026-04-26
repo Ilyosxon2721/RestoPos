@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire\Cabinet\Settings;
 
 use App\Domain\Organization\Models\Organization;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 /**
  * Настройки столов — бронирование, автоосвобождение, длительность брони, обязательный выбор стола.
@@ -15,8 +15,11 @@ use Livewire\Attributes\Layout;
 final class Tables extends Component
 {
     public bool $reservationsEnabled = false;
+
     public int $autoReleaseMinutes = 120;
+
     public int $defaultReservationDuration = 90;
+
     public bool $requireTableForDineIn = true;
 
     public function mount(): void

@@ -2,14 +2,14 @@
 
 namespace App\Domain\Auth\Models;
 
-use App\Support\Traits\HasUuid;
 use App\Support\Traits\BelongsToOrganization;
+use App\Support\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Role extends Model
 {
-    use HasUuid, BelongsToOrganization;
+    use BelongsToOrganization, HasUuid;
 
     protected $fillable = [
         'organization_id',
@@ -81,6 +81,7 @@ class Role extends Model
             if ($permission instanceof Permission) {
                 return $permission->id;
             }
+
             return Permission::where('slug', $permission)->firstOrFail()->id;
         });
 

@@ -165,7 +165,7 @@ class AuthController extends Controller
                     'subscription_plan' => $user->organization->subscription_plan,
                     'subscription_ends_at' => $user->organization->subscription_ends_at,
                 ],
-                'roles' => $user->roles->map(fn($role) => [
+                'roles' => $user->roles->map(fn ($role) => [
                     'id' => $role->id,
                     'name' => $role->name,
                     'slug' => $role->slug,

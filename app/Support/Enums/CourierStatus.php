@@ -10,7 +10,7 @@ enum CourierStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Available => 'Доступен',
             self::Busy => 'Занят',
             self::Offline => 'Не в сети',
@@ -19,7 +19,7 @@ enum CourierStatus: string
 
     public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Available => 'success',
             self::Busy => 'warning',
             self::Offline => 'secondary',

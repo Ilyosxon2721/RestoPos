@@ -16,8 +16,8 @@ class OrganizationScope
     {
         if ($user = $request->user()) {
             // Set organization context globally
-            app()->singleton('current.organization', fn() => $user->organization);
-            app()->singleton('current.organization_id', fn() => $user->organization_id);
+            app()->singleton('current.organization', fn () => $user->organization);
+            app()->singleton('current.organization_id', fn () => $user->organization_id);
         }
 
         return $next($request);

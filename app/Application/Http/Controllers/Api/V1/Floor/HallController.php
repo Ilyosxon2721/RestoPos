@@ -18,8 +18,8 @@ class HallController extends Controller
 
         $halls = Hall::query()
             ->where('branch_id', $branchId)
-            ->when($request->boolean('active_only'), fn($q) => $q->active())
-            ->with(['tables' => fn($q) => $q->when($request->boolean('active_only'), fn($sq) => $sq->active())->ordered()])
+            ->when($request->boolean('active_only'), fn ($q) => $q->active())
+            ->with(['tables' => fn ($q) => $q->when($request->boolean('active_only'), fn ($sq) => $sq->active())->ordered()])
             ->ordered()
             ->get();
 
@@ -43,7 +43,7 @@ class HallController extends Controller
      */
     public function show(Hall $hall): JsonResponse
     {
-        $hall->load(['tables' => fn($q) => $q->active()->ordered()]);
+        $hall->load(['tables' => fn ($q) => $q->active()->ordered()]);
 
         return response()->json([
             'data' => $hall,
@@ -93,7 +93,7 @@ class HallController extends Controller
         ]);
 
         $hall->update($request->only([
-            'name', 'floor', 'description', 'sort_order', 'is_active'
+            'name', 'floor', 'description', 'sort_order', 'is_active',
         ]));
 
         return response()->json([
