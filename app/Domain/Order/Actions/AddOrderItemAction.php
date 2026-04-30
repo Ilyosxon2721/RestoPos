@@ -17,10 +17,13 @@ class AddOrderItemAction
         }
 
         return DB::transaction(function () use ($order, $data) {
-            $product = Product::findOrFail($data['product_id']);
+            $product = Product::with('category')->findOrFail($data['product_id']);
 
             // Get price for branch
             $price = $data['unit_price'] ?? $product->getSellingPrice($order->branch_id);
+
+            // Snapshot tax at moment of add — survives later edits to Tax/Product.
+            $tax = $product->effectiveTax();
 
             $item = $order->items()->create([
                 'product_id' => $product->id,
@@ -28,6 +31,9 @@ class AddOrderItemAction
                 'quantity' => $data['quantity'] ?? 1,
                 'unit_price' => $price,
                 'discount_amount' => $data['discount_amount'] ?? 0,
+                'tax_id' => $tax?->id,
+                'tax_rate' => $tax ? (float) $tax->rate : 0.0,
+                'tax_type' => $tax ? $tax->type : 'none',
                 'status' => OrderItemStatus::PENDING,
                 'notes' => $data['notes'] ?? null,
             ]);

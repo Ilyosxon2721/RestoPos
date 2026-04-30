@@ -22,6 +22,10 @@ class OrderItem extends Model
         'discount_amount',
         'total_price',
         'cost_price',
+        'tax_id',
+        'tax_rate',
+        'tax_type',
+        'tax_amount',
         'course',
         'status',
         'comment',
@@ -40,6 +44,8 @@ class OrderItem extends Model
             'discount_amount' => 'decimal:2',
             'total_price' => 'decimal:2',
             'cost_price' => 'decimal:2',
+            'tax_rate' => 'decimal:2',
+            'tax_amount' => 'decimal:2',
             'course' => 'integer',
             'sent_to_kitchen_at' => 'datetime',
             'ready_at' => 'datetime',
@@ -50,6 +56,7 @@ class OrderItem extends Model
     {
         static::saving(function ($item) {
             $item->calculateTotal();
+            $item->calculateTax();
         });
 
         static::saved(function ($item) {
@@ -86,6 +93,14 @@ class OrderItem extends Model
     }
 
     /**
+     * Get tax snapshot.
+     */
+    public function tax(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Menu\Models\Tax::class);
+    }
+
+    /**
      * Calculate total for this item.
      */
     public function calculateTotal(): void
@@ -93,6 +108,30 @@ class OrderItem extends Model
         $modifiersTotal = $this->modifiers()->sum('price_adjustment');
         $baseTotal = ($this->unit_price + $modifiersTotal) * $this->quantity;
         $this->total_price = $baseTotal - ($this->discount_amount ?? 0);
+    }
+
+    /**
+     * Compute tax_amount from snapshot rate and type.
+     *
+     * VAT (НДС) is treated as included in unit_price → extracted from total_price.
+     * Turnover (С оборота) is added on top of total_price.
+     * None / no rate → zero.
+     */
+    public function calculateTax(): void
+    {
+        $rate = (float) ($this->tax_rate ?? 0);
+        if ($rate <= 0 || $this->tax_type === 'none' || !$this->tax_type) {
+            $this->tax_amount = 0;
+
+            return;
+        }
+
+        $base = (float) $this->total_price;
+        $this->tax_amount = match ($this->tax_type) {
+            'vat' => round($base * $rate / (100 + $rate), 2),
+            'turnover' => round($base * $rate / 100, 2),
+            default => 0,
+        };
     }
 
     /**

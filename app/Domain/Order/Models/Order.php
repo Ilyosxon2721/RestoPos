@@ -146,20 +146,28 @@ class Order extends Model
      */
     public function calculateTotals(): void
     {
-        $subtotal = $this->items()->sum('total_price');
+        $subtotal = (float) $this->items()->sum('total_price');
 
         $discountAmount = $this->discount_percent
-            ? $subtotal * ($this->discount_percent / 100)
-            : ($this->discount_amount ?? 0);
+            ? $subtotal * ((float) $this->discount_percent / 100)
+            : (float) ($this->discount_amount ?? 0);
 
         $afterDiscount = $subtotal - $discountAmount;
-        $serviceCharge = $this->service_charge ?? 0;
-        $taxAmount = $this->tax_amount ?? 0;
-        $total = $afterDiscount + $serviceCharge + $taxAmount;
+        $serviceCharge = (float) ($this->service_charge ?? 0);
+
+        // Tax: VAT (НДС) is included in subtotal already → only sum turnover-style for the total.
+        // VAT is reported in tax_amount (informational on receipt).
+        $items = $this->items()->get(['tax_type', 'tax_amount']);
+        $vatTotal = (float) $items->where('tax_type', 'vat')->sum('tax_amount');
+        $turnoverTotal = (float) $items->where('tax_type', 'turnover')->sum('tax_amount');
+        $taxAmount = $vatTotal + $turnoverTotal;
+
+        $total = $afterDiscount + $serviceCharge + $turnoverTotal;
 
         $this->update([
             'subtotal' => $subtotal,
             'discount_amount' => $discountAmount,
+            'tax_amount' => $taxAmount,
             'total_amount' => $total,
         ]);
     }
