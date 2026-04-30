@@ -25,6 +25,7 @@ class Product extends Model
         'category_id',
         'workshop_id',
         'unit_id',
+        'tax_id',
         'type',
         'name',
         'name_uz',
@@ -45,6 +46,7 @@ class Product extends Model
         'weight',
         'cooking_time',
         'is_weighable',
+        'excluded_from_discounts',
         'is_visible',
         'is_available',
         'in_stop_list',
@@ -65,6 +67,7 @@ class Product extends Model
             'weight' => 'decimal:3',
             'cooking_time' => 'integer',
             'is_weighable' => 'boolean',
+            'excluded_from_discounts' => 'boolean',
             'is_visible' => 'boolean',
             'is_available' => 'boolean',
             'in_stop_list' => 'boolean',
@@ -94,6 +97,22 @@ class Product extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    /**
+     * Get tax. Falls back to category tax if product tax is null.
+     */
+    public function tax(): BelongsTo
+    {
+        return $this->belongsTo(Tax::class);
+    }
+
+    /**
+     * Effective tax — direct tax or inherited from category chain.
+     */
+    public function effectiveTax(): ?Tax
+    {
+        return $this->tax ?? $this->category?->effectiveTax();
     }
 
     /**

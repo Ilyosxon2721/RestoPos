@@ -21,6 +21,7 @@ class Category extends Model
     protected $fillable = [
         'organization_id',
         'parent_id',
+        'tax_id',
         'name',
         'slug',
         'description',
@@ -45,6 +46,22 @@ class Category extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    /**
+     * Get category-level tax.
+     */
+    public function tax(): BelongsTo
+    {
+        return $this->belongsTo(Tax::class);
+    }
+
+    /**
+     * Effective tax — own tax or inherited from parent chain.
+     */
+    public function effectiveTax(): ?Tax
+    {
+        return $this->tax ?? $this->parent?->effectiveTax();
     }
 
     /**

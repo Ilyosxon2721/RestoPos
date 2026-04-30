@@ -174,6 +174,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/menu/items', \App\Livewire\Menu\Items::class)->name('cabinet.menu.items');
         Route::get('/menu/ingredients', \App\Livewire\Menu\Ingredients::class)->name('cabinet.menu.ingredients');
         Route::get('/menu/tech-cards', \App\Livewire\Menu\TechCards::class)->name('cabinet.menu.tech-cards');
+        Route::get('/menu/dishes/create', \App\Livewire\Menu\DishEditor::class)->name('cabinet.menu.dishes.create');
+        Route::get('/menu/dishes/{productId}/edit', \App\Livewire\Menu\DishEditor::class)->name('cabinet.menu.dishes.edit');
+        Route::get('/menu/dishes/{product}/print', \App\Application\Http\Controllers\Menu\TechCardPdfController::class)->name('cabinet.menu.dishes.print');
         Route::get('/menu/qr-menu', \App\Livewire\Menu\QrMenuSettings::class)->name('cabinet.menu.qr-menu');
 
         // Интернет-магазин

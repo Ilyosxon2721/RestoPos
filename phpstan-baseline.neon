@@ -223,6 +223,42 @@ parameters:
 			path: app/Domain/Floor/Models/Table.php
 
 		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:items\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Domain/Menu/Actions/SaveDishAction.php
+
+		-
+			message: '#^Offset ''is_required'' on array\{group_id\: int, is_required\: bool, sort_order\: int\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Domain/Menu/Actions/SaveDishAction.php
+
+		-
+			message: '#^Offset ''sort_order'' on array\{group_id\: int, is_required\: bool, sort_order\: int\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Domain/Menu/Actions/SaveDishAction.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$product with type array\<string, mixed\> is incompatible with native type App\\Domain\\Menu\\Models\\Product\|null\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: app/Domain/Menu/Actions/SaveDishAction.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:effectiveTax\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Menu/Models/Category.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:effectiveTax\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Domain/Menu/Models/Product.php
+
+		-
 			message: '#^Method App\\Domain\\Menu\\Models\\Product\:\:getPriceForBranch\(\) should return App\\Domain\\Menu\\Models\\ProductPrice\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: return.type
 			count: 1
@@ -463,6 +499,24 @@ parameters:
 			path: app/Domain/Warehouse/Models/StockBatch.php
 
 		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model\)\: float\)\|string\|null, Closure\(App\\Domain\\Warehouse\\Models\\TechCardItem\)\: float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Domain/Warehouse/Models/TechCard.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>cost_price" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Domain/Warehouse/Models/TechCardItem.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>current_cost" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Domain/Warehouse/Models/TechCardItem.php
+
+		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:updatePaymentStatus\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -611,6 +665,36 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/Kitchen/Display.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Livewire/Menu/DishEditor.php
+
+		-
+			message: '#^Offset ''kind'' on array\{id\?\: int, kind\: ''ingredient''\|''semi_finished'', ref_id\: int\|null, unit_id\: int\|null, preparation_method_id\: int\|null, quantity\: string, loss_percent\: string\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 2
+			path: app/Livewire/Menu/DishEditor.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Livewire/Menu/DishEditor.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>cost_price" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Menu/DishEditor.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>current_cost" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Menu/DishEditor.php
 
 		-
 			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{ingredient_id\: int\<0, max\>\|null, quantity\: numeric\-string&uppercase\-string, loss_percent\: numeric\-string&uppercase\-string\}, Closure\(App\\Domain\\Warehouse\\Models\\TechCardItem\)\: array\{ingredient_id\: int\<0, max\>\|null, quantity\: numeric\-string&uppercase\-string, loss_percent\: numeric\-string&uppercase\-string\} given\.$#'
