@@ -56,7 +56,7 @@ final class Register extends Component
     {
         $this->validate();
 
-        $action = new RegisterOrganizationAction;
+        $action = app(RegisterOrganizationAction::class);
 
         $result = $action->execute([
             'organization_name' => $this->organizationName,

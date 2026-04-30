@@ -177,6 +177,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/menu/dishes/create', \App\Livewire\Menu\DishEditor::class)->name('cabinet.menu.dishes.create');
         Route::get('/menu/dishes/{productId}/edit', \App\Livewire\Menu\DishEditor::class)->name('cabinet.menu.dishes.edit');
         Route::get('/menu/dishes/{product}/print', \App\Application\Http\Controllers\Menu\TechCardPdfController::class)->name('cabinet.menu.dishes.print');
+        Route::get('/menu/taxes', \App\Livewire\Menu\Taxes::class)->name('cabinet.menu.taxes');
+        Route::get('/menu/preparation-methods', \App\Livewire\Menu\PreparationMethods::class)->name('cabinet.menu.preparation-methods');
         Route::get('/menu/qr-menu', \App\Livewire\Menu\QrMenuSettings::class)->name('cabinet.menu.qr-menu');
 
         // Интернет-магазин

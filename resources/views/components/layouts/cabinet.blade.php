@@ -92,6 +92,8 @@
                         <a href="/cabinet/menu/items" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/items*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Блюда</a>
                         <a href="/cabinet/menu/ingredients" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/ingredients*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Ингредиенты</a>
                         <a href="/cabinet/menu/tech-cards" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/tech-cards*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Тех. карты</a>
+                        <a href="/cabinet/menu/taxes" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/taxes*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Налоги</a>
+                        <a href="/cabinet/menu/preparation-methods" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/preparation-methods*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">Методы приготовления</a>
                         <a href="/cabinet/menu/qr-menu" class="block rounded-lg px-3 py-2 text-sm {{ request()->is('cabinet/menu/qr-menu*') ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white' }}">QR-меню</a>
                     </div>
                 </div>

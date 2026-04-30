@@ -6,6 +6,7 @@ namespace App\Domain\Auth\Actions;
 
 use App\Domain\Auth\Models\Role;
 use App\Domain\Auth\Models\User;
+use App\Domain\Menu\Actions\SeedOrganizationDefaultsAction;
 use App\Domain\Organization\Models\Branch;
 use App\Domain\Organization\Models\Organization;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,10 @@ use Illuminate\Support\Str;
 
 class RegisterOrganizationAction
 {
+    public function __construct(
+        private readonly SeedOrganizationDefaultsAction $seedDefaults,
+    ) {}
+
     /**
      * Регистрация новой организации с владельцем.
      */
@@ -76,6 +81,8 @@ class RegisterOrganizationAction
             }
 
             $user->roles()->attach($ownerRole->id, ['branch_id' => null]);
+
+            $this->seedDefaults->execute($organization);
 
             return [
                 'organization' => $organization,
